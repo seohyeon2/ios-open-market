@@ -34,10 +34,11 @@ final class ProductDetailViewController: UIViewController {
     private var dataSource: DiffableDataSource?
     private var snapshot = NSDiffableDataSourceSnapshot<Section, SaleInformation>()
 
-    private let actionButton: UIButton = {
+    private lazy var actionButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: "square.and.arrow.up")
         button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(showActionSheet), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -68,6 +69,26 @@ final class ProductDetailViewController: UIViewController {
     }
     
     // MARK: Method
+    
+    @objc private func showActionSheet() {
+        let actionsheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        let actionModify = UIAlertAction(title: "수정", style: .default, handler: { action in
+            self.navigationController?.pushViewController(ModificationViewController(product: self.product!), animated: true)
+        })
+        let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { action in
+            //삭제 메서드 호출
+            print("삭제")
+        })
+
+        let actionCancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+
+        actionsheetController.addAction(actionModify)
+        actionsheetController.addAction(actionDelete)
+        actionsheetController.addAction(actionCancel)
+        
+        self.present(actionsheetController, animated: true, completion: nil)
+    }
     
     private func getProductDetail() {
         guard let productId = product?.id else { return }
