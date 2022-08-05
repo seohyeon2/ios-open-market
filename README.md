@@ -2,54 +2,53 @@
 # 🛒 오픈 마켓
 
 ## 목차
-* [프로젝트 저장소](#-💾-프로젝트-저장소)
-* [팀원](#-👥-팀원)
-* [실행화면](#📺-실행-화면)
-* [개발환경 및 라이브러리](#🛠-개발환경-및-라이브러리)
-* [타임라인](#🕖-타임라인:-시간-순으로-프로젝트의-주요-진행-척도를-표시)
+* [Project Storage](#-💾-Project-Storage)
+* [Team](#-👥-Team)
+* [Run screen](#📺-Run-screen)
+* [Development-Environment-and-Library](#🛠-Development-Environment-and-Library)
+* [Timeline](#🕖-Timeline)
     * [week1](#Week-1)
     * [week2](#Week-2)
     * [week3](#Week-3)
     * [week4](#Week-4)
-* [프로젝트 내용](#✏️-프로젝트-내용)
-    * [핵심 기능 경험](#💻-핵심-기능-경험)
-    * [코드 소개](#⚙️-코드-소개)
-* [트러블 슈팅](#🏀-TroubleShooting)
-* [참고한 페이지](#참고한-페이지)
+* [Project Contents](#✏️Project-Contents)
+    * [Core Feature Experience](#💻-Core-Feature-Experience)
+* [TroubleShooting](#🏀-TroubleShooting)
+* [Reference page](#Reference-page)
 
-## 💾 프로젝트 저장소
+## 💾 Project Storage
 >**프로젝트 기간** : 2022-07-11 ~ 2022-08-05<br>
 **소개** : 네트워크 통신을 통해 상품 API를 가져와 물건을 매매하는 앱입니다. <br>
 **리뷰어** : [**라이언**](https://github.com/ryan-son)
 
-## 👥 팀원
+## 👥 Team
     
 | [현이](https://github.com/seohyeon2) | [언체인](https://github.com/unchain123) |
 |:---:|:---:|
 |<img src = "https://i.imgur.com/0UjNUFH.jpg" width="250" height="250">|<img src = "https://i.imgur.com/GlPnCo7.png" width="250" height="250">|
 
 ---
-## 📺 실행 화면
-### 메인 화면
+## 📺 Run screen
+### Home screen
 
 | ListCollectionView | GridCollectionView |
 |:---:|:---:|
 |<img src = https://i.imgur.com/SBqTBAk.gif width=200 height=400>|<img src = https://i.imgur.com/op5su98.gif width=200 height=400>|
 
-### 상품 등록 화면
+### Product registration screen
 
 | 상품 등록 과정 | 상품 등록 성공 | 상품 등록 실패 |
 |:---:|:---:|:---:|
 |<img src = https://i.imgur.com/YjuWno2.gif width=200 height=400>|<img src = https://i.imgur.com/XVGljW8.png width=200 height=400>|<img src = https://i.imgur.com/1tiOGeA.png width=200 height=400>|
 
 
-## 🛠 개발환경 및 라이브러리
+## 🛠 Development Environment and Library
 [![swift](https://img.shields.io/badge/swift-5.6-orange)]()
 [![xcode](https://img.shields.io/badge/Xcode-13.4.1-blue)]()
 [![swiftLint](https://img.shields.io/badge/SwiftLint-13.2-green)]()
 ---
 
-## 🕖 타임라인: 시간 순으로 프로젝트의 주요 진행 척도를 표시
+## 🕖 Timeline
 
 ### Week 1
 - **2022-07-11 (월)** 
@@ -117,9 +116,9 @@
   - 오픈마켓 II STEP2: RegistrationViewController UI 및 기능 구현
 ---
 
-## ✏️ 프로젝트 내용
+## ✏️ Project Contents
 
-### 💻 핵심 기능 경험
+### 💻 Core Feature Experience
 - [x] UIAlertController 액션의 completion handler 활용
 - [x] UIAlertController의 textFields 활용
 - [x] UICollectionView 를 통한 좌우 스크롤 기능 구현
@@ -221,6 +220,6 @@ imageStackView.heightAnchor.constraint(equalToConstant: 80)
 ---
 
 
-### 참고한 페이지        
+### Reference page
 
 - [Implementing Modern Collection Views](https://developer.apple.com/documentation/uikit/views_and_controls/collection_views/implementing_modern_collection_views)
