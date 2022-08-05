@@ -2,19 +2,19 @@
 # 🛒 오픈 마켓
 
 ## 목차
-* [Project Storage](#-💾-Project-Storage)
-* [Team](#-👥-Team)
-* [Run screen](#📺-Run-screen)
-* [Development-Environment-and-Library](#🛠-Development-Environment-and-Library)
-* [Timeline](#🕖-Timeline)
-    * [week1](#Week-1)
-    * [week2](#Week-2)
-    * [week3](#Week-3)
-    * [week4](#Week-4)
-* [Project Contents](#✏️Project-Contents)
-    * [Core Feature Experience](#💻-Core-Feature-Experience)
-* [TroubleShooting](#🏀-TroubleShooting)
-* [Reference page](#Reference-page)
+* [Project Storage](#-project-storage)
+* [Team](#-team)
+* [Run screen](#-run-screen)
+* [Development Environment and Library](#-development-environment-and-library)
+* [Timeline](#-timeline)
+    * [week1](#week-1)
+    * [week2](#week-2)
+    * [week3](#week-3)
+    * [week4](#week-4)
+* [Project Contents](#project-contents)
+    * [Core Feature Experience](#-core-feature-experience)
+* [TroubleShooting](#-troubleshooting)
+* [Reference page](#reference-page)
 
 ## 💾 Project Storage
 >**프로젝트 기간** : 2022-07-11 ~ 2022-08-05<br>
@@ -116,7 +116,7 @@
   - 오픈마켓 II STEP2: RegistrationViewController UI 및 기능 구현
 ---
 
-## ✏️ Project Contents
+## Project Contents
 
 ### 💻 Core Feature Experience
 - [x] UIAlertController 액션의 completion handler 활용
