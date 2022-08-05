@@ -31,14 +31,6 @@ extension RequestProtocol {
         return APIConstants.host
     }
     
-    var headers: [String: String] {
-        return [:]
-    }
-    
-    var needsIdentifier: Bool {
-        return true
-    }
-    
     func createURLRequest() throws -> URLRequest {
         var components = URLComponents()
         components.scheme = scheme
@@ -88,10 +80,27 @@ protocol NetworkManagerProtocol {
 }
 
 enum ProductRequest: RequestProtocol {
-
     case list(page: Int, itemPerPage: Int = 20)
     case item(Int)
     case registerItem
+
+    var headers: [String: String] {
+        switch self {
+        case .registerItem:
+            return [Multipart.contentType: Multipart.boundaryForm + "\"\(Multipart.boundaryValue)\""]
+        default:
+            return [:]
+        }
+    }
+
+    var needsIdentifier: Bool {
+        switch self {
+        case .list:
+            return false
+        default:
+            return true
+        }
+    }
 
     var path: String {
         switch self {
@@ -124,5 +133,4 @@ enum ProductRequest: RequestProtocol {
             return .post
         }
     }
-    
 }

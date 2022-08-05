@@ -53,8 +53,8 @@ final class NetworkManager: NetworkManagerProtocol {
         var newParms = params
         
         newParms[passwordKey] = passwordValue
-
-        guard var request = OpenMarketRequest.createPostRequest(identifier: identifier) else { return }
+        
+        guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
 
         let postData = OpenMarketRequest.createPostBody(parms: newParms as [String: Any], images: images)
 
