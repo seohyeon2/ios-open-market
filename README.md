@@ -9,6 +9,8 @@
 * [타임라인](#🕖-타임라인:-시간-순으로-프로젝트의-주요-진행-척도를-표시)
     * [week1](#Week-1)
     * [week2](#Week-2)
+    * [week3](#Week-3)
+    * [week4](#Week-4)
 * [프로젝트 내용](#✏️-프로젝트-내용)
     * [핵심 기능 경험](#💻-핵심-기능-경험)
     * [코드 소개](#⚙️-코드-소개)
@@ -28,10 +30,17 @@
 
 ---
 ## 📺 실행 화면
+### 메인 화면
+
 | ListCollectionView | GridCollectionView |
 |:---:|:---:|
-|![](https://i.imgur.com/SBqTBAk.gif)|![](https://i.imgur.com/op5su98.gif)
-|
+|<img src = https://i.imgur.com/SBqTBAk.gif width=200 height=400>|<img src = https://i.imgur.com/op5su98.gif width=200 height=400>|
+
+### 상품 등록 화면
+
+| 상품 등록 과정 | 상품 등록 성공 | 상품 등록 실패 |
+|:---:|:---:|:---:|
+|<img src = https://i.imgur.com/YjuWno2.gif width=200 height=400>|<img src = https://i.imgur.com/XVGljW8.png width=200 height=400>|<img src = https://i.imgur.com/1tiOGeA.png width=200 height=400>|
 
 
 ## 🛠 개발환경 및 라이브러리
@@ -74,8 +83,6 @@
 - **2022-07-22 (금)**
   - 오픈마켓 I STEP2: Readme.md 작성 및 STEP2 PR 
 
-
-
 ### Week 3
 - **2022-07-25 (월)** 
   - 오픈마켓 II STEP1: multipart/form-data 구조 공부 및 예제 코드 작성
@@ -92,15 +99,30 @@
 - **2022-07-29 (금)**
   - 오픈마켓 II STEP1: POST 메서드 구현 및 레이아웃 구현
 
+### Week 4
+- **2022-08-01 (월)** 
+  - 오픈마켓 II STEP1: RegistrationViewController UI 구현
+ 
+- **2022-08-02 (화)**
+  - 오픈마켓 II STEP1: POST 메서드 수정 및 키보드 구현
+
+- **2022-08-03 (수)**
+  - 오픈마켓 II STEP2: STEP2에 필요한 개념 공부
+
+- **2022-08-04 (목)**
+  - 오픈마켓 II STEP1: 리팩토링
+  
+- **2022-08-05 (금)**
+  - 오픈마켓 II STEP1: 리팩토링
+  - 오픈마켓 II STEP2: RegistrationViewController UI 및 기능 구현
 ---
 
 ## ✏️ 프로젝트 내용
 
 ### 💻 핵심 기능 경험
-- [x] multipart/form-data의 구조 파악
-- [x] URLSession을 활용한 multipart/form-data 요청 전송
-- [x] 사용자 친화적인 UI/UX 구현 (적절한 입력 컴포넌트 사용, 알맞은 키보드 타입 지정)
-- [x] UIImagePickerController를 활용한 카메라 및 사진첩 접근
+- [x] UIAlertController 액션의 completion handler 활용
+- [x] UIAlertController의 textFields 활용
+- [x] UICollectionView 를 통한 좌우 스크롤 기능 구현
 
 ---
 
@@ -169,7 +191,7 @@ imageStackView.heightAnchor.constraint(equalToConstant: 80)
 
 | 오류화면 |
 |:--:|
-|<img src = https://i.imgur.com/tt55i4h.png width = 250 height = 300>|
+|<img src = https://i.imgur.com/tt55i4h.png width = 200 height = 300>|
 
 
 - debug 창을 통해 layout이 깨지는 시점과 `getProductList` 메서드의 escaping closer 종료 시점과 동일하다는 것을 알 수 있었다.
@@ -177,9 +199,25 @@ imageStackView.heightAnchor.constraint(equalToConstant: 80)
 `segmentedControl`에서 바꿀 때에도 `apply` 적용을 해주었더니 layout 깨짐 현상을 해결 할 수 있었다.
 
 | 기존의 코드 | 해결한 코드 |
-| -- | -- |
-|![](https://i.imgur.com/orryKJl.png)|![](https://i.imgur.com/ZK8yfsf.png)|
+| :--: | :--: |
+|<img src = https://i.imgur.com/orryKJl.png width = 400 height = 200>|<img src = https://i.imgur.com/ZK8yfsf.png width = 400 height = 200>|
 
+
+#### 6. URLRequest Timeinterval Test
+- URLRequest의 Timeinterval 값은 default값이 60초인데 이 시간을 넘으면 어떻게 되는지 확인하기 위해 실기기로 테스트를 진행 해 보았다.
+- 실기기에서 테스트 할 때 아래와 같은 컨디션으로 설정을 해준 다음 테스트를 진행 했다.
+<img src = https://i.imgur.com/4VYU6h0.png width = 225 height = 200>
+- 결과를 빠르게 확인하기 위해 Timeinterval을 10초로 설정하고 진행 하였고 10초가 지난 다음에는 아래와 같이 우리가 설정해준 얼럿 메세지를 확인 할 수 있었다.
+
+| 얼럿메세지 | 이후 로딩뷰|
+| :--: | :--: |
+|<img src = https://i.imgur.com/YLyBtW9.png width = 200 height = 400>|<img src = https://i.imgur.com/2STJ1Ms.png width = 200 height = 400>|
+
+### 7. remove Observer
+- 상품등록 화면에서 키보드의 입력 상태를 확인하기 위해 NotificationCenter를 사용해 Observer를 추가한 뒤 다시 remove Observer를 해야 한다고 생각했고 removeOBserver메서드를 사용 했었는데 이게 꼭 필요할까요? 라는 리뷰어의 말을 듣고 공식문서를 찾아보았다.
+- 아래와 같은 글을 발견하고 우리의 타겟 버전은 14.0이기 때문에 누구보다 빠르게 removeObserver메서드를 지웠다.
+
+<img src = https://i.imgur.com/8v6wmC5.png width = 500 height = 50>
 ---
 
 
