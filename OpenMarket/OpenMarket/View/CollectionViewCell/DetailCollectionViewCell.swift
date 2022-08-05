@@ -7,10 +7,11 @@
 
 import UIKit
 
-class DetailCollectionViewCell: ItemCollectionViewCell {
-
+class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        imageScrollView.delegate = self
         setDetailStackView()
         setDetailConstraints()
     }
@@ -18,11 +19,23 @@ class DetailCollectionViewCell: ItemCollectionViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-
+    
     // MARK: Properties
-
-    private let imageScrollView: UIScrollView = {
+    var productImages = [UIImage]()
+    
+    var pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.backgroundColor = .yellow
+        pageControl.currentPage = 0
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        return pageControl
+    }()
+    
+    let imageScrollView: UIScrollView = {
         let scrollView = UIScrollView()
+        scrollView.frame = UIScreen.main.bounds
+        scrollView.backgroundColor = .orange
+        scrollView.contentSize = CGSize(width: 500, height: 500)
         scrollView.showsHorizontalScrollIndicator = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
@@ -58,18 +71,22 @@ class DetailCollectionViewCell: ItemCollectionViewCell {
         stackView.alignment = .fill
         stackView.distribution = .fill
         stackView.axis = .vertical
+        stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
     // MARK: Method
-
+    
     private func setDetailConstraints() {
         NSLayoutConstraint.activate([
             totalDetailStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Metric.gridPositiveConstant),
             totalDetailStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant),
             totalDetailStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: Metric.listNegativeConstant),
-            totalDetailStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant)
+            totalDetailStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant),
+
+            imageScrollView.widthAnchor.constraint(equalTo: totalDetailStackView.widthAnchor, multiplier: 1),
+            imageScrollView.heightAnchor.constraint(equalTo: totalDetailStackView.heightAnchor, multiplier: 0.4)
         ])
     }
     
@@ -79,11 +96,42 @@ class DetailCollectionViewCell: ItemCollectionViewCell {
         totalDetailStackView.addArrangedSubview(labelStackView)
         totalDetailStackView.addArrangedSubview(descriptionScrollView)
         
+        imageScrollView.addSubview(productThumbnailImageView)
+        imageScrollView.addSubview(pageControl)
+        
         labelStackView.addArrangedSubview(productNameLabel)
         labelStackView.addArrangedSubview(stockPriceStackView)
         
         stockPriceStackView.addArrangedSubview(productStockQuntityLabel)
         stockPriceStackView.addArrangedSubview(productPriceLabel)
         stockPriceStackView.addArrangedSubview(bargainPriceLabel)
+    }
+    
+    override func configureCell(product: SaleInformation, completion: @escaping (Result<Data, Error>) -> Void) {
+        (0..<(product.images?.count ?? 0)).forEach { index in
+            guard let image = product.images?[index] else { return }
+            guard let url = URL(string: image.url) else { return }
+            
+            NetworkManager().networkPerform(for: URLRequest(url: url)) { result in
+                switch result {
+                case .success(let data):
+                    guard let image = UIImage(data: data) else { return }
+                    self.productImages.append(image)
+                    
+                    DispatchQueue.main.async {
+                        self.productThumbnailImageView.image = image
+                    }
+                    
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
+        
+        self.productNameLabel.text = product.name
+        
+        showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
+        showSoldOut(productStockQuntity: self.productStockQuntityLabel, product: product)
+        
     }
 }

@@ -44,7 +44,7 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         return label
     }()
     
-    private func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: SaleInformation) {
+    func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: SaleInformation) {
         priceLabel.text = "\(product.currency) \(product.price)"
         if product.discountedPrice == Metric.discountedPrice {
             priceLabel.textColor = .systemGray
@@ -58,7 +58,7 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         }
     }
     
-    private func showSoldOut(productStockQuntity: UILabel, product: SaleInformation) {
+    func showSoldOut(productStockQuntity: UILabel, product: SaleInformation) {
         if product.stock == Metric.stock {
             productStockQuntity.text = CollectionViewNamespace.soldout.name
             productStockQuntity.textColor = .systemOrange

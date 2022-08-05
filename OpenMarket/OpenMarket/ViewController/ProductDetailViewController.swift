@@ -120,8 +120,18 @@ final class ProductDetailViewController: UIViewController {
 
             cell.configureCell(product: product) { result in
                 switch result {
-                case .success(_):
-                    return
+                case .success(let images):
+                    // 이미지 5개 다 들어와서 여기서 적용!
+                    cell.pageControl.numberOfPages = images.count
+                    
+                    for index in 0..<images.count {
+                        let imageView = UIImageView()
+                        let positionX = self.view.frame.width * CGFloat(index)
+                        imageView.frame = CGRect(x: positionX, y: 0, width: cell.imageScrollView.bounds.width, height: cell.imageScrollView.bounds.height)
+                        imageView.image = cell.productImages[index]
+                        cell.imageScrollView.contentSize.width = imageView.frame.width * CGFloat(index+1)
+                    }
+                return
                 case .failure(let error):
                     DispatchQueue.main.async {
                         self.showCustomAlert(title: nil, message: error.localizedDescription)
@@ -131,18 +141,5 @@ final class ProductDetailViewController: UIViewController {
             return cell
         }
         return dataSource
-    }
-
-    func configureCell(product: SaleInformation, completion: @escaping (Result<Data, Error>) -> Void) {
-        guard let url = URL(string: product.thumbnail) else { return }
-
-        NetworkManager().networkPerform(for: URLRequest(url: url)) { [weak self] result in
-            switch result {
-            case .success(let data):
-                guard let images = UIImage(data: data) else { return }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
     }
 }
