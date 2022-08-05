@@ -40,6 +40,7 @@ struct SaleInformation: Decodable, Hashable {
     let stock: Int
     let createdAt: String
     let issuedAt: String
+    let images: [Images]?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -52,6 +53,23 @@ struct SaleInformation: Decodable, Hashable {
         case discountedPrice = "discounted_price"
         case stock
         case createdAt = "created_at"
+        case issuedAt = "issued_at"
+        case images
+    }
+}
+
+struct Images: Decodable, Hashable {
+    let id: Int
+    let url: String
+    let thumbnailUrl: String
+    let succeed: Bool
+    let issuedAt: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case url
+        case thumbnailUrl = "thumbnail_url"
+        case succeed
         case issuedAt = "issued_at"
     }
 }
@@ -69,3 +87,4 @@ enum Currency: Int {
         }
     }
 }
+
