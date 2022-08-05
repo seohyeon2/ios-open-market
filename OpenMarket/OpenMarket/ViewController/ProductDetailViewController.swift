@@ -41,33 +41,32 @@ final class ProductDetailViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     private lazy var collectionView: UICollectionView = {
-        let layout = createGridLayout()
+        let layout = createDetailLayout()
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         return collectionView
     }()
-
+    
     // MARK: View Life Cycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-
+        
         navigationItem.title = product?.name
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: actionButton)
-        collectionView.register(GridCollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewNamespace.grid.name)
-        dataSource = configureDataSource(id: CollectionViewNamespace.grid.name)
+        collectionView.register(DetailCollectionViewCell.self, forCellWithReuseIdentifier: "detail")
+        dataSource = configureDataSource(id: "detail")
         self.snapshot.appendSections([.main])
-
+        
         view.addSubview(collectionView)
         setCollectionViewConstraint()
         getProductDetail()
-
     }
-
+    
     // MARK: Method
     
     private func getProductDetail() {
@@ -92,13 +91,12 @@ final class ProductDetailViewController: UIViewController {
         }
     }
     
-    private func createGridLayout() -> UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(Metric.gridItemWidth), heightDimension: .fractionalHeight(Metric.gridItemHeight))
+    private func createDetailLayout() -> UICollectionViewCompositionalLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(Metric.gridGroupWidth), heightDimension: .fractionalHeight(Metric.gridGroupHeight))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-        group.interItemSpacing = .fixed(Metric.gridGroupSpacing)
         group.contentInsets = NSDirectionalEdgeInsets(top: Metric.padding, leading: Metric.padding, bottom: Metric.padding, trailing: Metric.padding)
         
         let section = NSCollectionLayoutSection(group: group)
@@ -117,9 +115,9 @@ final class ProductDetailViewController: UIViewController {
     
     private func configureDataSource(id: String) -> DiffableDataSource? {
         dataSource = DiffableDataSource(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, product: SaleInformation) -> UICollectionViewCell? in
-            
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewNamespace.grid.name, for: indexPath) as? GridCollectionViewCell else { return GridCollectionViewCell() }
-            
+
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "detail", for: indexPath) as? DetailCollectionViewCell else { return DetailCollectionViewCell() }
+
             cell.configureCell(product: product) { result in
                 switch result {
                 case .success(_):
