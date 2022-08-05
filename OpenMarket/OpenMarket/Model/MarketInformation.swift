@@ -35,6 +35,7 @@ struct SaleInformation: Decodable, Hashable {
     let thumbnail: String
     let currency: String
     let price: Double
+    let description: String?
     let bargainPrice: Double
     let discountedPrice: Double
     let stock: Int
@@ -49,6 +50,7 @@ struct SaleInformation: Decodable, Hashable {
         case thumbnail
         case currency
         case price
+        case description
         case bargainPrice = "bargain_price"
         case discountedPrice = "discounted_price"
         case stock

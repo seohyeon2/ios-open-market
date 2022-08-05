@@ -43,11 +43,21 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
     
     private let descriptionScrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.showsHorizontalScrollIndicator = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.font = UIFont.preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private let stockPriceStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.alignment = .center
@@ -86,7 +96,12 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
             totalDetailStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant),
 
             imageScrollView.widthAnchor.constraint(equalTo: totalDetailStackView.widthAnchor, multiplier: 1),
-            imageScrollView.heightAnchor.constraint(equalTo: totalDetailStackView.heightAnchor, multiplier: 0.4)
+            imageScrollView.heightAnchor.constraint(equalTo: totalDetailStackView.heightAnchor, multiplier: 0.4),
+            
+            descriptionLabel.topAnchor.constraint(equalTo: descriptionScrollView.topAnchor, constant: Metric.gridPositiveConstant),
+            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant),
+            descriptionLabel.bottomAnchor.constraint(equalTo: descriptionScrollView.bottomAnchor, constant: Metric.listNegativeConstant),
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant)
         ])
     }
     
@@ -95,6 +110,8 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         totalDetailStackView.addArrangedSubview(imageScrollView)
         totalDetailStackView.addArrangedSubview(labelStackView)
         totalDetailStackView.addArrangedSubview(descriptionScrollView)
+        
+        descriptionScrollView.addSubview(descriptionLabel)
         
         imageScrollView.addSubview(productThumbnailImageView)
         imageScrollView.addSubview(pageControl)
@@ -129,7 +146,7 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         }
         
         self.productNameLabel.text = product.name
-        
+        self.descriptionLabel.text = product.description
         showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
         showSoldOut(productStockQuntity: self.productStockQuntityLabel, product: product)
         
