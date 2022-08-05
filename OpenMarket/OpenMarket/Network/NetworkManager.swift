@@ -7,7 +7,8 @@
 
 import UIKit
 
-final class NetworkManager {
+final class NetworkManager: NetworkManagerProtocol {
+    
     private let session: URLSessionProtocol
     private let identifier = NetworkNamespace.identifier.name
     
@@ -18,8 +19,8 @@ final class NetworkManager {
     init(session: URLSessionProtocol) {
         self.session = session
     }
-
-    func networkPerform(for request: URLRequest, completion: @escaping (Result<Data, Error>) -> Void) {
+    
+    func networkPerform(for request: URLRequest, identifier: String? = nil, completion: @escaping (Result<Data, Error>) -> Void) {
         let dataTask: URLSessionDataTask = session.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completion(.failure(error))
@@ -39,15 +40,11 @@ final class NetworkManager {
         dataTask.resume()
     }
     
-    func getProductInquiry(request: URLRequest?,
-                           completion: @escaping (Result<Data, Error>) -> Void) {
-        let baseURL = URL(string: NetworkNamespace.url.name)
-        guard let url = baseURL else { return }
+    func getProductInquiry( completion: @escaping (Result<Data, Error>) -> Void) {
         
-        var request = request ?? URLRequest(url: url)
-        request.httpMethod = NetworkNamespace.get.name
+        guard let request = try? ProductRequest.list(page: 1).createURLRequest() else { return }
         
-        networkPerform(for: request, completion: completion)
+        networkPerform(for: request, identifier: nil, completion: completion)
     }
 
     func postProduct(params: [String: Any?], images: [UIImage], completion: @escaping (Result<Data, Error>) -> Void) {

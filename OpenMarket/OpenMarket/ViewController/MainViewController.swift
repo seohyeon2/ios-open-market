@@ -106,10 +106,7 @@ final class MainViewController: UIViewController {
     }
     
     private func getProductList(pageNumber: Int, itemPerPage: Int) {
-        let queryItems = OpenMarketRequest.createQuery(of: String(pageNumber), with: String(itemPerPage))
-        let request = OpenMarketRequest.requestProductList(queryItems: queryItems)
-        
-        networkManager.getProductInquiry(request: request) { result in
+        networkManager.getProductInquiry() { result in
             switch result {
             case .success(let data):
                 guard let productList = try? JSONDecoder().decode(MarketInformation.self, from: data) else { return }

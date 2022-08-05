@@ -14,7 +14,7 @@ protocol RequestProtocol {
     var headers: [String: String] { get }
     var needsIdentifier: Bool { get }
     
-    func createURLRequest(identifier: String) throws -> URLRequest
+    func createURLRequest() throws -> URLRequest
 }
 
 protocol Occupiable {
@@ -23,6 +23,10 @@ protocol Occupiable {
 }
 
 extension RequestProtocol {
+    var scheme: String {
+        return APIConstants.scheme
+    }
+    
     var host: String {
         return APIConstants.host
     }
@@ -35,10 +39,12 @@ extension RequestProtocol {
         return true
     }
     
-    func createURLRequest(identifier: String) throws -> URLRequest {
+    func createURLRequest() throws -> URLRequest {
         var components = URLComponents()
-        components.scheme = "https"
+        components.scheme = scheme
         components.host = host
+
+        components.path = path
 
         if queries.isNotEmpty {
             components.queryItems = queries.map(URLQueryItem.init(name:value:))
@@ -53,7 +59,7 @@ extension RequestProtocol {
         }
 
         if needsIdentifier {
-            urlRequest.setValue(identifier, forHTTPHeaderField: "identifier")
+            urlRequest.setValue(APIConstants.identifier, forHTTPHeaderField: "identifier")
         }
         return urlRequest
     }
@@ -75,4 +81,48 @@ extension URLRequest {
         self.init(url: url)
         self.httpMethod = httpMethod.rawValue
     }
+}
+
+protocol NetworkManagerProtocol {
+    func networkPerform(for request: URLRequest, identifier: String?, completion: @escaping (Result<Data, Error>) -> Void)
+}
+
+enum ProductRequest: RequestProtocol {
+
+    case list(page: Int, itemPerPage: Int = 20)
+    case item(Int)
+    case registerItem
+
+    var path: String {
+        switch self {
+        case let .item(id):
+            return "/api/products/\(id)"
+        default:
+            return "/api/products"
+        }
+    }
+
+    var queries: [String: String] {
+        switch self {
+        case let .list(page, itemPerPage):
+            return [
+                "page": "\(page)",
+                "itemPerPage": "\(itemPerPage)"
+            ]
+        default:
+            return [:]
+        }
+    }
+
+    var httpMethod: HTTPMethod {
+        switch self {
+        case .list:
+            return .get
+        case .item:
+            return .get
+        case .registerItem:
+            return .post
+        }
+    }
+    
 }
