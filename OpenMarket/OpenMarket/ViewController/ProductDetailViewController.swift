@@ -8,7 +8,13 @@
 import UIKit
 
 final class ProductDetailViewController: UIViewController {
-    
+
+    private enum Section {
+        case main
+    }
+
+    private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, SaleInformation>
+
     // MARK: Initializtion
     
     init(product: SaleInformation) {
@@ -24,7 +30,10 @@ final class ProductDetailViewController: UIViewController {
     // MARK: Properties
     
     let product: SaleInformation?
-
+    private var productDetail: SaleInformation?
+    private var dataSource: DiffableDataSource?
+    private var snapshot = NSDiffableDataSourceSnapshot<Section, SaleInformation>()
+ 
     private let actionButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: "square.and.arrow.up")
@@ -41,5 +50,31 @@ final class ProductDetailViewController: UIViewController {
 
         navigationItem.title = product?.name
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: actionButton)
+        
+        self.snapshot.appendSections([.main])
+        
+        getProductDetail()
+    }
+    
+    private func getProductDetail() {
+        guard let productId = product?.id else { return }
+        guard let request = try? ProductRequest.item(productId).createURLRequest() else { return }
+        
+        NetworkManager().networkPerform(for: request) { result in
+            switch result {
+            case .success(let data):
+                guard let productInfo = try? JSONDecoder().decode(SaleInformation.self, from: data) else { return }
+                
+                self.snapshot.appendItems([productInfo])
+                self.dataSource?.apply(self.snapshot, animatingDifferences: false)
+                
+                self.productDetail = productInfo
+                
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.showCustomAlert(title: nil, message: error.localizedDescription)
+                }
+            }
+        }
     }
 }
