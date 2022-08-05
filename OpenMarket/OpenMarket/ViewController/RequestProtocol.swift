@@ -106,8 +106,8 @@ enum ProductRequest: RequestProtocol {
         switch self {
         case let .list(page, itemPerPage):
             return [
-                "page": "\(page)",
-                "itemPerPage": "\(itemPerPage)"
+                ModelNameSpace.pageNo.name: "\(page)",
+                ModelNameSpace.itemsPerPage.name: "\(itemPerPage)"
             ]
         default:
             return [:]

@@ -40,9 +40,9 @@ final class NetworkManager: NetworkManagerProtocol {
         dataTask.resume()
     }
     
-    func getProductInquiry( completion: @escaping (Result<Data, Error>) -> Void) {
+    func getProductInquiry(pageNumber: Int, completion: @escaping (Result<Data, Error>) -> Void) {
         
-        guard let request = try? ProductRequest.list(page: 1).createURLRequest() else { return }
+        guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest() else { return }
         
         networkPerform(for: request, identifier: nil, completion: completion)
     }

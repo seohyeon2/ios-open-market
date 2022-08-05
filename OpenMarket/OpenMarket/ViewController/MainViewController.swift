@@ -74,7 +74,7 @@ final class MainViewController: UIViewController {
         
         dataSource = configureDataSource(id: CollectionViewNamespace.list.name)
         self.snapshot.appendSections([.main])
-        getProductList(pageNumber: Metric.firstPage, itemPerPage: Metric.itemCount)
+        getProductList(pageNumber: Metric.firstPage)
     }
     
     // MARK: Method
@@ -105,8 +105,8 @@ final class MainViewController: UIViewController {
         ])
     }
     
-    private func getProductList(pageNumber: Int, itemPerPage: Int) {
-        networkManager.getProductInquiry() { result in
+    private func getProductList(pageNumber: Int) {
+        networkManager.getProductInquiry(pageNumber: pageNumber) { result in
             switch result {
             case .success(let data):
                 guard let productList = try? JSONDecoder().decode(MarketInformation.self, from: data) else { return }
@@ -219,7 +219,7 @@ extension MainViewController: UICollectionViewDataSourcePrefetching {
             self.loadingView.startAnimating()
             
             productPageNumber += 1
-            getProductList(pageNumber: productPageNumber, itemPerPage: Metric.itemCount)
+            getProductList(pageNumber: productPageNumber)
         }
     }
 }
