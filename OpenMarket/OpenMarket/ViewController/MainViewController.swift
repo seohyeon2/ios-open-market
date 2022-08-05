@@ -69,6 +69,7 @@ final class MainViewController: UIViewController {
         setUI()
         
         collectionView.prefetchDataSource = self
+        collectionView.delegate = self
         collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewNamespace.list.name)
         collectionView.register(GridCollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewNamespace.grid.name)
         
@@ -221,5 +222,17 @@ extension MainViewController: UICollectionViewDataSourcePrefetching {
             productPageNumber += 1
             getProductList(pageNumber: productPageNumber)
         }
+    }
+}
+
+extension MainViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let product = snapshot.itemIdentifiers[indexPath.item]
+        let viewController = ProductDetailViewController(product: product)
+        
+        navigationController?.pushViewController(viewController, animated: true)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+
     }
 }
