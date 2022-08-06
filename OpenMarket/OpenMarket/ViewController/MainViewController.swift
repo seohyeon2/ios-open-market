@@ -83,6 +83,7 @@ final class MainViewController: UIViewController {
         
         self.snapshot.deleteAllItems()
         self.snapshot.appendSections([.main])
+        productPageNumber = 1
     }
     
     override func viewWillAppear(_ animated: Bool) {
