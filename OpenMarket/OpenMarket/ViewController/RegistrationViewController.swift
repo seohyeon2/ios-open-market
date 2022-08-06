@@ -15,7 +15,7 @@ class RegistrationViewController: UIViewController {
     private var imageCount = Registraion.initailNumber
     var images = [UIImage]()
 
-    lazy var doneButton: UIButton = {
+    private lazy var doneButton: UIButton = {
         let button = UIButton()
         button.setTitle(Registraion.done, for: .normal)
         button.setTitleColor(UIColor.systemBlue, for: .normal)
@@ -92,7 +92,7 @@ class RegistrationViewController: UIViewController {
         return textField
     }()
 
-    private lazy var segmentedControl: UISegmentedControl = {
+    lazy var segmentedControl: UISegmentedControl = {
         let segment = UISegmentedControl(items: [Currency.KRW.name, Currency.USD.name])
         segment.selectedSegmentIndex = Registraion.initailNumber
         segment.translatesAutoresizingMaskIntoConstraints = false
@@ -205,7 +205,7 @@ class RegistrationViewController: UIViewController {
         segmentedControl.selectedSegmentIndex = Registraion.initailNumber
     }
 
-    private func choiceCurrency() -> Currency? {
+    func choiceCurrency() -> Currency? {
         return Currency.init(rawValue: segmentedControl.selectedSegmentIndex)
     }
 

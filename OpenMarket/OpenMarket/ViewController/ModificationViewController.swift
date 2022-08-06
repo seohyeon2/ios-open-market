@@ -10,7 +10,7 @@ import UIKit
 class ModificationViewController: RegistrationViewController {
 
     var product: SaleInformation?
-
+    
     init(product: SaleInformation) {
         self.product = product
         super.init(nibName: nil, bundle: nil)
@@ -26,9 +26,55 @@ class ModificationViewController: RegistrationViewController {
         self.title = "상품 수정"
         setInformation()
         setImage()
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: doneButton)
     }
 
-    func setInformation() {
+    private lazy var doneButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(Registraion.done, for: .normal)
+        button.setTitleColor(UIColor.systemBlue, for: .normal)
+        button.addTarget(self, action: #selector(patchProduct), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    @objc private func patchProduct() {
+        guard let product = product else {
+            return
+        }
+
+        let params: [String: Any?] = [
+            "name": productNameTextField.text,
+            "price": productPriceTextField.text,
+            "discounted_price": discountedPriceTextField.text,
+            "currency": choiceCurrency()?.name,
+            "stock": stockTextField.text,
+            "descriptions": descriptionTextView.text
+        ]
+
+        NetworkManager().patchProduct(productId: product.id, modifiedInfomation: params) { result in
+            switch result {
+            case .success(_):
+                DispatchQueue.main.async {
+                    let alertController = UIAlertController(title: "🤩", message: "상품수정이 정상적으로 완료되었습니다!", preferredStyle: .alert)
+                    let okButton = UIAlertAction(title: "확인", style: .default) { _ in
+                        self.navigationController?.popViewController(animated: true)
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    alertController.addAction(okButton)
+                    
+                    self.present(alertController, animated: true)
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.showCustomAlert(title: "😢", message: error.localizedDescription)
+                }
+            }
+        }
+    }
+
+    private func setInformation() {
         guard let product = product else {
             return
         }
@@ -41,7 +87,7 @@ class ModificationViewController: RegistrationViewController {
         imageAddButton.isHidden = true
     }
 
-    func setImage() {
+    private func setImage() {
         guard let product = product else {
             return
         }

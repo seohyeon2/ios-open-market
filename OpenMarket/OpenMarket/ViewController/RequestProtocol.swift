@@ -83,6 +83,7 @@ enum ProductRequest: RequestProtocol {
     case list(page: Int, itemPerPage: Int = 20)
     case item(Int)
     case registerItem
+    case patchItem(Int)
 
     var headers: [String: String] {
         switch self {
@@ -104,7 +105,7 @@ enum ProductRequest: RequestProtocol {
 
     var path: String {
         switch self {
-        case let .item(id):
+        case .item(let id), .patchItem(let id):
             return "/api/products/\(id)"
         default:
             return "/api/products"
@@ -131,6 +132,8 @@ enum ProductRequest: RequestProtocol {
             return .get
         case .registerItem:
             return .post
+        case .patchItem:
+            return .patch
         }
     }
 }

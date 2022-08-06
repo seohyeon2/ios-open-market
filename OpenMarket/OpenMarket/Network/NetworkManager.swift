@@ -98,14 +98,13 @@ final class NetworkManager: NetworkManagerProtocol {
         
     }
 
-    func patchProduct(productId: String, completion: @escaping (Result<Data, Error>) -> Void) {
-        guard var request = OpenMarketRequest.requestProductDetail(of: productId) else { return }
+    func patchProduct(productId: Int, modifiedInfomation: [String: Any], completion: @escaping (Result<Data, Error>) -> Void) {
         
-        request.httpMethod = NetworkNamespace.patch.name
-        request.addValue(identifier, forHTTPHeaderField: Request.identifier)
+        guard var request = try? ProductRequest.patchItem(productId).createURLRequest() else { return }
         
-        let params: [String: Any] = ["name": "아야나", "descriptions": "테스트중임", "price": 222, "currency": Currency.KRW.rawValue, "secret": "lP8VFiBqGI"]
-        
+        var params = modifiedInfomation
+        params[NetworkNamespace.passwordKey.name] = NetworkNamespace.passwordValue.name
+
         guard let jsonData = OpenMarketRequest.createJson(params: params) else { return }
         request.httpBody = jsonData
         
