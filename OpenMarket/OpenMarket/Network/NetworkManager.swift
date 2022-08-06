@@ -70,20 +70,11 @@ final class NetworkManager: NetworkManagerProtocol {
         }
     }
     
-    func postSecret(productId: String, password: String, completion: @escaping (Result<Data, Error>) -> Void) {
-        let components = URLComponents(string: NetworkNamespace.url.name)
-
-        guard var url = components?.url else { return }
-
-        url.appendPathComponent(productId)
-        url.appendPathComponent(Request.secret)
+    func postSecret(productId: Int, completion: @escaping (Result<Data, Error>) -> Void) {
+      
+        guard var request = try? ProductRequest.productSecret(productId).createURLRequest() else { return }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = NetworkNamespace.post.name
-        request.addValue(identifier, forHTTPHeaderField: Request.identifier)
-        request.addValue(Multipart.jsonContentType, forHTTPHeaderField: Multipart.contentType)
-        
-        let parameters = "{\"\(Request.secret)\": \"\(password)\"}"
+        let parameters = "{\"\(NetworkNamespace.passwordKey.name)\": \"\(NetworkNamespace.passwordValue.name)\"}"
         let postData = parameters.data(using: .utf8)
 
         request.httpBody = postData
@@ -91,6 +82,7 @@ final class NetworkManager: NetworkManagerProtocol {
                 switch result {
                 case .success(let data):
                     self.deleteProduct(productId: productId, productSecretId: data)
+                    return completion(.success(data))
                 case .failure(let error):
                     return completion(.failure(error))
                 }
@@ -118,20 +110,11 @@ final class NetworkManager: NetworkManagerProtocol {
         }
     }
     
-    func deleteProduct(productId: String, productSecretId: Data) {
+    func deleteProduct(productId: Int, productSecretId: Data) {
         guard let secret = String(data: productSecretId, encoding: .utf8) else { return }
-        let components = URLComponents(string: NetworkNamespace.url.name)
         
-        guard var url = components?.url else { return }
-        
-        url.appendPathComponent(productId)
-        url.appendPathComponent(secret)
-        
-        var request = URLRequest(url: url)
+        guard var request = try? ProductRequest.delete(id: productId, secret: secret).createURLRequest() else { return }
 
-        request.httpMethod = NetworkNamespace.del.name
-        request.addValue(identifier, forHTTPHeaderField: Request.identifier)
-        
         networkPerform(for: request) { _ in }
     }
 }

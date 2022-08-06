@@ -72,13 +72,32 @@ final class ProductDetailViewController: UIViewController {
     
     @objc private func showActionSheet() {
         let actionsheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        guard let items = self.productDetail else { return }
 
         let actionModify = UIAlertAction(title: "수정", style: .default, handler: { _ in
-            guard let items = self.productDetail else { return }
             self.navigationController?.pushViewController(ModificationViewController(product: items), animated: true)
         })
         let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
-            print("삭제")
+
+            NetworkManager().postSecret(productId: items.id) { result in
+                switch result {
+                case .success(_):
+                    DispatchQueue.main.async {
+                        let alertController = UIAlertController(title: "😝", message: "상품삭제가 정상적으로 완료되었습니다!", preferredStyle: .alert)
+                        let okButton = UIAlertAction(title: "확인", style: .default) { _ in
+                            self.navigationController?.popViewController(animated: true)
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                        alertController.addAction(okButton)
+                        
+                        self.present(alertController, animated: true)
+                    }
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        self.showCustomAlert(title: "😭", message: error.localizedDescription)
+                    }
+                }
+            }
         })
 
         let actionCancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)

@@ -84,11 +84,15 @@ enum ProductRequest: RequestProtocol {
     case item(Int)
     case registerItem
     case patchItem(Int)
+    case productSecret(Int)
+    case delete(id: Int, secret: String)
 
     var headers: [String: String] {
         switch self {
         case .registerItem:
             return [Multipart.contentType: Multipart.boundaryForm + "\"\(Multipart.boundaryValue)\""]
+        case .productSecret(_):
+            return [Multipart.contentType: Multipart.jsonContentType]
         default:
             return [:]
         }
@@ -107,6 +111,10 @@ enum ProductRequest: RequestProtocol {
         switch self {
         case .item(let id), .patchItem(let id):
             return "/api/products/\(id)"
+        case .productSecret(let id):
+            return "/api/products/\(id)/secret"
+        case .delete(let id, let secret):
+            return "/api/products/\(id)/\(secret)"
         default:
             return "/api/products"
         }
@@ -134,6 +142,10 @@ enum ProductRequest: RequestProtocol {
             return .post
         case .patchItem:
             return .patch
+        case .productSecret:
+            return .post
+        case .delete:
+            return .del
         }
     }
 }
