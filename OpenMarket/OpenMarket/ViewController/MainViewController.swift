@@ -78,6 +78,19 @@ final class MainViewController: UIViewController {
         getProductList(pageNumber: Metric.firstPage)
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(true)
+        
+        self.snapshot.deleteAllItems()
+        self.snapshot.appendSections([.main])
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        getProductList(pageNumber: Metric.firstPage)
+    }
+    
     // MARK: Method
     
     @objc private func moveProductRegistrationPage() {
