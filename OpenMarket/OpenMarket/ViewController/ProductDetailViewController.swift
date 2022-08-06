@@ -73,11 +73,11 @@ final class ProductDetailViewController: UIViewController {
     @objc private func showActionSheet() {
         let actionsheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let actionModify = UIAlertAction(title: "수정", style: .default, handler: { action in
-            self.navigationController?.pushViewController(ModificationViewController(product: self.product!), animated: true)
+        let actionModify = UIAlertAction(title: "수정", style: .default, handler: { _ in
+            guard let items = self.productDetail else { return }
+            self.navigationController?.pushViewController(ModificationViewController(product: items), animated: true)
         })
-        let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { action in
-            //삭제 메서드 호출
+        let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
             print("삭제")
         })
 

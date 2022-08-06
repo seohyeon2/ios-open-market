@@ -13,9 +13,9 @@ class RegistrationViewController: UIViewController {
     
     private let imagePickerController = UIImagePickerController()
     private var imageCount = Registraion.initailNumber
-    private var images = [UIImage]()
+    var images = [UIImage]()
 
-    private lazy var doneButton: UIButton = {
+    lazy var doneButton: UIButton = {
         let button = UIButton()
         button.setTitle(Registraion.done, for: .normal)
         button.setTitleColor(UIColor.systemBlue, for: .normal)
@@ -41,7 +41,7 @@ class RegistrationViewController: UIViewController {
         return scrollView
     }()
 
-    private let imageStackView: UIStackView = {
+    let imageStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fill
@@ -51,7 +51,7 @@ class RegistrationViewController: UIViewController {
         return stackView
     }()
 
-    private lazy var imageAddButton: UIButton = {
+    lazy var imageAddButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: CollectionViewNamespace.plus.name)
         button.addTarget(self, action: #selector(addImage), for: .touchUpInside)
@@ -61,14 +61,14 @@ class RegistrationViewController: UIViewController {
         return button
     }()
 
-    private let productNameTextField: UITextField = {
+    let productNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = Registraion.productName
         textField.borderStyle = .roundedRect
         return textField
     }()
 
-    private let productPriceTextField: UITextField = {
+    let productPriceTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = Registraion.productPrice
         textField.borderStyle = .roundedRect
@@ -76,7 +76,7 @@ class RegistrationViewController: UIViewController {
         return textField
     }()
 
-    private let discountedPriceTextField: UITextField = {
+    let discountedPriceTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = Registraion.discountedPrice
         textField.borderStyle = .roundedRect
@@ -84,7 +84,7 @@ class RegistrationViewController: UIViewController {
         return textField
     }()
 
-    private let stockTextField: UITextField = {
+    let stockTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = Registraion.stock
         textField.borderStyle = .roundedRect
@@ -99,7 +99,7 @@ class RegistrationViewController: UIViewController {
         return segment
     }()
 
-    private let descriptionTextView: UITextView = {
+    let descriptionTextView: UITextView = {
         let textView = UITextView()
         return textView
     }()
