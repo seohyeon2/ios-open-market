@@ -124,7 +124,7 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         stockPriceStackView.addArrangedSubview(bargainPriceLabel)
     }
     
-    override func configureCell(product: SaleInformation, completion: @escaping (Result<Data, Error>) -> Void) {
+    override func configureCell(product: MarketItem, completion: @escaping (Result<Data, Error>) -> Void) {
         (0..<(product.images?.count ?? 0)).forEach { index in
             guard let image = product.images?[index] else { return }
             guard let url = URL(string: image.url) else { return }

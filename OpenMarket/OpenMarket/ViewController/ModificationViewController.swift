@@ -9,9 +9,9 @@ import UIKit
 
 class ModificationViewController: RegistrationViewController {
 
-    var product: SaleInformation?
+    var product: MarketItem?
     
-    init(product: SaleInformation) {
+    init(product: MarketItem) {
         self.product = product
         super.init(nibName: nil, bundle: nil)
     }
@@ -81,7 +81,7 @@ class ModificationViewController: RegistrationViewController {
 
         productNameTextField.text = product.name
         productPriceTextField.text = String(product.price)
-        discountedPriceTextField.text = String(product.discountedPrice)
+        discountedPriceTextField.text = String(product.description)
         stockTextField.text = String(product.stock)
         descriptionTextView.text = product.description
         imageAddButton.isHidden = true

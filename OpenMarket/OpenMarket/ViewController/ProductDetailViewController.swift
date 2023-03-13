@@ -13,11 +13,11 @@ final class ProductDetailViewController: UIViewController {
         case main
     }
 
-    private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, SaleInformation>
+    private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, MarketItem>
 
     // MARK: Initializtion
     
-    init(product: SaleInformation) {
+    init(product: MarketItem) {
         self.product = product
         super.init(nibName: nil, bundle: nil)
     }
@@ -29,10 +29,10 @@ final class ProductDetailViewController: UIViewController {
     
     // MARK: Properties
     
-    let product: SaleInformation?
-    private var productDetail: SaleInformation?
+    let product: MarketItem?
+    private var productDetail: MarketItem?
     private var dataSource: DiffableDataSource?
-    private var snapshot = NSDiffableDataSourceSnapshot<Section, SaleInformation>()
+    private var snapshot = NSDiffableDataSourceSnapshot<Section, MarketItem>()
 
     private lazy var actionButton: UIButton = {
         let button = UIButton()
@@ -116,7 +116,7 @@ final class ProductDetailViewController: UIViewController {
         NetworkManager().networkPerform(for: request) { result in
             switch result {
             case .success(let data):
-                guard let productInfo = try? JSONDecoder().decode(SaleInformation.self, from: data) else { return }
+                guard let productInfo = try? JSONDecoder().decode(MarketItem.self, from: data) else { return }
                 
                 self.snapshot.appendItems([productInfo])
                 self.dataSource?.apply(self.snapshot, animatingDifferences: false)
@@ -154,7 +154,7 @@ final class ProductDetailViewController: UIViewController {
     }
     
     private func configureDataSource(id: String) -> DiffableDataSource? {
-        dataSource = DiffableDataSource(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, product: SaleInformation) -> UICollectionViewCell? in
+        dataSource = DiffableDataSource(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, product: MarketItem) -> UICollectionViewCell? in
 
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "detail", for: indexPath) as? DetailCollectionViewCell else { return DetailCollectionViewCell() }
 

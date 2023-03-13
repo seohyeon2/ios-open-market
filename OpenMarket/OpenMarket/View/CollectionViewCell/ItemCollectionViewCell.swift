@@ -44,7 +44,7 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         return label
     }()
     
-    func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: SaleInformation) {
+    func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: MarketItem) {
         priceLabel.text = "\(product.currency) \(product.price)"
         if product.discountedPrice == Metric.discountedPrice {
             priceLabel.textColor = .systemGray
@@ -58,7 +58,7 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         }
     }
     
-    func showSoldOut(productStockQuntity: UILabel, product: SaleInformation) {
+    func showSoldOut(productStockQuntity: UILabel, product: MarketItem) {
         if product.stock == Metric.stock {
             productStockQuntity.text = CollectionViewNamespace.soldout.name
             productStockQuntity.textColor = .systemOrange
@@ -68,7 +68,7 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         }
     }
     
-    func configureCell(product: SaleInformation, completion: @escaping (Result<Data, Error>) -> Void) {
+    func configureCell(product: MarketItem, completion: @escaping (Result<Data, Error>) -> Void) {
         guard let url = URL(string: product.thumbnail) else { return }
         
         NetworkManager().networkPerform(for: URLRequest(url: url)) { [weak self] result in

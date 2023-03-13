@@ -10,47 +10,37 @@ struct MarketInformation: Decodable {
     let totalCount: Int
     let offset: Int
     let limit: Int
-    let pages: [SaleInformation]
+    let pages: [MarketItem]
     let lastPage: Int
     let hasNext: Bool
     let hasPrev: Bool
-    
-    enum CodingKeys: String, CodingKey {
-        case pageNo = "page_no"
-        case itemsPerPage = "items_per_page"
-        case totalCount = "total_count"
-        case offset
-        case limit
-        case pages
-        case lastPage = "last_page"
-        case hasNext = "has_next"
-        case hasPrev = "has_prev"
-    }
 }
 
-struct SaleInformation: Decodable, Hashable {
+struct MarketItem: Decodable, Hashable {
     let id: Int
     let vendorId: Int
+    let vendorName: String
     let name: String
+    let description: String
     let thumbnail: String
     let currency: String
     let price: Double
-    let description: String?
     let bargainPrice: Double
-    let discountedPrice: Double
+    let discountedPrice: Double?
     let stock: Int
     let createdAt: String
     let issuedAt: String
     let images: [Images]?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case vendorId = "vendor_id"
+        case vendorName
         case name
+        case description
         case thumbnail
         case currency
         case price
-        case description
         case bargainPrice = "bargain_price"
         case discountedPrice = "discounted_price"
         case stock
@@ -66,7 +56,7 @@ struct Images: Decodable, Hashable {
     let thumbnailUrl: String
     let succeed: Bool
     let issuedAt: String
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case url
@@ -79,7 +69,7 @@ struct Images: Decodable, Hashable {
 enum Currency: Int {
     case KRW
     case USD
-    
+
     var name: String {
         switch self {
         case .KRW:
@@ -89,4 +79,3 @@ enum Currency: Int {
         }
     }
 }
-

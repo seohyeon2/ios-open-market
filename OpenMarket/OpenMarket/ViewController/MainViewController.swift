@@ -12,7 +12,7 @@ final class MainViewController: UIViewController {
         case main
     }
     
-    private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, SaleInformation>
+    private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, MarketItem>
     
     // MARK: Properties
     
@@ -28,7 +28,7 @@ final class MainViewController: UIViewController {
     }()
     
     private var dataSource: DiffableDataSource?
-    private var snapshot = NSDiffableDataSourceSnapshot<Section, SaleInformation>()
+    private var snapshot = NSDiffableDataSourceSnapshot<Section, MarketItem>()
     private var productPageNumber = 1
     
     private lazy var segmentedControl: UISegmentedControl = {
@@ -141,7 +141,7 @@ final class MainViewController: UIViewController {
     }
     
     private func configureDataSource(id: String) -> DiffableDataSource? {
-        dataSource = DiffableDataSource(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, product: SaleInformation) -> UICollectionViewCell? in
+        dataSource = DiffableDataSource(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, product: MarketItem) -> UICollectionViewCell? in
             switch id {
             case CollectionViewNamespace.list.name:
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewNamespace.list.name, for: indexPath) as? ListCollectionViewCell else {

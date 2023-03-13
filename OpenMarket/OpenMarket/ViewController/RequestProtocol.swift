@@ -53,6 +53,8 @@ extension RequestProtocol {
         if needsIdentifier {
             urlRequest.setValue(APIConstants.identifier, forHTTPHeaderField: "identifier")
         }
+        
+        print(urlRequest.description)
         return urlRequest
     }
 }
