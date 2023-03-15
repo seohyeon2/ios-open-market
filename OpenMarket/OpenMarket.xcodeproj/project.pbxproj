@@ -11,6 +11,7 @@
 		052E9894289C9F1C0051D439 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E9893289C9F1C0051D439 /* HTTPMethod.swift */; };
 		052E9896289C9F4A0051D439 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E9895289C9F4A0051D439 /* APIConstants.swift */; };
 		052E989E289D6C340051D439 /* ModificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E989D289D6C340051D439 /* ModificationViewController.swift */; };
+		0533607A29C23AF200942AE5 /* RegistrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0533607929C23AF200942AE5 /* RegistrationViewModel.swift */; };
 		0549E8E4288FFD9D00260891 /* Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0549E8E3288FFD9D00260891 /* Metric.swift */; };
 		054E774A288AC13000E7460B /* ItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054E7749288AC13000E7460B /* ItemCollectionViewCell.swift */; };
 		05B3530D288797690027DCDE /* ListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B3530C288797690027DCDE /* ListCollectionViewCell.swift */; };
@@ -65,6 +66,7 @@
 		052E9893289C9F1C0051D439 /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		052E9895289C9F4A0051D439 /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		052E989D289D6C340051D439 /* ModificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModificationViewController.swift; sourceTree = "<group>"; };
+		0533607929C23AF200942AE5 /* RegistrationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RegistrationViewModel.swift; path = ../../../../../Downloads/FindOrLose/starter/FindOrLose/Network/RegistrationViewModel.swift; sourceTree = "<group>"; };
 		0549E8E3288FFD9D00260891 /* Metric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metric.swift; sourceTree = "<group>"; };
 		054E7749288AC13000E7460B /* ItemCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCollectionViewCell.swift; sourceTree = "<group>"; };
 		05B3530C288797690027DCDE /* ListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -117,6 +119,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0533607829C23ADD00942AE5 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				0533607929C23AF200942AE5 /* RegistrationViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		05B5A7F8287D926B00865293 /* OpenMarketTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -233,6 +243,7 @@
 		C70FB0F925BEF61C00C9924E /* OpenMarket */ = {
 			isa = PBXGroup;
 			children = (
+				0533607829C23ADD00942AE5 /* ViewModel */,
 				05F2975728990E4500EB7F41 /* View */,
 				05F2975628990E0D00EB7F41 /* ViewController */,
 				8F019816288A49EA00C47CF0 /* Extension */,
@@ -388,6 +399,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05D993A1289C0F2F008AFE30 /* UIViewController + extension.swift in Sources */,
+				0533607A29C23AF200942AE5 /* RegistrationViewModel.swift in Sources */,
 				05B5A7D2287D4E1600865293 /* URLSessionProtocol.swift in Sources */,
 				8F1475DF289D3DF90034B4DA /* DetailCollectionViewCell.swift in Sources */,
 				8F4F82C52885AD7500C76E98 /* ModelNameSpace.swift in Sources */,
