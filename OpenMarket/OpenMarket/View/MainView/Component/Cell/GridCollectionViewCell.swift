@@ -21,6 +21,7 @@ final class GridCollectionViewCell: ItemCollectionViewCell {
         self.layer.borderWidth = Metric.borderWidth
         self.layer.borderColor = UIColor.systemGray3.cgColor
     }
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }

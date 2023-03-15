@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import Combine
 
 final class MainViewController: UIViewController {
     
@@ -17,14 +18,16 @@ final class MainViewController: UIViewController {
     // MARK: Properties
     
     private let networkManager = NetworkManager()
-    
+    private let viewModel = MainViewModel()
+    private var cancelable = Set<AnyCancellable>()
+
     private lazy var loadingView: UIActivityIndicatorView = {
-        let lodingview = UIActivityIndicatorView()
-        lodingview.center = self.view.center
-        lodingview.startAnimating()
-        lodingview.style = UIActivityIndicatorView.Style.large
-        lodingview.isHidden = false
-        return lodingview
+        let loadingView = UIActivityIndicatorView()
+        loadingView.center = self.view.center
+        loadingView.startAnimating()
+        loadingView.style = UIActivityIndicatorView.Style.large
+        loadingView.isHidden = false
+        return loadingView
     }()
     
     private var dataSource: DiffableDataSource?
@@ -75,7 +78,8 @@ final class MainViewController: UIViewController {
         
         dataSource = configureDataSource(id: CollectionViewNamespace.list.name)
         self.snapshot.appendSections([.main])
-        getProductList(pageNumber: Metric.firstPage)
+
+        bind()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -88,8 +92,7 @@ final class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        
-        getProductList(pageNumber: Metric.firstPage)
+        viewModel.input.getInformation(pageNumber: Metric.firstPage)
     }
     
     // MARK: Method
@@ -119,25 +122,32 @@ final class MainViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         ])
     }
-    
-    private func getProductList(pageNumber: Int) {
-        networkManager.getProductInquiry(pageNumber: pageNumber) { result in
-            switch result {
-            case .success(let data):
-                guard let productList = try? JSONDecoder().decode(MarketInformation.self, from: data) else { return }
-                
+
+    private func bind() {
+        viewModel.output.marketInformationPublisher
+            .sink { productList in
                 self.snapshot.appendItems(productList.pages)
-                self.dataSource?.apply(self.snapshot, animatingDifferences: false)
-                
-                DispatchQueue.main.async {
+                self.dataSource?.apply(self.snapshot, animatingDifferences: true)
+            }.store(in: &cancelable)
+
+        viewModel.output.isLoadingPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                guard let self = self else { return }
+                if isLoading {
+                    self.loadingView.startAnimating()
+                } else {
                     self.loadingView.stopAnimating()
                 }
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    self.showCustomAlert(title: nil, message: error.localizedDescription)
-                }
             }
-        }
+            .store(in: &cancelable)
+
+        viewModel.output.alertPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] error in
+                guard let self = self else { return }
+                self.showCustomAlert(title: nil, message: error)
+            }.store(in: &cancelable)
     }
     
     private func configureDataSource(id: String) -> DiffableDataSource? {
@@ -234,7 +244,7 @@ extension MainViewController: UICollectionViewDataSourcePrefetching {
             self.loadingView.startAnimating()
             
             productPageNumber += 1
-            getProductList(pageNumber: productPageNumber)
+            viewModel.input.getInformation(pageNumber: currentPage)
         }
     }
 }
