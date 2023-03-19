@@ -48,15 +48,10 @@ final class NetworkManager: NetworkManagerProtocol {
     }
 
     func postProduct(params: [String: Any?], images: [UIImage], completion: @escaping (Result<Data, Error>) -> Void) {
-        let passwordKey = NetworkNamespace.passwordKey.name
-        let passwordValue = NetworkNamespace.passwordValue.name
-        var newParms = params
-        
-        newParms[passwordKey] = passwordValue
-        
+
         guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
 
-        let postData = OpenMarketRequest.createPostBody(parms: newParms as [String: Any], images: images)
+        let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], images: images)
 
         request.httpBody = postData
 

@@ -9,12 +9,11 @@ import Foundation
 
 enum Request {
     static let identifier = "identifier"
-    static let secret = "secret"
 }
 
 enum Multipart {
     static let boundaryForm = "multipart/form-data; boundary="
-    static let boundaryValue = "\(UUID().uuidString)"
+    static let boundaryValue = "Boundary-\(UUID().uuidString)"
     static let contentType = "Content-Type"
     static let jsonContentType = "application/json"
     static let paramContentDisposition = "Content-Disposition: form-data; name=\"params\"\r\n"
@@ -42,9 +41,10 @@ enum ImageType {
 
 enum Params {
     static let productName = "name"
-    static let productDescription = "descriptions"
+    static let productDescription = "description"
     static let productPrice = "price"
     static let currency = "currency"
-    static let discountedPrice = "discounted_price"
+    static let discountedPrice = "discountedPrice"
     static let stock = "stock"
+    static let secret = "secret"
 }

@@ -169,10 +169,11 @@ class RegistrationViewController: UIViewController {
         let params: [String: Any?] = [
             Params.productName: productNameTextField.text,
             Params.productDescription: descriptionTextView.text,
-            Params.productPrice: productPriceTextField.text,
+            Params.productPrice: Int(productPriceTextField.text ?? "0") ?? 0,
             Params.currency: choiceCurrency()?.name,
-            Params.discountedPrice: discountedPriceTextField.text,
-            Params.stock: stockTextField.text
+            Params.discountedPrice: Int(discountedPriceTextField.text ?? "0") ?? 0,
+            Params.stock: Int(stockTextField.text ?? "0") ?? 0,
+            Params.secret: "lk1erfg241t8ygh0"
         ]
         
         NetworkManager().postProduct(params: params, images: images) { result in
