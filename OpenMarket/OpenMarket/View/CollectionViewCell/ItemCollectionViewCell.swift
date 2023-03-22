@@ -38,7 +38,7 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         return label
     }()
     
-    let productStockQuntityLabel: UILabel = {
+    let productStockQuantityLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -87,6 +87,6 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         self.productNameLabel.text = product.name
         
         showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
-        showSoldOut(productStockQuntity: self.productStockQuntityLabel, product: product)
+        showSoldOut(productStockQuntity: self.productStockQuantityLabel, product: product)
     }
 }

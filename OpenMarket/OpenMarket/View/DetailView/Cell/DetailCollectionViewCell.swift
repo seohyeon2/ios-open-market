@@ -119,7 +119,7 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         labelStackView.addArrangedSubview(productNameLabel)
         labelStackView.addArrangedSubview(stockPriceStackView)
         
-        stockPriceStackView.addArrangedSubview(productStockQuntityLabel)
+        stockPriceStackView.addArrangedSubview(productStockQuantityLabel)
         stockPriceStackView.addArrangedSubview(productPriceLabel)
         stockPriceStackView.addArrangedSubview(bargainPriceLabel)
     }
@@ -148,7 +148,7 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         self.productNameLabel.text = product.name
         self.descriptionLabel.text = product.description
         showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
-        showSoldOut(productStockQuntity: self.productStockQuntityLabel, product: product)
+        showSoldOut(productStockQuntity: self.productStockQuantityLabel, product: product)
         
     }
 }

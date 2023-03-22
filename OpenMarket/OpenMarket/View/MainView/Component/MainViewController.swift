@@ -7,17 +7,16 @@
 import UIKit
 import Combine
 
+ enum Section {
+    case main
+}
+
 final class MainViewController: UIViewController {
-    
-    private enum Section {
-        case main
-    }
-    
+
     private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, MarketItem>
     
     // MARK: Properties
     
-    private let networkManager = NetworkManager()
     private let viewModel = MainViewModel()
     private var cancelable = Set<AnyCancellable>()
 
@@ -148,6 +147,14 @@ final class MainViewController: UIViewController {
                 guard let self = self else { return }
                 self.showCustomAlert(title: nil, message: error)
             }.store(in: &cancelable)
+
+        viewModel.output.marketItemPublisher
+            .sink { [weak self] item in
+                guard let self = self else { return }
+                let viewController = ProductDetailViewController(product: item)
+                self.navigationController?.pushViewController(viewController, animated: true)
+                self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+            }.store(in: &cancelable)
     }
     
     private func configureDataSource(id: String) -> DiffableDataSource? {
@@ -252,10 +259,11 @@ extension MainViewController: UICollectionViewDataSourcePrefetching {
 extension MainViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let product = snapshot.itemIdentifiers[indexPath.item]
-        let viewController = ProductDetailViewController(product: product)
+        viewModel.input.pushToDetailView(snapshot: snapshot, indexPath: indexPath)
+//        let product = snapshot.itemIdentifiers[indexPath.item]
+//        let viewController = ProductDetailViewController(product: product)
         
-        navigationController?.pushViewController(viewController, animated: true)
+//        navigationController?.pushViewController(viewController, animated: true)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 
     }

@@ -90,13 +90,13 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
         labelStackView.addArrangedSubview(downStackView)
         
         upperStackView.addArrangedSubview(productNameLabel)
-        upperStackView.addArrangedSubview(productStockQuntityLabel)
+        upperStackView.addArrangedSubview(productStockQuantityLabel)
         
         downStackView.addArrangedSubview(productPriceLabel)
         downStackView.addArrangedSubview(bargainPriceLabel)
         
         productNameLabel.setContentHuggingPriority(UILayoutPriority.defaultLow, for: .horizontal)
-        productStockQuntityLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
+        productStockQuantityLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
         productPriceLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
     }
     

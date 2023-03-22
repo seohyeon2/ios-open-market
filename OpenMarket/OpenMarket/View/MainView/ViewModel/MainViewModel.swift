@@ -7,15 +7,18 @@
 
 import Foundation
 import Combine
+import UIKit.NSDiffableDataSourceSectionSnapshot
 
 protocol MainViewModelInputInterface {
     func getInformation(pageNumber: Int)
+    func pushToDetailView(snapshot: NSDiffableDataSourceSnapshot<Section, MarketItem>, indexPath: IndexPath)
 }
 
 protocol MainViewModelOutputInterface {
-    var marketInformationPublisher: PassthroughSubject<MarketInformation, Never> { get }
-    var isLoadingPublisher: PassthroughSubject<Bool, Never> { get }
-    var alertPublisher: PassthroughSubject<String, Never> { get }
+    var marketInformationPublisher: AnyPublisher<MarketInformation, Never> { get }
+    var isLoadingPublisher: AnyPublisher<Bool, Never> { get }
+    var alertPublisher: AnyPublisher<String, Never> { get }
+    var marketItemPublisher: AnyPublisher<MarketItem, Never> { get }
 }
 
 protocol MainViewModelInterface {
@@ -27,9 +30,26 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
     var input: MainViewModelInputInterface { self }
     var output: MainViewModelOutputInterface { self }
 
-    var marketInformationPublisher = PassthroughSubject<MarketInformation, Never>()
-    var isLoadingPublisher = PassthroughSubject<Bool, Never>()
-    var alertPublisher = PassthroughSubject<String, Never>()
+    private let marketInformationSubject = PassthroughSubject<MarketInformation, Never>()
+    private let isLoadingSubject = PassthroughSubject<Bool, Never>()
+    private let alertSubject = PassthroughSubject<String, Never>()
+    private let marketItemSubject = PassthroughSubject<MarketItem, Never>()
+
+    var marketInformationPublisher: AnyPublisher<MarketInformation, Never> {
+        return marketInformationSubject.eraseToAnyPublisher()
+    }
+
+    var isLoadingPublisher: AnyPublisher<Bool, Never> {
+        return isLoadingSubject.eraseToAnyPublisher()
+    }
+
+    var alertPublisher: AnyPublisher<String, Never> {
+        return alertSubject.eraseToAnyPublisher()
+    }
+
+    var marketItemPublisher: AnyPublisher<MarketItem, Never> {
+        return marketItemSubject.eraseToAnyPublisher()
+    }
 
 
     private let networkManager = NetworkManager()
@@ -40,13 +60,13 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
             switch result {
             case .success(let data):
                 guard let productList = try? JSONDecoder().decode(MarketInformation.self, from: data) else { return }
-                self.isLoadingPublisher.send(true)
-                self.marketInformationPublisher
+                self.isLoadingSubject.send(true)
+                self.marketInformationSubject
                     .send(productList)
-                self.isLoadingPublisher.send(false)
+                self.isLoadingSubject.send(false)
             case .failure(let error):
                 print(error.localizedDescription)
-                self.alertPublisher.send(error.localizedDescription)
+                self.alertSubject.send(error.localizedDescription)
             }
         }
     }
@@ -55,5 +75,10 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
 extension MainViewModel: MainViewModelInputInterface {
     func getInformation(pageNumber: Int) {
         getProductList(pageNumber: pageNumber)
+    }
+
+    func pushToDetailView(snapshot: NSDiffableDataSourceSnapshot<Section, MarketItem>, indexPath: IndexPath) {
+        let product = snapshot.itemIdentifiers[indexPath.item]
+        marketItemSubject.send(product)
     }
 }

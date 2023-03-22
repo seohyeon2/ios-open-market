@@ -44,7 +44,7 @@ final class GridCollectionViewCell: ItemCollectionViewCell {
         totalGridStackView.addArrangedSubview(productNameLabel)
         totalGridStackView.addArrangedSubview(productPriceLabel)
         totalGridStackView.addArrangedSubview(bargainPriceLabel)
-        totalGridStackView.addArrangedSubview(productStockQuntityLabel)
+        totalGridStackView.addArrangedSubview(productStockQuantityLabel)
     }
     
     private func setGridConstraints() {
