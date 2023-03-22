@@ -13,12 +13,12 @@ import Combine
 
 final class MainViewController: UIViewController {
 
-    private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, MarketItem>
+    private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, PageInformation>
     
     // MARK: Properties
     
     private let viewModel = MainViewModel()
-    private var cancelable = Set<AnyCancellable>()
+    private var cancellable = Set<AnyCancellable>()
 
     private lazy var loadingView: UIActivityIndicatorView = {
         let loadingView = UIActivityIndicatorView()
@@ -30,7 +30,7 @@ final class MainViewController: UIViewController {
     }()
     
     private var dataSource: DiffableDataSource?
-    private var snapshot = NSDiffableDataSourceSnapshot<Section, MarketItem>()
+    private var snapshot = NSDiffableDataSourceSnapshot<Section, PageInformation>()
     private var productPageNumber = 1
     
     private lazy var segmentedControl: UISegmentedControl = {
@@ -127,7 +127,7 @@ final class MainViewController: UIViewController {
             .sink { productList in
                 self.snapshot.appendItems(productList.pages)
                 self.dataSource?.apply(self.snapshot, animatingDifferences: true)
-            }.store(in: &cancelable)
+            }.store(in: &cancellable)
 
         viewModel.output.isLoadingPublisher
             .receive(on: RunLoop.main)
@@ -139,26 +139,26 @@ final class MainViewController: UIViewController {
                     self.loadingView.stopAnimating()
                 }
             }
-            .store(in: &cancelable)
+            .store(in: &cancellable)
 
         viewModel.output.alertPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] error in
                 guard let self = self else { return }
                 self.showCustomAlert(title: nil, message: error)
-            }.store(in: &cancelable)
+            }.store(in: &cancellable)
 
         viewModel.output.marketItemPublisher
             .sink { [weak self] item in
                 guard let self = self else { return }
-                let viewController = ProductDetailViewController(product: item)
+                let viewController = ProductDetailViewController()
                 self.navigationController?.pushViewController(viewController, animated: true)
                 self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-            }.store(in: &cancelable)
+            }.store(in: &cancellable)
     }
     
     private func configureDataSource(id: String) -> DiffableDataSource? {
-        dataSource = DiffableDataSource(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, product: MarketItem) -> UICollectionViewCell? in
+        dataSource = DiffableDataSource(collectionView: collectionView) { (collectionView: UICollectionView, indexPath: IndexPath, product: PageInformation) -> UICollectionViewCell? in
             switch id {
             case CollectionViewNamespace.list.name:
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewNamespace.list.name, for: indexPath) as? ListCollectionViewCell else {
@@ -259,7 +259,7 @@ extension MainViewController: UICollectionViewDataSourcePrefetching {
 extension MainViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        viewModel.input.pushToDetailView(snapshot: snapshot, indexPath: indexPath)
+//        viewModel.input.pushToDetailView(snapshot: snapshot, indexPath: indexPath)
 //        let product = snapshot.itemIdentifiers[indexPath.item]
 //        let viewController = ProductDetailViewController(product: product)
         

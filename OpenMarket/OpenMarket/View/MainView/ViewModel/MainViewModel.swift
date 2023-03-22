@@ -30,6 +30,7 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
     var input: MainViewModelInputInterface { self }
     var output: MainViewModelOutputInterface { self }
 
+    private var cancellable = Set<AnyCancellable>()
     private let marketInformationSubject = PassthroughSubject<MarketInformation, Never>()
     private let isLoadingSubject = PassthroughSubject<Bool, Never>()
     private let alertSubject = PassthroughSubject<String, Never>()
@@ -51,24 +52,24 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
         return marketItemSubject.eraseToAnyPublisher()
     }
 
-
     private let networkManager = NetworkManager()
 
     private func getProductList(pageNumber: Int) {
-        networkManager.getProductInquiry(pageNumber: pageNumber) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let data):
-                guard let productList = try? JSONDecoder().decode(MarketInformation.self, from: data) else { return }
+
+        networkManager.getProductInquiry2(pageNumber: pageNumber)?
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("성공")
+                case .failure(let error):
+                    self.alertSubject.send(error.message)
+                }
+            } receiveValue: { productList in
                 self.isLoadingSubject.send(true)
-                self.marketInformationSubject
-                    .send(productList)
+                self.marketInformationSubject.send(productList)
                 self.isLoadingSubject.send(false)
-            case .failure(let error):
-                print(error.localizedDescription)
-                self.alertSubject.send(error.localizedDescription)
             }
-        }
+            .store(in: &cancellable)
     }
 }
 

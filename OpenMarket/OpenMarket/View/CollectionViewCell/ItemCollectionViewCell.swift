@@ -8,16 +8,16 @@
 import UIKit
 
 class ItemCollectionViewCell: UICollectionViewListCell {
-    
+
     // MARK: Properties
-    
+
     let productThumbnailImageView: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFit
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
-    
+
     let productNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .headline)
@@ -25,26 +25,26 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     let productPriceLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     let bargainPriceLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     let productStockQuantityLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: MarketItem) {
+
+    func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: PageInformation) {
         priceLabel.text = "\(product.currency) \(product.price)"
         if product.discountedPrice == Metric.discountedPrice {
             priceLabel.textColor = .systemGray
@@ -57,8 +57,8 @@ class ItemCollectionViewCell: UICollectionViewListCell {
             bargainPriceLabel.textColor = .systemGray
         }
     }
-    
-    func showSoldOut(productStockQuntity: UILabel, product: MarketItem) {
+
+    func showSoldOut(productStockQuntity: UILabel, product: PageInformation) {
         if product.stock == Metric.stock {
             productStockQuntity.text = CollectionViewNamespace.soldout.name
             productStockQuntity.textColor = .systemOrange
@@ -67,15 +67,15 @@ class ItemCollectionViewCell: UICollectionViewListCell {
             productStockQuntity.textColor = .systemGray
         }
     }
-    
-    func configureCell(product: MarketItem, completion: @escaping (Result<Data, Error>) -> Void) {
+
+    func configureCell(product: PageInformation, completion: @escaping (Result<Data, Error>) -> Void) {
         guard let url = URL(string: product.thumbnail) else { return }
-        
+
         NetworkManager().networkPerform(for: URLRequest(url: url)) { [weak self] result in
             switch result {
             case .success(let data):
                 guard let images = UIImage(data: data) else { return }
-                
+
                 DispatchQueue.main.async {
                     self?.productThumbnailImageView.image = images
                 }
@@ -83,9 +83,9 @@ class ItemCollectionViewCell: UICollectionViewListCell {
                 completion(.failure(error))
             }
         }
-        
+
         self.productNameLabel.text = product.name
-        
+
         showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
         showSoldOut(productStockQuntity: self.productStockQuantityLabel, product: product)
     }
