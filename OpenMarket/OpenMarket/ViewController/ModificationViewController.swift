@@ -92,8 +92,8 @@ class ModificationViewController: RegistrationViewController {
             return
         }
 
-        (0..<(product.images?.count ?? 0)).forEach { index in
-            guard let image = product.images?[index] else { return }
+        (0..<(product.images.count)).forEach { index in
+            let image = product.images[index]
             guard let url = URL(string: image.url) else { return }
 
             NetworkManager().networkPerform(for: URLRequest(url: url)) { result in

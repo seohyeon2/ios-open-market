@@ -7,22 +7,11 @@
 
 import UIKit
 
-class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        imageScrollView.delegate = self
-        setDetailStackView()
-        setDetailConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
+class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDelegate {
+
     // MARK: Properties
     var productImages = [UIImage]()
-    
+
     var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.backgroundColor = .yellow
@@ -31,6 +20,39 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         return pageControl
     }()
     
+    let productThumbnailImageView: UIImageView = {
+        let image = UIImageView()
+        image.contentMode = .scaleAspectFit
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+
+    let productNameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.adjustsFontForContentSizeCategory = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    let productPriceLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    let bargainPriceLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    let productStockQuantityLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     let imageScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.frame = UIScreen.main.bounds
@@ -40,7 +62,7 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
-    
+
     private let descriptionScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
@@ -48,7 +70,7 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
-    
+
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
@@ -66,7 +88,7 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-    
+
     private let labelStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.alignment = .top
@@ -75,7 +97,7 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-    
+
     private let totalDetailStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.alignment = .fill
@@ -85,9 +107,20 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-    
+
     // MARK: Method
     
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setDetailStackView()
+        setDetailConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
     private func setDetailConstraints() {
         NSLayoutConstraint.activate([
             totalDetailStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Metric.gridPositiveConstant),
@@ -97,58 +130,82 @@ class DetailCollectionViewCell: ItemCollectionViewCell, UIScrollViewDelegate {
 
             imageScrollView.widthAnchor.constraint(equalTo: totalDetailStackView.widthAnchor, multiplier: 1),
             imageScrollView.heightAnchor.constraint(equalTo: totalDetailStackView.heightAnchor, multiplier: 0.4),
-            
+
             descriptionLabel.topAnchor.constraint(equalTo: descriptionScrollView.topAnchor, constant: Metric.gridPositiveConstant),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant),
             descriptionLabel.bottomAnchor.constraint(equalTo: descriptionScrollView.bottomAnchor, constant: Metric.listNegativeConstant),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant)
         ])
     }
-    
+
     private func setDetailStackView() {
         contentView.addSubview(totalDetailStackView)
         totalDetailStackView.addArrangedSubview(imageScrollView)
         totalDetailStackView.addArrangedSubview(labelStackView)
         totalDetailStackView.addArrangedSubview(descriptionScrollView)
-        
+
         descriptionScrollView.addSubview(descriptionLabel)
-        
+
         imageScrollView.addSubview(productThumbnailImageView)
         imageScrollView.addSubview(pageControl)
-        
+
         labelStackView.addArrangedSubview(productNameLabel)
         labelStackView.addArrangedSubview(stockPriceStackView)
-        
+
         stockPriceStackView.addArrangedSubview(productStockQuantityLabel)
         stockPriceStackView.addArrangedSubview(productPriceLabel)
         stockPriceStackView.addArrangedSubview(bargainPriceLabel)
     }
-    
-    override func configureCell(product: MarketItem, completion: @escaping (Result<Data, Error>) -> Void) {
-        (0..<(product.images?.count ?? 0)).forEach { index in
-            guard let image = product.images?[index] else { return }
+
+   func configureCell(product: MarketItem, completion: @escaping (Result<Data, Error>) -> Void) {
+        (0..<(product.images.count)).forEach { index in
+            let image = product.images[index]
             guard let url = URL(string: image.url) else { return }
-            
+
             NetworkManager().networkPerform(for: URLRequest(url: url)) { result in
                 switch result {
                 case .success(let data):
                     guard let image = UIImage(data: data) else { return }
                     self.productImages.append(image)
-                    
+
                     DispatchQueue.main.async {
                         self.productThumbnailImageView.image = image
                     }
-                    
+
                 case .failure(let error):
                     completion(.failure(error))
                 }
             }
         }
-        
+
         self.productNameLabel.text = product.name
         self.descriptionLabel.text = product.description
         showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
         showSoldOut(productStockQuntity: self.productStockQuantityLabel, product: product)
-        
+
+    }
+    
+    func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: MarketItem) {
+        priceLabel.text = "\(product.currency) \(product.price)"
+        if product.discountedPrice == Metric.discountedPrice {
+            priceLabel.textColor = .systemGray
+            bargainPriceLabel.isHidden = true
+        } else {
+            bargainPriceLabel.isHidden = false
+            priceLabel.textColor = .systemRed
+            priceLabel.attributedText = priceLabel.text?.strikeThrough()
+            bargainPriceLabel.text = "\(product.currency) \(product.bargainPrice)"
+            bargainPriceLabel.textColor = .systemGray
+        }
+    }
+
+    func showSoldOut(productStockQuntity: UILabel, product: MarketItem) {
+        if product.stock == Metric.stock {
+            productStockQuntity.text = CollectionViewNamespace.soldout.name
+            productStockQuntity.textColor = .systemOrange
+        } else {
+            productStockQuntity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
+            productStockQuntity.textColor = .systemGray
+        }
     }
 }

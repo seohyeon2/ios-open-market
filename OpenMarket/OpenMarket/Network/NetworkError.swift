@@ -10,6 +10,7 @@ enum NetworkError: Error {
     case failToDecoding
     case failToEncoding
     case noneData
+    case failToResponse
     
     var message: String {
         switch self {
@@ -21,6 +22,8 @@ enum NetworkError: Error {
             return "인코딩을 할 수 없습니다."
         case .noneData:
             return "데이터가 없습니다."
+        case .failToResponse:
+            return "응답 오류"
         }
     }
 }
