@@ -43,7 +43,7 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     private var cancellable = Set<AnyCancellable>()
     
     private func getProductDetail(id: Int) {
-        guard let request = try? ProductRequest.item(id).createURLRequest() else { return }
+        guard let request = try? ProductRequest.detailItem(id).createURLRequest() else { return }
         
         networkManager.requestToServer(type: MarketItem.self, request: request)
             .sink { completion in
