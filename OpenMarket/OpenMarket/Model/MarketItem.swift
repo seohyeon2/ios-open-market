@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MarketItem: Codable, Hashable {
+struct MarketItem: Decodable, Hashable {
     let id: Int
     let vendorId: Int
     let name: String
@@ -33,23 +33,21 @@ struct MarketItem: Codable, Hashable {
     }
 }
 
-struct Images: Codable, Hashable {
+struct Images: Decodable, Hashable {
     let id: Int
     let url: String
     let thumbnailUrl: String
-    let succeed: Bool
     let issuedAt: String
 
     enum CodingKeys: String, CodingKey {
         case id
         case url
         case thumbnailUrl = "thumbnail_url"
-        case succeed
         case issuedAt = "issued_at"
     }
 }
 
-struct VendorDTO: Codable, Hashable {
+struct VendorDTO: Decodable, Hashable {
     let id: Int
     let name: String
 }

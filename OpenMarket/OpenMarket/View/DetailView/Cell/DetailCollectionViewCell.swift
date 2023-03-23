@@ -109,6 +109,17 @@ class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDelegate {
     }()
 
     // MARK: Method
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        setDetailStackView()
+        setDetailConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
 
     private func setDetailConstraints() {
         NSLayoutConstraint.activate([

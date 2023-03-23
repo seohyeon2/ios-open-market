@@ -14,6 +14,7 @@ protocol ProductDetailViewModelInputInterface {
 
 protocol ProductDetailViewModelOutputInterface {
     var detailMarketItem: Just<MarketItem>? { get }
+    var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
 }
 
@@ -25,16 +26,20 @@ protocol ProductDetailViewModelInterface {
 final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDetailViewModelOutputInterface {
     var detailMarketItem: Just<MarketItem>?
     
+    var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> {
+        return detailMarketItemSubject.eraseToAnyPublisher()
+    }
+    
     var input: ProductDetailViewModelInputInterface { self }
     var output: ProductDetailViewModelOutputInterface { self }
     
     var alertPublisher: AnyPublisher<String, Never> {
         return alertSubject.eraseToAnyPublisher()
     }
-    
-    private var marketItem: MarketItem?
+
     private let networkManager = NetworkManager()
     private let alertSubject = PassthroughSubject<String, Never>()
+    private let detailMarketItemSubject = PassthroughSubject<MarketItem, Never>()
     private var cancellable = Set<AnyCancellable>()
     
     private func getProductDetail(id: Int) {
@@ -44,13 +49,12 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
             .sink { completion in
                 switch completion {
                 case .finished:
-                    print("❤️")
+                    return
                 case .failure(let error):
-                    print("❤️❤️")
                     self.alertSubject.send(error.message)
                 }
         } receiveValue: { [weak self] marketItem in
-            self?.marketItem = marketItem
+            self?.detailMarketItemSubject.send(marketItem)
         }
         .store(in: &cancellable)
     }
