@@ -6,10 +6,14 @@
 //
 
 import UIKit
+import Combine
 
 class RegistrationViewController: UIViewController {
     
     // MARK: Properties
+    
+    private let viewModel =  RegistrationViewModel()
+    private var bindings = Set<AnyCancellable>()
     
     private let imagePickerController = UIImagePickerController()
     private var imageCount = Registration.initialNumber
@@ -19,7 +23,7 @@ class RegistrationViewController: UIViewController {
         let button = UIButton()
         button.setTitle(Registration.done, for: .normal)
         button.setTitleColor(UIColor.systemBlue, for: .normal)
-        button.addTarget(self, action: #selector(registerProduct), for: .touchUpInside)
+        button.addTarget(self, action: #selector(onClickDoneButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -156,40 +160,78 @@ class RegistrationViewController: UIViewController {
         setConstraint()
         setViewGesture()
         registerForKeyboardNotification()
+        
+        bindViewToViewModel()
     }
     
     // MARK: Method
-
+    
+    @objc private func onClickDoneButton() {
+        viewModel.registerProduct()
+    }
+    
+    func bindViewToViewModel() {
+        productNameTextField.textPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.productName, on: viewModel)
+            .store(in: &bindings)
+        
+        descriptionTextView.textPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.productDescription, on: viewModel)
+            .store(in: &bindings)
+        
+        productPriceTextField.textPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.productPrice, on: viewModel)
+            .store(in: &bindings)
+        
+        discountedPriceTextField.textPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.discountedPrice, on: viewModel)
+            .store(in: &bindings)
+        
+        stockTextField.textPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.stock, on: viewModel)
+            .store(in: &bindings)
+        
+//        segmentedControl.segmentedControlPublisher
+//            .receive(on: DispatchQueue.main)
+//            .assign(to: \.currency, on: viewModel)
+//            .store(in: &bindings)
+    }
+    
     @objc private func goBackMainViewController() {
         navigationController?.popViewController(animated: true)
     }
 
-    @objc private func registerProduct() {
-        
-        let params: [String: Any?] = [
-            Params.productName: productNameTextField.text,
-            Params.productDescription: descriptionTextView.text,
-            Params.productPrice: Int(productPriceTextField.text ?? "0") ?? 0,
-            Params.currency: choiceCurrency()?.name,
-            Params.discountedPrice: Int(discountedPriceTextField.text ?? "0") ?? 0,
-            Params.stock: Int(stockTextField.text ?? "0") ?? 0,
-            Params.secret: "lk1erfg241t8ygh0"
-        ]
-        
-        NetworkManager().postProduct(params: params, images: images) { result in
-            switch result {
-            case .success(_):
-                DispatchQueue.main.async {
-                    self.showCustomAlert(title: "🥳", message: "상품등록이 정상적으로 완료되었습니다!")
-                }
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    self.showCustomAlert(title: "🤔", message: error.localizedDescription)
-                }
-            }
-        }
-        resetRegistrationPage()
-    }
+//    @objc private func registerProduct() {
+//
+//        let params: [String: Any?] = [
+//            Params.productName: productNameTextField.text,
+//            Params.productDescription: descriptionTextView.text,
+//            Params.productPrice: Int(productPriceTextField.text ?? "0") ?? 0,
+//            Params.currency: choiceCurrency()?.name,
+//            Params.discountedPrice: Int(discountedPriceTextField.text ?? "0") ?? 0,
+//            Params.stock: Int(stockTextField.text ?? "0") ?? 0,
+//            Params.secret: "lk1erfg241t8ygh0"
+//        ]
+//
+//        NetworkManager().postProduct(params: params, images: images) { result in
+//            switch result {
+//            case .success(_):
+//                DispatchQueue.main.async {
+//                    self.showCustomAlert(title: "🥳", message: "상품등록이 정상적으로 완료되었습니다!")
+//                }
+//            case .failure(let error):
+//                DispatchQueue.main.async {
+//                    self.showCustomAlert(title: "🤔", message: error.localizedDescription)
+//                }
+//            }
+//        }
+//        resetRegistrationPage()
+//    }
 
     private func resetRegistrationPage() {
         images = []
