@@ -148,10 +148,10 @@ final class MainViewController: UIViewController {
                 self.showCustomAlert(title: nil, message: error)
             }.store(in: &cancellable)
 
-        viewModel.output.marketItemPublisher
-            .sink { [weak self] item in
+        viewModel.output.marketItemIdPublisher
+            .sink { [weak self] itemId in
                 guard let self = self else { return }
-                let viewController = ProductDetailViewController()
+                let viewController = ProductDetailViewController(id: itemId)
                 self.navigationController?.pushViewController(viewController, animated: true)
                 self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
             }.store(in: &cancellable)
@@ -259,12 +259,14 @@ extension MainViewController: UICollectionViewDataSourcePrefetching {
 extension MainViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        viewModel.input.pushToDetailView(snapshot: snapshot, indexPath: indexPath)
-//        let product = snapshot.itemIdentifiers[indexPath.item]
-//        let viewController = ProductDetailViewController(product: product)
+        
+        let id = snapshot.itemIdentifiers[indexPath.row].id
+        //let viewController = ProductDetailViewController(product: product)
+        viewModel.input.pushToDetailView(indexPath: indexPath, id: id)
+
         
 //        navigationController?.pushViewController(viewController, animated: true)
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+//        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 
     }
 }

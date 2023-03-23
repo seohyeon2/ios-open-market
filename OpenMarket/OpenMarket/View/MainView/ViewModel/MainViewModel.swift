@@ -7,18 +7,17 @@
 
 import Foundation
 import Combine
-import UIKit.NSDiffableDataSourceSectionSnapshot
 
 protocol MainViewModelInputInterface {
     func getInformation(pageNumber: Int)
-    func pushToDetailView(snapshot: NSDiffableDataSourceSnapshot<Section, MarketItem>, indexPath: IndexPath)
+    func pushToDetailView(indexPath: IndexPath, id:Int)
 }
 
 protocol MainViewModelOutputInterface {
     var marketInformationPublisher: AnyPublisher<MarketInformation, Never> { get }
     var isLoadingPublisher: AnyPublisher<Bool, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
-    var marketItemPublisher: AnyPublisher<MarketItem, Never> { get }
+    var marketItemIdPublisher: AnyPublisher<Int, Never> { get }
 }
 
 protocol MainViewModelInterface {
@@ -34,7 +33,7 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
     private let marketInformationSubject = PassthroughSubject<MarketInformation, Never>()
     private let isLoadingSubject = PassthroughSubject<Bool, Never>()
     private let alertSubject = PassthroughSubject<String, Never>()
-    private let marketItemSubject = PassthroughSubject<MarketItem, Never>()
+    private let marketItemIdSubject = PassthroughSubject<Int, Never>()
 
     var marketInformationPublisher: AnyPublisher<MarketInformation, Never> {
         return marketInformationSubject.eraseToAnyPublisher()
@@ -48,8 +47,8 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
         return alertSubject.eraseToAnyPublisher()
     }
 
-    var marketItemPublisher: AnyPublisher<MarketItem, Never> {
-        return marketItemSubject.eraseToAnyPublisher()
+    var marketItemIdPublisher: AnyPublisher<Int, Never> {
+        return marketItemIdSubject.eraseToAnyPublisher()
     }
 
     private let networkManager = NetworkManager()
@@ -78,8 +77,7 @@ extension MainViewModel: MainViewModelInputInterface {
         getProductList(pageNumber: pageNumber)
     }
 
-    func pushToDetailView(snapshot: NSDiffableDataSourceSnapshot<Section, MarketItem>, indexPath: IndexPath) {
-        let product = snapshot.itemIdentifiers[indexPath.item]
-        marketItemSubject.send(product)
+    func pushToDetailView(indexPath: IndexPath, id:Int) {
+        marketItemIdSubject.send(id)
     }
 }

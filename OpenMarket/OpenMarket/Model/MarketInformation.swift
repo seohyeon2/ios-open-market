@@ -4,7 +4,7 @@
 //
 //  Created by unchain, hyeon2 on 2022/07/12.
 //
-struct MarketInformation: Codable {
+struct MarketInformation: Decodable {
     let pageNo: Int
     let itemsPerPage: Int
     let totalCount: Int
@@ -16,7 +16,7 @@ struct MarketInformation: Codable {
     let hasPrev: Bool
 }
 
-struct PageInformation: Codable, Hashable {
+struct PageInformation: Decodable, Hashable {
         let id: Int
         let vendorId: Int
         let vendorName: String

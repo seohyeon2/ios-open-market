@@ -28,8 +28,7 @@ final class NetworkManager: NetworkManagerProtocol {
         networkPerform(for: request, identifier: nil, completion: completion)
     }
 
-
-    func requestToServer<T: Codable>(type: T.Type, request: URLRequest) -> AnyPublisher<T, NetworkError> {
+    func requestToServer<T: Decodable>(type: T.Type, request: URLRequest) -> AnyPublisher<T, NetworkError> {
         return URLSession.shared
           .dataTaskPublisher(for: request)
           .tryMap() { data, response in
