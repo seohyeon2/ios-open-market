@@ -138,13 +138,13 @@
 			path = OpenMarketTests;
 			sourceTree = "<group>";
 		};
-		05CF569929CC241300808277 /* Registration */ = {
+		05CF569929CC241300808277 /* RegistrationView */ = {
 			isa = PBXGroup;
 			children = (
 				05CF569B29CC243E00808277 /* ViewModel */,
 				05CF569A29CC242800808277 /* Component */,
 			);
-			path = Registration;
+			path = RegistrationView;
 			sourceTree = "<group>";
 		};
 		05CF569A29CC242800808277 /* Component */ = {
@@ -175,6 +175,7 @@
 		05DC9F6F2885705A0097B6E3 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				052E9891289C9DE00051D439 /* RequestProtocol.swift */,
 				05B5A7D3287D4E4E00865293 /* NetworkManager.swift */,
 				8F1A0BB7287D96720071EF7A /* NetworkError.swift */,
 				05DC9F70288571390097B6E3 /* OpenMarketRequest.swift */,
@@ -182,22 +183,22 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
-		05F2975628990E0D00EB7F41 /* ViewController */ = {
+		05F2975628990E0D00EB7F41 /* ModificationView */ = {
 			isa = PBXGroup;
 			children = (
-				052E9891289C9DE00051D439 /* RequestProtocol.swift */,
-				052E989D289D6C340051D439 /* ModificationViewController.swift */,
+				8F97F06929CC27FA0091ADC5 /* Componenet */,
+				8F97F06829CC27F20091ADC5 /* ViewModel */,
 			);
-			path = ViewController;
+			path = ModificationView;
 			sourceTree = "<group>";
 		};
 		05F2975728990E4500EB7F41 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				05CF569929CC241300808277 /* Registration */,
 				8F7E490929BF675F00D259DF /* MainView */,
 				8F7E490D29BF67AA00D259DF /* DetailView */,
-				8F0198122887D4E200C47CF0 /* CollectionViewCell */,
+				05F2975628990E0D00EB7F41 /* ModificationView */,
+				05CF569929CC241300808277 /* RegistrationView */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -286,6 +287,7 @@
 		8F7E490C29BF679200D259DF /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				8F0198122887D4E200C47CF0 /* CollectionViewCell */,
 				05B3530C288797690027DCDE /* ListCollectionViewCell.swift */,
 				05B3530E2887CA7F0027DCDE /* GridCollectionViewCell.swift */,
 			);
@@ -318,6 +320,21 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		8F97F06829CC27F20091ADC5 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		8F97F06929CC27FA0091ADC5 /* Componenet */ = {
+			isa = PBXGroup;
+			children = (
+				052E989D289D6C340051D439 /* ModificationViewController.swift */,
+			);
+			path = Componenet;
+			sourceTree = "<group>";
+		};
 		C70FB0EE25BEF61C00C9924E = {
 			isa = PBXGroup;
 			children = (
@@ -340,7 +357,6 @@
 			isa = PBXGroup;
 			children = (
 				05F2975728990E4500EB7F41 /* View */,
-				05F2975628990E0D00EB7F41 /* ViewController */,
 				8F019816288A49EA00C47CF0 /* Extension */,
 				05DC9F6F2885705A0097B6E3 /* Network */,
 				8F4809B5287CFF2500A77BCD /* Model */,

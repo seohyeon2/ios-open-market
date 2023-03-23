@@ -124,7 +124,8 @@ final class MainViewController: UIViewController {
 
     private func bind() {
         viewModel.output.marketInformationPublisher
-            .sink { productList in
+            .sink { [weak self] productList in
+                guard let self = self else { return }
                 self.snapshot.appendItems(productList.pages)
                 self.dataSource?.apply(self.snapshot, animatingDifferences: true)
             }.store(in: &cancellable)

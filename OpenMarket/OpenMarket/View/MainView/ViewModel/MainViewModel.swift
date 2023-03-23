@@ -55,7 +55,7 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
 
     private func getProductList(pageNumber: Int) {
 
-        networkManager.getProductInquiry2(pageNumber: pageNumber)?
+        networkManager.getProductInquiry(pageNumber: pageNumber)?
             .sink { completion in
                 switch completion {
                 case .finished:
@@ -63,7 +63,8 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
                 case .failure(let error):
                     self.alertSubject.send(error.message)
                 }
-            } receiveValue: { productList in
+            } receiveValue: { [weak self] productList in
+                guard let self = self else { return }
                 self.isLoadingSubject.send(true)
                 self.marketInformationSubject.send(productList)
                 self.isLoadingSubject.send(false)

@@ -57,7 +57,7 @@ final class NetworkManager: NetworkManagerProtocol {
           .eraseToAnyPublisher()
      }
 
-    func getProductInquiry2(pageNumber: Int) -> AnyPublisher<MarketInformation, NetworkError>? {
+    func getProductInquiry(pageNumber: Int) -> AnyPublisher<MarketInformation, NetworkError>? {
             guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest() else { return nil }
 
             return requestToServer(type: MarketInformation.self, request: request)
@@ -82,13 +82,6 @@ final class NetworkManager: NetworkManagerProtocol {
         }
         dataTask.resume()
     }
-    
-//    func getProductInquiry(pageNumber: Int, completion: @escaping (Result<Data, Error>) -> Void) {
-//
-//        guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest() else { return }
-//
-//        networkPerform(for: request, identifier: nil, completion: completion)
-//    }
 
     func postProduct(params: [String: Any?], images: [UIImage], completion: @escaping (Result<Data, Error>) -> Void) {
 

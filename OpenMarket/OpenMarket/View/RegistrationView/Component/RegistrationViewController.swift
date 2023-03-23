@@ -13,8 +13,8 @@ class RegistrationViewController: UIViewController {
     // MARK: Properties
     
     private let viewModel =  RegistrationViewModel()
-    private var bindings = Set<AnyCancellable>()
-    
+    private var cancellable = Set<AnyCancellable>()
+
     private let imagePickerController = UIImagePickerController()
     private var imageCount = Registration.initialNumber
     var images = [UIImage]()
@@ -174,27 +174,27 @@ class RegistrationViewController: UIViewController {
         productNameTextField.textPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.productName, on: viewModel)
-            .store(in: &bindings)
+            .store(in: &cancellable)
         
         descriptionTextView.textPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.productDescription, on: viewModel)
-            .store(in: &bindings)
+            .store(in: &cancellable)
         
         productPriceTextField.textPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.productPrice, on: viewModel)
-            .store(in: &bindings)
+            .store(in: &cancellable)
         
         discountedPriceTextField.textPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.discountedPrice, on: viewModel)
-            .store(in: &bindings)
+            .store(in: &cancellable)
         
         stockTextField.textPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.stock, on: viewModel)
-            .store(in: &bindings)
+            .store(in: &cancellable)
         
 //        segmentedControl.segmentedControlPublisher
 //            .receive(on: DispatchQueue.main)

@@ -70,16 +70,6 @@ final class ProductDetailViewController: UIViewController {
     // MARK: Method
 
     private func bind() {
-//        viewModel.output.detailMarketItemPublisher
-//            .sink(receiveValue: { [weak self] marketItem in
-//
-//                guard let self = self else { return }
-//                self.navigationItem.title = marketItem.name
-//                self.snapshot.appendItems([marketItem])
-//                self.dataSource?.apply(self.snapshot)
-//            })
-//            .store(in: &cancellable)
-        
         viewModel.output.detailMarketItemPublisher
             .sink (receiveValue: {  [weak self] marketItem in
                 guard let self = self else { return }
