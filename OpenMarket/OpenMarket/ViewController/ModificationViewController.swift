@@ -32,7 +32,7 @@ class ModificationViewController: RegistrationViewController {
 
     private lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.setTitle(Registraion.done, for: .normal)
+        button.setTitle(Registration.done, for: .normal)
         button.setTitleColor(UIColor.systemBlue, for: .normal)
         button.addTarget(self, action: #selector(patchProduct), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -106,9 +106,9 @@ class ModificationViewController: RegistrationViewController {
                         let imageView = UIImageView()
 
                         imageView.image = image
-                        imageView.heightAnchor.constraint(equalToConstant: Registraion.imageSize).isActive = true
-                        imageView.widthAnchor.constraint(equalToConstant: Registraion.imageSize).isActive = true
-                        self.imageStackView.insertArrangedSubview(imageView, at: Registraion.firstIndex)
+                        imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+                        imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+                        self.imageStackView.insertArrangedSubview(imageView, at: Registration.firstIndex)
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {

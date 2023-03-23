@@ -8,7 +8,5 @@
 enum APIConstants {
     static let scheme = "https"
     static let host = "openmarket.yagom-academy.kr"
-    static let identifier = "be387241-bee2-11ed-acad-cd967b0fa95b"
-    static let passwordKey = "secret"
-    static let passwordValue = "n6gn901c1asvberfjsf"
+    static let identifier = "43bd5ceb-c498-11ed-acad-fd18a8f0ebae"
 }

@@ -48,15 +48,10 @@ final class NetworkManager: NetworkManagerProtocol {
     }
 
     func postProduct(params: [String: Any?], images: [UIImage], completion: @escaping (Result<Data, Error>) -> Void) {
-        let passwordKey = NetworkNamespace.passwordKey.name
-        let passwordValue = NetworkNamespace.passwordValue.name
-        var newParms = params
-        
-        newParms[passwordKey] = passwordValue
-        
+
         guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
 
-        let postData = OpenMarketRequest.createPostBody(parms: newParms as [String: Any], images: images)
+        let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], images: images)
 
         request.httpBody = postData
 
@@ -70,25 +65,25 @@ final class NetworkManager: NetworkManagerProtocol {
         }
     }
     
-    func postSecret(productId: Int, completion: @escaping (Result<Data, Error>) -> Void) {
-      
-        guard var request = try? ProductRequest.productSecret(productId).createURLRequest() else { return }
-        
-        let parameters = "{\"\(NetworkNamespace.passwordKey.name)\": \"\(NetworkNamespace.passwordValue.name)\"}"
-        let postData = parameters.data(using: .utf8)
-
-        request.httpBody = postData
-        networkPerform(for: request) { result in
-                switch result {
-                case .success(let data):
-                    self.deleteProduct(productId: productId, productSecretId: data)
-                    return completion(.success(data))
-                case .failure(let error):
-                    return completion(.failure(error))
-                }
-            }
-        
-    }
+//    func postSecret(productId: Int, completion: @escaping (Result<Data, Error>) -> Void) {
+//      
+//        guard var request = try? ProductRequest.deleteURL(productId).createURLRequest() else { return }
+//        
+//        let parameters = "{\"\(NetworkNamespace.passwordKey.name)\": \"\(NetworkNamespace.passwordValue.name)\"}"
+//        let postData = parameters.data(using: .utf8)
+//
+//        request.httpBody = postData
+//        networkPerform(for: request) { result in
+//                switch result {
+//                case .success(let data):
+//                    self.deleteProduct(productId: productId, productSecretId: data)
+//                    return completion(.success(data))
+//                case .failure(let error):
+//                    return completion(.failure(error))
+//                }
+//            }
+//        
+//    }
 
     func patchProduct(productId: Int, modifiedInfomation: [String: Any], completion: @escaping (Result<Data, Error>) -> Void) {
         
@@ -110,11 +105,11 @@ final class NetworkManager: NetworkManagerProtocol {
         }
     }
     
-    func deleteProduct(productId: Int, productSecretId: Data) {
-        guard let secret = String(data: productSecretId, encoding: .utf8) else { return }
-        
-        guard var request = try? ProductRequest.delete(id: productId, secret: secret).createURLRequest() else { return }
-
-        networkPerform(for: request) { _ in }
-    }
+//    func deleteProduct(productId: Int, productSecretId: Data) {
+//        guard let secret = String(data: productSecretId, encoding: .utf8) else { return }
+//
+//        guard var request = try? ProductRequest.delete(id: productId, secret: secret).createURLRequest() else { return }
+//
+//        networkPerform(for: request) { _ in }
+//    }
 }

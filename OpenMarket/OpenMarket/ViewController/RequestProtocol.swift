@@ -35,7 +35,6 @@ extension RequestProtocol {
         var components = URLComponents()
         components.scheme = scheme
         components.host = host
-
         components.path = path
 
         if queries.isNotEmpty {
@@ -51,10 +50,9 @@ extension RequestProtocol {
         }
 
         if needsIdentifier {
-            urlRequest.setValue(APIConstants.identifier, forHTTPHeaderField: "identifier")
+            urlRequest.setValue(APIConstants.identifier, forHTTPHeaderField: Request.identifier)
         }
-        
-        print(urlRequest.description)
+
         return urlRequest
     }
 }
@@ -82,19 +80,17 @@ protocol NetworkManagerProtocol {
 }
 
 enum ProductRequest: RequestProtocol {
-    case list(page: Int, itemPerPage: Int = 20)
-    case item(Int)
-    case registerItem
-    case patchItem(Int)
-    case productSecret(Int)
-    case delete(id: Int, secret: String)
+    case list(page: Int, itemPerPage: Int = 20) // 상품 리스트 조회
+    case detailItem(Int) // 상품 상세 조회
+    case registerItem // 상품 생성
+    case patchItem(Int) // 상품 수정
+    case deleteURL(Int) // 상품 삭제 url 조회
+    case delete(url: String) // 상품 삭제
 
     var headers: [String: String] {
         switch self {
         case .registerItem:
             return [Multipart.contentType: Multipart.boundaryForm + "\"\(Multipart.boundaryValue)\""]
-        case .productSecret(_):
-            return [Multipart.contentType: Multipart.jsonContentType]
         default:
             return [:]
         }
@@ -102,7 +98,7 @@ enum ProductRequest: RequestProtocol {
 
     var needsIdentifier: Bool {
         switch self {
-        case .list:
+        case .list, .detailItem(_):
             return false
         default:
             return true
@@ -111,12 +107,12 @@ enum ProductRequest: RequestProtocol {
 
     var path: String {
         switch self {
-        case .item(let id), .patchItem(let id):
+        case .detailItem(let id), .patchItem(let id):
             return "/api/products/\(id)"
-        case .productSecret(let id):
-            return "/api/products/\(id)/secret"
-        case .delete(let id, let secret):
-            return "/api/products/\(id)/\(secret)"
+        case .deleteURL(let id):
+            return "/api/products/\(id)/archived"
+        case .delete(let url):
+            return "/api/products/\(url)"
         default:
             return "/api/products"
         }
@@ -138,13 +134,13 @@ enum ProductRequest: RequestProtocol {
         switch self {
         case .list:
             return .get
-        case .item:
+        case .detailItem:
             return .get
         case .registerItem:
             return .post
         case .patchItem:
             return .patch
-        case .productSecret:
+        case .deleteURL:
             return .post
         case .delete:
             return .del

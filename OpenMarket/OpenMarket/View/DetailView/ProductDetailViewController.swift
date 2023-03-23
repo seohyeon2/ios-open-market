@@ -71,47 +71,47 @@ final class ProductDetailViewController: UIViewController {
     // MARK: Method
     
     @objc private func showActionSheet() {
-        let actionsheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        guard let items = self.productDetail else { return }
-
-        let actionModify = UIAlertAction(title: "수정", style: .default, handler: { _ in
-            self.navigationController?.pushViewController(ModificationViewController(product: items), animated: true)
-        })
-        let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
-
-            NetworkManager().postSecret(productId: items.id) { result in
-                switch result {
-                case .success(_):
-                    DispatchQueue.main.async {
-                        let alertController = UIAlertController(title: "😝", message: "상품삭제가 정상적으로 완료되었습니다!", preferredStyle: .alert)
-                        let okButton = UIAlertAction(title: "확인", style: .default) { _ in
-                            self.navigationController?.popViewController(animated: true)
-                            self.navigationController?.popViewController(animated: true)
-                        }
-                        alertController.addAction(okButton)
-                        
-                        self.present(alertController, animated: true)
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        self.showCustomAlert(title: "😭", message: error.localizedDescription)
-                    }
-                }
-            }
-        })
-
-        let actionCancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-
-        actionsheetController.addAction(actionModify)
-        actionsheetController.addAction(actionDelete)
-        actionsheetController.addAction(actionCancel)
-        
-        self.present(actionsheetController, animated: true, completion: nil)
+//        let actionsheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+//        guard let items = self.productDetail else { return }
+//
+//        let actionModify = UIAlertAction(title: "수정", style: .default, handler: { _ in
+//            self.navigationController?.pushViewController(ModificationViewController(product: items), animated: true)
+//        })
+//        let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
+//
+//            NetworkManager().postSecret(productId: items.id) { result in
+//                switch result {
+//                case .success(_):
+//                    DispatchQueue.main.async {
+//                        let alertController = UIAlertController(title: "😝", message: "상품삭제가 정상적으로 완료되었습니다!", preferredStyle: .alert)
+//                        let okButton = UIAlertAction(title: "확인", style: .default) { _ in
+//                            self.navigationController?.popViewController(animated: true)
+//                            self.navigationController?.popViewController(animated: true)
+//                        }
+//                        alertController.addAction(okButton)
+//
+//                        self.present(alertController, animated: true)
+//                    }
+//                case .failure(let error):
+//                    DispatchQueue.main.async {
+//                        self.showCustomAlert(title: "😭", message: error.localizedDescription)
+//                    }
+//                }
+//            }
+//        })
+//
+//        let actionCancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+//
+//        actionsheetController.addAction(actionModify)
+//        actionsheetController.addAction(actionDelete)
+//        actionsheetController.addAction(actionCancel)
+//
+//        self.present(actionsheetController, animated: true, completion: nil)
     }
     
     private func getProductDetail() {
         guard let productId = product?.id else { return }
-        guard let request = try? ProductRequest.item(productId).createURLRequest() else { return }
+        guard let request = try? ProductRequest.detailItem(productId).createURLRequest() else { return }
         
         NetworkManager().networkPerform(for: request) { result in
             switch result {
