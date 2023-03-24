@@ -5,19 +5,24 @@
 //  Created by unchain, hyeon2 on 2022/08/01.
 //
 
-import UIKit
+import PhotosUI
 import Combine
 
-class RegistrationViewController: UIViewController {
-    
+class RegistrationViewController: UIViewController, PHPickerViewControllerDelegate {
     // MARK: Properties
     
     private let viewModel =  RegistrationViewModel()
     private var cancellable = Set<AnyCancellable>()
 
-    private let imagePickerController = UIImagePickerController()
     private var imageCount = Registration.initialNumber
     var images = [UIImage]()
+
+    private let imagePicker : PHPickerViewController = {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 5
+        let picker = PHPickerViewController(configuration: configuration)
+        return picker
+    }()
 
     private lazy var doneButton: UIButton = {
         let button = UIButton()
@@ -143,10 +148,8 @@ class RegistrationViewController: UIViewController {
         
         imageScrollView.addSubview(imageStackView)
         imageStackView.addArrangedSubview(imageAddButton)
-        
-        imagePickerController.sourceType = .photoLibrary
-        imagePickerController.allowsEditing = true
-        imagePickerController.delegate = self
+
+        imagePicker.delegate = self
         
         textStackView.addArrangedSubview(productNameTextField)
         textStackView.addArrangedSubview(priceStackView)
@@ -168,6 +171,28 @@ class RegistrationViewController: UIViewController {
     
     @objc private func onClickDoneButton() {
         viewModel.registerProduct()
+    }
+
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        for selectedImage in results {
+            let imageView = UIImageView()
+            let itemProvider = selectedImage.itemProvider
+            itemProvider.canLoadObject(ofClass: UIImage.self)
+            itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (picture, error) in
+                guard let self = self,
+                      let addedImage = picture as? UIImage else { return }
+                self.images.append(addedImage)
+
+                DispatchQueue.main.async {
+                    
+                    imageView.image = picture as? UIImage
+                    imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+                    imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+                    self.imageStackView.insertArrangedSubview(imageView, at: 0)
+                }
+            }
+        }
+        picker.dismiss(animated: true)
     }
     
     func bindViewToViewModel() {
@@ -195,7 +220,7 @@ class RegistrationViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .assign(to: \.stock, on: viewModel)
             .store(in: &cancellable)
-        
+
         segmentedControl
             .publisher(for: \.selectedSegmentIndex)
             .receive(on: DispatchQueue.main)
@@ -254,7 +279,7 @@ class RegistrationViewController: UIViewController {
     }
 
     @objc private func addImage() {
-        present(imagePickerController, animated: true)
+        present(imagePicker, animated: true)
     }
 
     private func setConstraint() {
@@ -311,37 +336,5 @@ class RegistrationViewController: UIViewController {
         let keyboardHeight = keyboardRectangle.height
         
         descriptionTextView.contentInset.bottom = keyboardHeight
-    }
-}
-
-// MARK: Extension
-
-extension RegistrationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        
-        var selectedImage: UIImage?
-        if let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-            selectedImage = editedImage
-        } else if let originalImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            selectedImage = originalImage
-        }
-        
-        if imageCount <= Registration.maxImageCount {
-            let imageView = UIImageView()
-            imageView.image = selectedImage
-            imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-            imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-            imageStackView.insertArrangedSubview(imageView, at: Registration.firstIndex)
-            imageCount += 1
-        } else {
-            imagePickerController.dismiss(animated: true)
-            showCustomAlert(title: "⚠️", message: "이미지는 최대 5장까지 등록할 수 있습니다")
-            return
-        }
-        
-        guard let addedImage = selectedImage else { return }
-        images.append(addedImage)
-        
-        imagePickerController.dismiss(animated: true)
     }
 }
