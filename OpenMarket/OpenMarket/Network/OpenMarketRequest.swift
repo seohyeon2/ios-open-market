@@ -47,7 +47,7 @@ struct OpenMarketRequest {
 //        return request
 //    }
     
-    static func createPostBody(params: [String: Any], images: [UIImage]) -> Data? {
+    static func createPostBody(params: [String: Any], imageData: Data) -> Data? {
         var postData = Data()
         let boundary = Multipart.boundaryValue
 
@@ -58,14 +58,11 @@ struct OpenMarketRequest {
         postData.append(jsonData)
         postData.append(form: Multipart.lineFeed)
 
-        for image in images {
-            guard let imageData = OpenMarketRequest().createPostImage(image: image) else { return nil }
-            postData.append(form: "--\(boundary)" + Multipart.lineFeed)
-            postData.append(form: Multipart.imageContentDisposition + "\"\(images.description.hashValue)\"" + Multipart.lineFeed)
-            postData.append(form: Multipart.paramContentType + Multipart.lineFeed + Multipart.lineFeed)
-            postData.append(imageData)
-            postData.append(form: Multipart.lineFeed + Multipart.lineFeed)
-        }
+        postData.append(form: "--\(boundary)" + Multipart.lineFeed)
+        postData.append(form: Multipart.imageContentDisposition + "\"\(imageData.description.hashValue)\"" + Multipart.lineFeed)
+        postData.append(form: Multipart.paramContentType + Multipart.lineFeed + Multipart.lineFeed)
+        postData.append(imageData)
+        postData.append(form: Multipart.lineFeed + Multipart.lineFeed)
         
         postData.append(form: "--\(boundary)--")
 

@@ -164,7 +164,7 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
         setViewGesture()
         registerForKeyboardNotification()
         
-        bindViewToViewModel()
+        bind()
     }
     
     // MARK: Method
@@ -175,27 +175,20 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
 
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         for selectedImage in results {
-            let imageView = UIImageView()
             let itemProvider = selectedImage.itemProvider
             itemProvider.canLoadObject(ofClass: UIImage.self)
             itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (picture, error) in
                 guard let self = self,
-                      let addedImage = picture as? UIImage else { return }
-                self.images.append(addedImage)
-
-                DispatchQueue.main.async {
-                    
-                    imageView.image = picture as? UIImage
-                    imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-                    imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-                    self.imageStackView.insertArrangedSubview(imageView, at: 0)
-                }
+                      let addedImage = picture as? UIImage,
+                      let imageData = addedImage.compress() else { return }
+                
+                self.viewModel.input.getProductImageData(imageData)
             }
         }
         picker.dismiss(animated: true)
     }
     
-    func bindViewToViewModel() {
+    func bind() {
         productNameTextField.textPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.productName, on: viewModel)
@@ -226,8 +219,20 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
             .receive(on: DispatchQueue.main)
             .assign(to: \.currency, on: viewModel)
             .store(in: &cancellable)
+        
+        viewModel.output.imageDataPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] imageData in
+                guard let self = self else { return }
+                
+                let imageView = UIImageView()
+                imageView.image = UIImage(data: imageData)
+                imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+                imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+                self.imageStackView.insertArrangedSubview(imageView, at: 0)
+            }.store(in: &cancellable)
     }
-    
+
     @objc private func goBackMainViewController() {
         navigationController?.popViewController(animated: true)
     }

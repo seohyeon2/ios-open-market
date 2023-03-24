@@ -21,13 +21,6 @@ final class NetworkManager: NetworkManagerProtocol {
         self.session = session
     }
 
-    func getProductInquiry(pageNumber: Int, completion: @escaping (Result<Data, Error>) -> Void) {
-
-        guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest() else { return }
-
-        networkPerform(for: request, identifier: nil, completion: completion)
-    }
-
     func requestToServer<T: Decodable>(type: T.Type, request: URLRequest) -> AnyPublisher<T, NetworkError> {
         return URLSession.shared
           .dataTaskPublisher(for: request)
@@ -83,11 +76,11 @@ final class NetworkManager: NetworkManagerProtocol {
         dataTask.resume()
     }
 
-    func postProduct(params: [String: Any?], images: [UIImage], completion: @escaping (Result<Data, Error>) -> Void) {
+    func postProduct(params: [String: Any?], imageData: Data, completion: @escaping (Result<Data, Error>) -> Void) {
 
         guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
 
-        let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], images: images)
+        let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], imageData: imageData)
 
         request.httpBody = postData
 
@@ -102,9 +95,9 @@ final class NetworkManager: NetworkManagerProtocol {
     }
     
 //    func postSecret(productId: Int, completion: @escaping (Result<Data, Error>) -> Void) {
-//      
+//
 //        guard var request = try? ProductRequest.deleteURL(productId).createURLRequest() else { return }
-//        
+//
 //        let parameters = "{\"\(NetworkNamespace.passwordKey.name)\": \"\(NetworkNamespace.passwordValue.name)\"}"
 //        let postData = parameters.data(using: .utf8)
 //
@@ -118,7 +111,7 @@ final class NetworkManager: NetworkManagerProtocol {
 //                    return completion(.failure(error))
 //                }
 //            }
-//        
+//
 //    }
 
     func patchProduct(productId: Int, modifiedInfomation: [String: Any], completion: @escaping (Result<Data, Error>) -> Void) {
