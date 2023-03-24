@@ -12,7 +12,7 @@ class RegistrationViewModel {
     @Published var productName: String = ""
     @Published var productDescription: String = ""
     @Published var productPrice: String = ""
-    @Published var currency: String = ""
+    @Published var currency: Int = 0
     @Published var discountedPrice: String = ""
     @Published var stock: String = ""
     @Published var images: Data?
@@ -24,12 +24,16 @@ class RegistrationViewModel {
             Params.productName: productName,
             Params.productDescription: productDescription,
             Params.productPrice: Int(productPrice) ?? 0,
-            //Params.currency: choiceCurrency()?.name,
+            Params.currency: choiceCurrency()?.name,
             Params.discountedPrice: Int(discountedPrice) ?? 0,
             Params.stock: Int(stock) ?? 0,
             Params.secret: secret
         ]
         
         print(params)
+    }
+    
+    private func choiceCurrency() -> Currency? {
+        return Currency.init(rawValue: currency)
     }
 }

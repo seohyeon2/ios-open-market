@@ -196,10 +196,11 @@ class RegistrationViewController: UIViewController {
             .assign(to: \.stock, on: viewModel)
             .store(in: &cancellable)
         
-//        segmentedControl.segmentedControlPublisher
-//            .receive(on: DispatchQueue.main)
-//            .assign(to: \.currency, on: viewModel)
-//            .store(in: &bindings)
+        segmentedControl
+            .publisher(for: \.selectedSegmentIndex)
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.currency, on: viewModel)
+            .store(in: &cancellable)
     }
     
     @objc private func goBackMainViewController() {
