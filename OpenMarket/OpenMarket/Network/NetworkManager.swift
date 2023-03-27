@@ -49,6 +49,34 @@ final class NetworkManager: NetworkManagerProtocol {
           }
           .eraseToAnyPublisher()
      }
+    
+    func requestToServer2(request: URLRequest) -> AnyPublisher<Data, NetworkError> {
+        return URLSession.shared
+          .dataTaskPublisher(for: request)
+          .tryMap() { data, response in
+             guard let httpResponse = response as? HTTPURLResponse else {
+                 throw NetworkError.failToResponse
+             }
+
+             guard 200..<300 ~= httpResponse.statusCode else {
+                 throw NetworkError.outOfRange
+             }
+
+             guard !data.isEmpty else {
+                 throw NetworkError.noneData
+             }
+
+             return data
+          }
+          .mapError { error in
+             if let error = error as? NetworkError {
+                return error
+             } else {
+                 return NetworkError.noneData
+             }
+          }
+          .eraseToAnyPublisher()
+     }
 
     func getProductInquiry(pageNumber: Int) -> AnyPublisher<MarketInformation, NetworkError>? {
             guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest() else { return nil }
@@ -76,7 +104,25 @@ final class NetworkManager: NetworkManagerProtocol {
         dataTask.resume()
     }
 
-    func postProduct(params: [String: Any?], imageData: Data, completion: @escaping (Result<Data, Error>) -> Void) {
+//    func postProduct(params: [String: Any?], imageData: Data, completion: @escaping (Result<Data, Error>) -> Void) {
+//
+//        guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
+//
+//        let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], imageData: imageData)
+//
+//        request.httpBody = postData
+//
+//        networkPerform(for: request) { result in
+//            switch result {
+//            case .success(let data):
+//                return completion(.success(data))
+//            case .failure(let error):
+//                return completion(.failure(error))
+//            }
+//        }
+//    }
+    
+    func postProduct2(params: [String: Any?], imageData: Data) {
 
         guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
 
@@ -84,14 +130,18 @@ final class NetworkManager: NetworkManagerProtocol {
 
         request.httpBody = postData
 
-        networkPerform(for: request) { result in
-            switch result {
-            case .success(let data):
-                return completion(.success(data))
-            case .failure(let error):
-                return completion(.failure(error))
-            }
-        }
+        requestToServer2(request: request)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("포스트성공")
+                    return
+                case .failure(let error):
+                    print(error)
+                    return
+                }
+            } receiveValue: { _ in }
+            .store(in: &cancellable)
     }
     
 //    func postSecret(productId: Int, completion: @escaping (Result<Data, Error>) -> Void) {

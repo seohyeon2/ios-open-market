@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Foundation
 
 protocol ProductDetailViewModelInputInterface {
     func getMarketItem(_ id: Int)
@@ -45,7 +46,20 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     private func getProductDetail(id: Int) {
         guard let request = try? ProductRequest.detailItem(id).createURLRequest() else { return }
         
-        networkManager.requestToServer(type: MarketItem.self, request: request)
+//        networkManager.requestToServer(type: MarketItem.self, request: request)
+//            .sink { completion in
+//                switch completion {
+//                case .finished:
+//                    return
+//                case .failure(let error):
+//                    self.alertSubject.send(error.message)
+//                }
+//        } receiveValue: { [weak self] marketItem in
+//            self?.detailMarketItemSubject.send(marketItem)
+//        }
+//        .store(in: &cancellable)
+        
+        networkManager.requestToServer2(request: request)
             .sink { completion in
                 switch completion {
                 case .finished:
@@ -53,10 +67,15 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
                 case .failure(let error):
                     self.alertSubject.send(error.message)
                 }
-        } receiveValue: { [weak self] marketItem in
-            self?.detailMarketItemSubject.send(marketItem)
-        }
-        .store(in: &cancellable)
+            } receiveValue: { [weak self] data in
+                guard let marketItem = try? JSONDecoder().decode(MarketItem.self, from: data) else {
+                    return
+                }
+                
+                self?.detailMarketItemSubject.send(marketItem)
+                
+            }
+            .store(in: &cancellable)
     }
 }
 

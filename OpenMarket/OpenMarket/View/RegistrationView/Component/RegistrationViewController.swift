@@ -171,6 +171,13 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
     
     @objc private func onClickDoneButton() {
         viewModel.registerProduct()
+        
+        guard let imageView = imageStackView.subviews[1] as? UIImageView else {
+            print("💡")
+            return
+        }
+        
+        print(imageView.image)
     }
 
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
