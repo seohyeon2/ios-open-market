@@ -24,7 +24,8 @@ protocol RegistrationViewModelInterface {
 class RegistrationViewModel: RegistrationViewModelInterface, RegistrationViewModelOutputInterface {
     var input: RegistrationViewModelInputInterface { self }
     var output: RegistrationViewModelOutputInterface { self }
-    
+    private var imagesData = [Data]()
+
     @Published var productName: String = ""
     @Published var productDescription: String = ""
     @Published var productPrice: String = ""
@@ -50,6 +51,8 @@ class RegistrationViewModel: RegistrationViewModelInterface, RegistrationViewMod
             Params.stock: Int(stock) ?? 0,
             Params.secret: secret
         ]
+
+        networkManager.postProduct(params: params, imageData: imagesData)
     }
     
     private func choiceCurrency() -> Currency? {
@@ -60,5 +63,6 @@ class RegistrationViewModel: RegistrationViewModelInterface, RegistrationViewMod
 extension RegistrationViewModel: RegistrationViewModelInputInterface {
     func getProductImageData(_ data: Data) {
         imageDataSubject.send(data)
+        imagesData.append(data)
     }
 }

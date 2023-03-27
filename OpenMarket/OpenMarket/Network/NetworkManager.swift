@@ -103,26 +103,8 @@ final class NetworkManager: NetworkManagerProtocol {
         }
         dataTask.resume()
     }
-
-//    func postProduct(params: [String: Any?], imageData: Data, completion: @escaping (Result<Data, Error>) -> Void) {
-//
-//        guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
-//
-//        let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], imageData: imageData)
-//
-//        request.httpBody = postData
-//
-//        networkPerform(for: request) { result in
-//            switch result {
-//            case .success(let data):
-//                return completion(.success(data))
-//            case .failure(let error):
-//                return completion(.failure(error))
-//            }
-//        }
-//    }
     
-    func postProduct2(params: [String: Any?], imageData: Data) {
+    func postProduct(params: [String: Any?], imageData: [Data]) {
 
         guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
 
@@ -143,26 +125,6 @@ final class NetworkManager: NetworkManagerProtocol {
             } receiveValue: { _ in }
             .store(in: &cancellable)
     }
-    
-//    func postSecret(productId: Int, completion: @escaping (Result<Data, Error>) -> Void) {
-//
-//        guard var request = try? ProductRequest.deleteURL(productId).createURLRequest() else { return }
-//
-//        let parameters = "{\"\(NetworkNamespace.passwordKey.name)\": \"\(NetworkNamespace.passwordValue.name)\"}"
-//        let postData = parameters.data(using: .utf8)
-//
-//        request.httpBody = postData
-//        networkPerform(for: request) { result in
-//                switch result {
-//                case .success(let data):
-//                    self.deleteProduct(productId: productId, productSecretId: data)
-//                    return completion(.success(data))
-//                case .failure(let error):
-//                    return completion(.failure(error))
-//                }
-//            }
-//
-//    }
 
     func patchProduct(productId: Int, modifiedInfomation: [String: Any], completion: @escaping (Result<Data, Error>) -> Void) {
         

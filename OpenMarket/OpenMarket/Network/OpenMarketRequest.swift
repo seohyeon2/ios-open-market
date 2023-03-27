@@ -36,18 +36,8 @@ struct OpenMarketRequest {
         url.appendPathComponent(productId)
         return URLRequest(url: url)
     }
-    
-//    static func createPostRequest(identifier: String) -> URLRequest? {
-//        guard let url = URL(string: NetworkNamespace.url.name) else { return nil }
-//        var request = URLRequest(url: url)
-//        request.httpMethod = NetworkNamespace.post.name
-//
-//        request.addValue(Multipart.boundaryForm + "\"\(Multipart.boundaryValue)\"", forHTTPHeaderField: Multipart.contentType)
-//        request.addValue(identifier, forHTTPHeaderField: Request.identifier)
-//        return request
-//    }
-    
-    static func createPostBody(params: [String: Any], imageData: Data) -> Data? {
+
+    static func createPostBody(params: [String: Any], imageData: [Data]) -> Data? {
         var postData = Data()
         let boundary = Multipart.boundaryValue
 
@@ -58,12 +48,13 @@ struct OpenMarketRequest {
         postData.append(jsonData)
         postData.append(form: Multipart.lineFeed)
 
-        postData.append(form: "--\(boundary)" + Multipart.lineFeed)
-        postData.append(form: Multipart.imageContentDisposition + "\"\(imageData.description.hashValue)\"" + Multipart.lineFeed)
-        postData.append(form: Multipart.paramContentType + Multipart.lineFeed + Multipart.lineFeed)
-        postData.append(imageData)
-        postData.append(form: Multipart.lineFeed + Multipart.lineFeed)
-        
+        imageData.forEach { image in
+            postData.append(form: "--\(boundary)" + Multipart.lineFeed)
+            postData.append(form: Multipart.imageContentDisposition + "\"\(image.description.hashValue)\"" + Multipart.lineFeed)
+            postData.append(form: Multipart.paramContentType + Multipart.lineFeed + Multipart.lineFeed)
+            postData.append(image)
+            postData.append(form: Multipart.lineFeed + Multipart.lineFeed)
+        }
         postData.append(form: "--\(boundary)--")
 
         return postData
