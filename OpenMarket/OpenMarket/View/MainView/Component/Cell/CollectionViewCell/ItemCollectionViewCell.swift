@@ -9,6 +9,7 @@ import UIKit
 import Combine
 
 class ItemCollectionViewCell: UICollectionViewListCell {
+    var cancellable = Set<AnyCancellable>()
 
     // MARK: Properties
 
@@ -71,9 +72,9 @@ class ItemCollectionViewCell: UICollectionViewListCell {
 
     func configureCell(product: PageInformation) {
         guard let url = URL(string: product.thumbnail) else { return }
-        var cancellable = Set<AnyCancellable>()
 
-        NetworkManager().requestToServer2(request: URLRequest(url: url))
+        ImageCache.shared.load(url: url)
+            .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
                 case .finished:
@@ -81,9 +82,8 @@ class ItemCollectionViewCell: UICollectionViewListCell {
                 case .failure:
                     return
                 }
-            } receiveValue: { imageData in
-                guard let ThumbnailImage = UIImage(data: imageData) else { return }
-                self.productThumbnailImageView.image = ThumbnailImage
+            } receiveValue: { thumbnailImage in
+                self.productThumbnailImageView.image = thumbnailImage
             }.store(in: &cancellable)
 
         self.productNameLabel.text = product.name
