@@ -165,31 +165,13 @@ final class MainViewController: UIViewController {
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewNamespace.list.name, for: indexPath) as? ListCollectionViewCell else {
                     return ListCollectionViewCell()
                 }
-                cell.configureCell(product: product) { result in
-                    switch result {
-                    case .success(_):
-                        return
-                    case .failure(let error):
-                        DispatchQueue.main.async {
-                            self.showCustomAlert(title: nil, message: error.localizedDescription)
-                        }
-                    }
-                }
+                cell.configureCell(product: product)
                 return cell
             default:
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewNamespace.grid.name, for: indexPath) as? GridCollectionViewCell else {
                     return GridCollectionViewCell()
                 }
-                cell.configureCell(product: product) { result in
-                    switch result {
-                    case .success(_):
-                        return
-                    case .failure(let error):
-                        DispatchQueue.main.async {
-                            self.showCustomAlert(title: nil, message: error.localizedDescription)
-                        }
-                    }
-                }
+                cell.configureCell(product: product)
                 return cell
             }
         }
@@ -252,8 +234,8 @@ extension MainViewController: UICollectionViewDataSourcePrefetching {
             self.loadingView.startAnimating()
             
             productPageNumber += 1
-            viewModel.input.getInformation(pageNumber: currentPage)
         }
+        viewModel.input.getInformation(pageNumber: productPageNumber)
     }
 }
 
@@ -262,12 +244,6 @@ extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let id = snapshot.itemIdentifiers[indexPath.row].id
-        //let viewController = ProductDetailViewController(product: product)
         viewModel.input.pushToDetailView(indexPath: indexPath, id: id)
-
-        
-//        navigationController?.pushViewController(viewController, animated: true)
-//        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-
     }
 }

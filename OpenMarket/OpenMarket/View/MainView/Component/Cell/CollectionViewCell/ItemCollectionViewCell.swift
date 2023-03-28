@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 class ItemCollectionViewCell: UICollectionViewListCell {
 
@@ -58,35 +59,36 @@ class ItemCollectionViewCell: UICollectionViewListCell {
         }
     }
 
-    func showSoldOut(productStockQuntity: UILabel, product: PageInformation) {
+    func showSoldOut(productStockQuantity: UILabel, product: PageInformation) {
         if product.stock == Metric.stock {
-            productStockQuntity.text = CollectionViewNamespace.soldout.name
-            productStockQuntity.textColor = .systemOrange
+            productStockQuantity.text = CollectionViewNamespace.soldout.name
+            productStockQuantity.textColor = .systemOrange
         } else {
-            productStockQuntity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
-            productStockQuntity.textColor = .systemGray
+            productStockQuantity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
+            productStockQuantity.textColor = .systemGray
         }
     }
 
-    func configureCell(product: PageInformation, completion: @escaping (Result<Data, Error>) -> Void) {
+    func configureCell(product: PageInformation) {
         guard let url = URL(string: product.thumbnail) else { return }
+        var cancellable = Set<AnyCancellable>()
 
-        NetworkManager().networkPerform(for: URLRequest(url: url)) { [weak self] result in
-            switch result {
-            case .success(let data):
-                guard let images = UIImage(data: data) else { return }
-
-                DispatchQueue.main.async {
-                    self?.productThumbnailImageView.image = images
+        NetworkManager().requestToServer2(request: URLRequest(url: url))
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    return
+                case .failure:
+                    return
                 }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+            } receiveValue: { imageData in
+                guard let ThumbnailImage = UIImage(data: imageData) else { return }
+                self.productThumbnailImageView.image = ThumbnailImage
+            }.store(in: &cancellable)
 
         self.productNameLabel.text = product.name
 
         showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
-        showSoldOut(productStockQuntity: self.productStockQuantityLabel, product: product)
+        showSoldOut(productStockQuantity: self.productStockQuantityLabel, product: product)
     }
 }

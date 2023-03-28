@@ -56,11 +56,13 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
     private func getProductList(pageNumber: Int) {
 
         networkManager.getProductInquiry(pageNumber: pageNumber)?
+            .decode(type: MarketInformation.self, decoder: JSONDecoder())
             .sink { completion in
                 switch completion {
                 case .finished:
-                    print("성공")
+                    return
                 case .failure(let error):
+                    guard let error = error as? NetworkError else { return }
                     self.alertSubject.send(error.message)
                 }
             } receiveValue: { [weak self] productList in

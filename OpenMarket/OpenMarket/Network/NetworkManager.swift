@@ -20,35 +20,6 @@ final class NetworkManager: NetworkManagerProtocol {
     init(session: URLSessionProtocol) {
         self.session = session
     }
-
-    func requestToServer<T: Decodable>(type: T.Type, request: URLRequest) -> AnyPublisher<T, NetworkError> {
-        return URLSession.shared
-          .dataTaskPublisher(for: request)
-          .tryMap() { data, response in
-             guard let httpResponse = response as? HTTPURLResponse else {
-                 throw NetworkError.failToResponse
-             }
-
-             guard 200..<300 ~= httpResponse.statusCode else {
-                 throw NetworkError.outOfRange
-             }
-
-             guard !data.isEmpty else {
-                 throw NetworkError.noneData
-             }
-
-             return data
-          }
-          .decode(type: type, decoder: JSONDecoder())
-          .mapError { error in
-             if let error = error as? NetworkError {
-                return error
-             } else {
-                 return NetworkError.noneData
-             }
-          }
-          .eraseToAnyPublisher()
-     }
     
     func requestToServer2(request: URLRequest) -> AnyPublisher<Data, NetworkError> {
         return URLSession.shared
@@ -78,10 +49,10 @@ final class NetworkManager: NetworkManagerProtocol {
           .eraseToAnyPublisher()
      }
 
-    func getProductInquiry(pageNumber: Int) -> AnyPublisher<MarketInformation, NetworkError>? {
+    func getProductInquiry(pageNumber: Int) -> AnyPublisher<Data, NetworkError>? {
             guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest() else { return nil }
 
-            return requestToServer(type: MarketInformation.self, request: request)
+            return requestToServer2(request: request)
         }
     
     func networkPerform(for request: URLRequest, identifier: String? = nil, completion: @escaping (Result<Data, Error>) -> Void) {
