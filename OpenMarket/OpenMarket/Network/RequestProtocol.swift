@@ -98,7 +98,7 @@ enum ProductRequest: RequestProtocol {
 
     var needsIdentifier: Bool {
         switch self {
-        case .list, .detailItem(_):
+        case .list, .detailItem, .patchItem:
             return false
         default:
             return true

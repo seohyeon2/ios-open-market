@@ -97,24 +97,27 @@ final class NetworkManager: NetworkManagerProtocol {
             .store(in: &cancellable)
     }
 
-    func patchProduct(productId: Int, modifiedInfomation: [String: Any], completion: @escaping (Result<Data, Error>) -> Void) {
+    func patchProduct(productId: Int, modifiedInformation: [String: Any?]) {
         
         guard var request = try? ProductRequest.patchItem(productId).createURLRequest() else { return }
         
-        var params = modifiedInfomation
-        params[NetworkNamespace.passwordKey.name] = NetworkNamespace.passwordValue.name
-
-        guard let jsonData = OpenMarketRequest.createJson(params: params) else { return }
-        request.httpBody = jsonData
+        let postData = OpenMarketRequest.createPostBody(params: modifiedInformation as [String: Any], imageData: nil)
         
-        networkPerform(for: request) { result in
-            switch result {
-            case .success(let data):
-                return completion(.success(data))
-            case .failure(let error):
-                return completion(.failure(error))
-            }
-        }
+        request.httpBody = postData
+        
+        requestToServer2(request: request)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("수정성공")
+                    return
+                case .failure(let error):
+                    print(error)
+                    return
+                }
+            } receiveValue: { _ in }
+            .store(in: &cancellable)
+
     }
     
 //    func deleteProduct(productId: Int, productSecretId: Data) {

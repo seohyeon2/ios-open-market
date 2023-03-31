@@ -37,7 +37,7 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
         let button = UIButton()
         button.setTitle(Registration.cancel, for: .normal)
         button.setTitleColor(UIColor.systemBlue, for: .normal)
-        button.addTarget(self, action: #selector(goBackMainViewController), for: .touchUpInside)
+        button.addTarget(self, action: #selector(goBackDetailViewController), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -233,7 +233,7 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
             }.store(in: &cancellable)
     }
 
-    @objc private func goBackMainViewController() {
+    @objc private func goBackDetailViewController() {
         navigationController?.popViewController(animated: true)
     }
 
