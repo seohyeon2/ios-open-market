@@ -1,29 +1,30 @@
 //
-//  RegistrationViewModel.swift
+//  RegistrationEditViewModel.swift
 //  OpenMarket
 //
-//  Created by seohyeon park on 2023/03/23.
+//  Created by seohyeon park on 2023/03/31.
 //
 
 import Foundation
 import Combine
 
-protocol RegistrationViewModelInputInterface {
+protocol RegistrationEditViewModelInputInterface {
     func getProductImageData(_ data: Data)
 }
 
-protocol RegistrationViewModelOutputInterface {
+protocol RegistrationEditViewModelOutputInterface {
     var imageDataPublisher: AnyPublisher<Data, Never> { get }
 }
 
-protocol RegistrationViewModelInterface {
-    var input: RegistrationViewModelInputInterface { get }
-    var output: RegistrationViewModelOutputInterface { get }
+protocol RegistrationEditViewModelInterface {
+    var input: RegistrationEditViewModelInputInterface { get }
+    var output: RegistrationEditViewModelOutputInterface { get }
 }
 
-class RegistrationViewModel: RegistrationViewModelInterface, RegistrationViewModelOutputInterface {
-    var input: RegistrationViewModelInputInterface { self }
-    var output: RegistrationViewModelOutputInterface { self }
+class RegistrationEditViewModel: RegistrationEditViewModelInterface,
+                                 RegistrationEditViewModelOutputInterface {
+    var input: RegistrationEditViewModelInputInterface { self }
+    var output: RegistrationEditViewModelOutputInterface { self }
     private var imagesData = [Data]()
 
     @Published var productName: String = ""
@@ -60,7 +61,7 @@ class RegistrationViewModel: RegistrationViewModelInterface, RegistrationViewMod
     }
 }
 
-extension RegistrationViewModel: RegistrationViewModelInputInterface {
+extension RegistrationEditViewModel: RegistrationEditViewModelInputInterface {
     func getProductImageData(_ data: Data) {
         imageDataSubject.send(data)
         imagesData.append(data)

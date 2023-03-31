@@ -11,7 +11,7 @@ import Combine
 class RegistrationViewController: UIViewController, PHPickerViewControllerDelegate {
     // MARK: Properties
     
-    private let viewModel =  RegistrationViewModel()
+    private let viewModel =  RegistrationEditViewModel()
     private var cancellable = Set<AnyCancellable>()
 
     private var imageCount = Registration.initialNumber
