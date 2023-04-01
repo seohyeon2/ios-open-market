@@ -91,6 +91,8 @@ enum ProductRequest: RequestProtocol {
         switch self {
         case .registerItem:
             return [Multipart.contentType: Multipart.boundaryForm + "\"\(Multipart.boundaryValue)\""]
+        case .patchItem:
+            return [Multipart.contentType: Multipart.jsonContentType]
         default:
             return [:]
         }
@@ -98,7 +100,7 @@ enum ProductRequest: RequestProtocol {
 
     var needsIdentifier: Bool {
         switch self {
-        case .list, .detailItem, .patchItem:
+        case .list, .detailItem:
             return false
         default:
             return true

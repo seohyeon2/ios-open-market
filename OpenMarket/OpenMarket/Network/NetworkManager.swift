@@ -100,8 +100,7 @@ final class NetworkManager: NetworkManagerProtocol {
     func patchProduct(productId: Int, modifiedInformation: [String: Any?]) {
         
         guard var request = try? ProductRequest.patchItem(productId).createURLRequest() else { return }
-        
-        let postData = OpenMarketRequest.createPostBody(params: modifiedInformation as [String: Any], imageData: nil)
+        guard let postData = OpenMarketRequest.createJson(params: modifiedInformation as [String : Any]) else { return }
         
         request.httpBody = postData
         
@@ -117,7 +116,6 @@ final class NetworkManager: NetworkManagerProtocol {
                 }
             } receiveValue: { _ in }
             .store(in: &cancellable)
-
     }
     
 //    func deleteProduct(productId: Int, productSecretId: Data) {
