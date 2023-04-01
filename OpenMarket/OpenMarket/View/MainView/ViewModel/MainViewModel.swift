@@ -66,7 +66,7 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
                     self.alertSubject.send(error.message)
                 }
             } receiveValue: { [weak self] productList in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.isLoadingSubject.send(true)
                 self.marketInformationSubject.send(productList)
                 self.isLoadingSubject.send(false)

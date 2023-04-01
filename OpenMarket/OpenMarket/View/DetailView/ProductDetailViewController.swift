@@ -71,11 +71,10 @@ final class ProductDetailViewController: UIViewController {
 
     private func bind() {
         viewModel.output.detailMarketItemPublisher
+            .receive(on: DispatchQueue.main)
             .sink (receiveValue: {  [weak self] marketItem in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
+                guard let self else { return }
                     self.navigationItem.title = marketItem.name
-                }
                 
                 self.snapshot.appendItems([marketItem])
                 self.dataSource?.apply(self.snapshot)
@@ -83,10 +82,9 @@ final class ProductDetailViewController: UIViewController {
             .store(in: &cancellable)
         
         viewModel.output.alertPublisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] error in
-                guard let self = self else { return }
-                self.showCustomAlert(title: nil, message: error)
+                self?.showCustomAlert(title: nil, message: error)
             }.store(in: &cancellable)
     }
     

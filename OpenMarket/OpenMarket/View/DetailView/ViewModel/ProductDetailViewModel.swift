@@ -14,7 +14,6 @@ protocol ProductDetailViewModelInputInterface {
 }
 
 protocol ProductDetailViewModelOutputInterface {
-    var detailMarketItem: Just<MarketItem>? { get }
     var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
 }
@@ -25,8 +24,7 @@ protocol ProductDetailViewModelInterface {
 }
 
 final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDetailViewModelOutputInterface {
-    var detailMarketItem: Just<MarketItem>?
-    
+
     var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> {
         return detailMarketItemSubject.eraseToAnyPublisher()
     }
@@ -41,24 +39,12 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     private let networkManager = NetworkManager()
     private let alertSubject = PassthroughSubject<String, Never>()
     private let detailMarketItemSubject = PassthroughSubject<MarketItem, Never>()
+    private var marketItem : MarketItem?
     private var cancellable = Set<AnyCancellable>()
     
     private func getProductDetail(id: Int) {
         guard let request = try? ProductRequest.detailItem(id).createURLRequest() else { return }
-        
-//        networkManager.requestToServer(type: MarketItem.self, request: request)
-//            .sink { completion in
-//                switch completion {
-//                case .finished:
-//                    return
-//                case .failure(let error):
-//                    self.alertSubject.send(error.message)
-//                }
-//        } receiveValue: { [weak self] marketItem in
-//            self?.detailMarketItemSubject.send(marketItem)
-//        }
-//        .store(in: &cancellable)
-        
+
         networkManager.requestToServer2(request: request)
             .sink { completion in
                 switch completion {
@@ -68,12 +54,12 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
                     self.alertSubject.send(error.message)
                 }
             } receiveValue: { [weak self] data in
-                guard let marketItem = try? JSONDecoder().decode(MarketItem.self, from: data) else {
+                guard let self,
+                      let marketItem = try? JSONDecoder().decode(MarketItem.self, from: data) else {
                     return
                 }
-                
-                self?.detailMarketItemSubject.send(marketItem)
-                
+                self.detailMarketItemSubject.send(marketItem)
+                self.marketItem = marketItem
             }
             .store(in: &cancellable)
     }
@@ -85,6 +71,6 @@ extension ProductDetailViewModel: ProductDetailViewModelInputInterface {
     }
     
     func pushToModificationView() {
-        
+
     }
 }

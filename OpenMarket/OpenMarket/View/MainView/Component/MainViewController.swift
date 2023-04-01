@@ -122,7 +122,7 @@ final class MainViewController: UIViewController {
     private func bind() {
         viewModel.output.marketInformationPublisher
             .sink { [weak self] productList in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.snapshot.appendItems(productList.pages)
                 self.dataSource?.apply(self.snapshot, animatingDifferences: true)
             }.store(in: &cancellable)
@@ -130,7 +130,7 @@ final class MainViewController: UIViewController {
         viewModel.output.isLoadingPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] isLoading in
-                guard let self = self else { return }
+                guard let self else { return }
                 if isLoading {
                     self.loadingView.startAnimating()
                 } else {
@@ -142,13 +142,13 @@ final class MainViewController: UIViewController {
         viewModel.output.alertPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] error in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.showCustomAlert(title: nil, message: error)
             }.store(in: &cancellable)
 
         viewModel.output.marketItemIdPublisher
             .sink { [weak self] itemId in
-                guard let self = self else { return }
+                guard let self else { return }
                 let viewController = ProductDetailViewController(id: itemId)
                 self.navigationController?.pushViewController(viewController, animated: true)
                 self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
