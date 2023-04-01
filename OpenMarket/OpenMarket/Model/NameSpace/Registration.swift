@@ -15,6 +15,7 @@ enum Registration {
     static let discountedPrice = "할인금액"
     static let stock = "재고수량"
     static let registrationProduct = "상품등록"
+    static let editProduct = "상품수정"
     static let textClear = ""
     static let initialNumber = 0
     static let scrollViewInset: CGFloat = 15

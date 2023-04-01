@@ -25,7 +25,13 @@ class RegistrationEditViewModel: RegistrationEditViewModelInterface,
                                  RegistrationEditViewModelOutputInterface {
     var input: RegistrationEditViewModelInputInterface { self }
     var output: RegistrationEditViewModelOutputInterface { self }
+    var marketItem: MarketItem?
     private var imagesData = [Data]()
+
+
+    init(marketItem: MarketItem?) {
+        self.marketItem = marketItem
+    }
 
     @Published var productName: String = ""
     @Published var productDescription: String = ""
@@ -53,7 +59,8 @@ class RegistrationEditViewModel: RegistrationEditViewModelInterface,
             Params.secret: secret
         ]
 
-        networkManager.postProduct(params: params, imageData: imagesData)
+        networkManager.postProduct(params: params,
+                                   imageData: imagesData)
     }
     
     private func choiceCurrency() -> Currency? {

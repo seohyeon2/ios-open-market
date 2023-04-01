@@ -90,9 +90,12 @@ final class ProductDetailViewController: UIViewController {
     
     @objc private func showActionSheet() {
         let actionSheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let actionModify = UIAlertAction(title: "수정", style: .default, handler: { _ in
 
+        let actionModify = UIAlertAction(title: "수정", style: .default, handler: { [weak self] _ in
+            let editViewController = RegistrationEditViewController(viewModel: RegistrationEditViewModel(marketItem: self?.viewModel.marketItem))
+            self?.navigationController?.pushViewController(editViewController, animated: true)
         })
+
         let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
 
 //            NetworkManager().postSecret(productId: items.id) { result in

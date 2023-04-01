@@ -1,5 +1,5 @@
 //
-//  RegistrationViewController.swift
+//  RegistrationEditViewController.swift
 //  OpenMarket
 //
 //  Created by unchain, hyeon2 on 2022/08/01.
@@ -8,10 +8,10 @@
 import PhotosUI
 import Combine
 
-class RegistrationViewController: UIViewController, PHPickerViewControllerDelegate {
+class RegistrationEditViewController: UIViewController, PHPickerViewControllerDelegate {
     // MARK: Properties
     
-    private let viewModel =  RegistrationEditViewModel()
+    private var viewModel: RegistrationEditViewModel = RegistrationEditViewModel(marketItem: nil)
     private var cancellable = Set<AnyCancellable>()
 
     private var imageCount = Registration.initialNumber
@@ -132,8 +132,41 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
+
+    init(viewModel: RegistrationEditViewModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+
+        guard let item = viewModel.marketItem else {
+            self.title = Registration.registrationProduct
+            return
+        }
+        configure(choose: item)
+        self.title = Registration.editProduct
+    }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: View Life Cycle
+
+    private func configure(choose item: MarketItem) {
+        productNameTextField.text = item.name
+        productPriceTextField.text = String(item.price)
+        discountedPriceTextField.text = String(item.discountedPrice)
+        stockTextField.text = String(item.stock)
+        descriptionTextView.text = item.description
+        segmentedControl.selectedSegmentIndex = item.currency.hashValue
+
+        item.images.forEach { image in
+            let imageView = UIImageView()
+//            imageView.image =
+            imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+            imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+            self.imageStackView.insertArrangedSubview(imageView, at: 0)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -141,8 +174,7 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: doneButton)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
-        self.title = Registration.registrationProduct
-        
+
         view.addSubview(imageScrollView)
         view.addSubview(textStackView)
         
@@ -236,33 +268,6 @@ class RegistrationViewController: UIViewController, PHPickerViewControllerDelega
     @objc private func goBackDetailViewController() {
         navigationController?.popViewController(animated: true)
     }
-
-//    @objc private func registerProduct() {
-//
-//        let params: [String: Any?] = [
-//            Params.productName: productNameTextField.text,
-//            Params.productDescription: descriptionTextView.text,
-//            Params.productPrice: Int(productPriceTextField.text ?? "0") ?? 0,
-//            Params.currency: choiceCurrency()?.name,
-//            Params.discountedPrice: Int(discountedPriceTextField.text ?? "0") ?? 0,
-//            Params.stock: Int(stockTextField.text ?? "0") ?? 0,
-//            Params.secret: "lk1erfg241t8ygh0"
-//        ]
-//
-//        NetworkManager().postProduct(params: params, images: images) { result in
-//            switch result {
-//            case .success(_):
-//                DispatchQueue.main.async {
-//                    self.showCustomAlert(title: "🥳", message: "상품등록이 정상적으로 완료되었습니다!")
-//                }
-//            case .failure(let error):
-//                DispatchQueue.main.async {
-//                    self.showCustomAlert(title: "🤔", message: error.localizedDescription)
-//                }
-//            }
-//        }
-//        resetRegistrationPage()
-//    }
 
     private func resetRegistrationPage() {
         images = []

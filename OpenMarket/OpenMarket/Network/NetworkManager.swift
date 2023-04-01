@@ -21,7 +21,7 @@ final class NetworkManager: NetworkManagerProtocol {
         self.session = session
     }
     
-    func requestToServer2(request: URLRequest) -> AnyPublisher<Data, NetworkError> {
+    func requestToServer(request: URLRequest) -> AnyPublisher<Data, NetworkError> {
         return URLSession.shared
           .dataTaskPublisher(for: request)
           .tryMap() { data, response in
@@ -52,7 +52,7 @@ final class NetworkManager: NetworkManagerProtocol {
     func getProductInquiry(pageNumber: Int) -> AnyPublisher<Data, NetworkError>? {
             guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest() else { return nil }
 
-            return requestToServer2(request: request)
+            return requestToServer(request: request)
         }
     
     func networkPerform(for request: URLRequest, identifier: String? = nil, completion: @escaping (Result<Data, Error>) -> Void) {
@@ -83,7 +83,7 @@ final class NetworkManager: NetworkManagerProtocol {
 
         request.httpBody = postData
 
-        requestToServer2(request: request)
+        requestToServer(request: request)
             .sink { completion in
                 switch completion {
                 case .finished:
@@ -105,7 +105,7 @@ final class NetworkManager: NetworkManagerProtocol {
         
         request.httpBody = postData
         
-        requestToServer2(request: request)
+        requestToServer(request: request)
             .sink { completion in
                 switch completion {
                 case .finished:

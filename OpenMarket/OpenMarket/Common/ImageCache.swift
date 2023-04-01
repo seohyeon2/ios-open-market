@@ -31,7 +31,7 @@ class ImageCache {
             }
         } else {
             return Future { promise in
-                NetworkManager().requestToServer2(request: URLRequest(url: url))
+                NetworkManager().requestToServer(request: URLRequest(url: url))
                     .sink(receiveCompletion: { completion in
                         switch completion {
                         case .finished:

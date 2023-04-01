@@ -94,7 +94,7 @@ final class MainViewController: UIViewController {
     // MARK: Method
     
     @objc private func moveProductRegistrationPage() {
-        let registrationViewController = RegistrationViewController()
+        let registrationViewController = RegistrationEditViewController(viewModel: RegistrationEditViewModel(marketItem: nil))
         navigationController?.pushViewController(registrationViewController, animated: true)
     }
     

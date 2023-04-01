@@ -10,7 +10,6 @@ import Foundation
 
 protocol ProductDetailViewModelInputInterface {
     func getMarketItem(_ id: Int)
-    func pushToModificationView()
 }
 
 protocol ProductDetailViewModelOutputInterface {
@@ -39,13 +38,13 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     private let networkManager = NetworkManager()
     private let alertSubject = PassthroughSubject<String, Never>()
     private let detailMarketItemSubject = PassthroughSubject<MarketItem, Never>()
-    private var marketItem : MarketItem?
     private var cancellable = Set<AnyCancellable>()
-    
+    var marketItem : MarketItem?
+
     private func getProductDetail(id: Int) {
         guard let request = try? ProductRequest.detailItem(id).createURLRequest() else { return }
 
-        networkManager.requestToServer2(request: request)
+        networkManager.requestToServer(request: request)
             .sink { completion in
                 switch completion {
                 case .finished:
@@ -68,9 +67,5 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
 extension ProductDetailViewModel: ProductDetailViewModelInputInterface {
     func getMarketItem(_ id: Int) {
         getProductDetail(id: id)
-    }
-    
-    func pushToModificationView() {
-
     }
 }
