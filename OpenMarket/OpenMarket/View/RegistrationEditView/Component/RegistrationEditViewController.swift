@@ -8,7 +8,7 @@
 import PhotosUI
 import Combine
 
-class RegistrationEditViewController: UIViewController, PHPickerViewControllerDelegate {
+final class RegistrationEditViewController: UIViewController, PHPickerViewControllerDelegate {
     // MARK: Properties
     
     private var viewModel: RegistrationEditViewModel = RegistrationEditViewModel(marketItem: nil)
@@ -151,23 +151,6 @@ class RegistrationEditViewController: UIViewController, PHPickerViewControllerDe
 
     // MARK: View Life Cycle
 
-    private func configure(choose item: MarketItem) {
-        productNameTextField.text = item.name
-        productPriceTextField.text = String(item.price)
-        discountedPriceTextField.text = String(item.discountedPrice)
-        stockTextField.text = String(item.stock)
-        descriptionTextView.text = item.description
-        segmentedControl.selectedSegmentIndex = item.currency.hashValue
-
-        item.images.forEach { image in
-            let imageView = UIImageView()
-//            imageView.image =
-            imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-            imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-            self.imageStackView.insertArrangedSubview(imageView, at: 0)
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -200,10 +183,6 @@ class RegistrationEditViewController: UIViewController, PHPickerViewControllerDe
     }
     
     // MARK: Method
-    
-    @objc private func onClickDoneButton() {
-        viewModel.registerProduct()
-    }
 
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         for selectedImage in results {
@@ -220,7 +199,7 @@ class RegistrationEditViewController: UIViewController, PHPickerViewControllerDe
         picker.dismiss(animated: true)
     }
     
-    func bind() {
+    private func bind() {
         productNameTextField.textPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.productName, on: viewModel)
@@ -265,8 +244,35 @@ class RegistrationEditViewController: UIViewController, PHPickerViewControllerDe
             }.store(in: &cancellable)
     }
 
-    @objc private func goBackDetailViewController() {
-        navigationController?.popViewController(animated: true)
+    private func configure(choose item: MarketItem) {
+        productNameTextField.text = item.name
+        productPriceTextField.text = String(item.price)
+        discountedPriceTextField.text = String(item.discountedPrice)
+        stockTextField.text = String(item.stock)
+        descriptionTextView.text = item.description
+        segmentedControl.selectedSegmentIndex = item.currency.hashValue
+
+        item.images.forEach { image in
+            guard let url = URL(string: image.url) else { return }
+            NetworkManager().requestToServer(request: URLRequest(url: url, httpMethod: .get))
+                .receive(on: DispatchQueue.main)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        print("성공")
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
+                } receiveValue: { image in
+                    let imageView = UIImageView()
+                    let editImage = UIImage(data: image)
+                    imageView.image = editImage
+                    imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+                    imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
+                    self.imageStackView.insertArrangedSubview(imageView, at: 0)
+                }
+                .store(in: &cancellable)
+        }
     }
 
     private func resetRegistrationPage() {
@@ -284,12 +290,8 @@ class RegistrationEditViewController: UIViewController, PHPickerViewControllerDe
         segmentedControl.selectedSegmentIndex = Registration.initialNumber
     }
 
-    func choiceCurrency() -> Currency? {
+    private func choiceCurrency() -> Currency? {
         return Currency.init(rawValue: segmentedControl.selectedSegmentIndex)
-    }
-
-    @objc private func addImage() {
-        present(imagePicker, animated: true)
     }
 
     private func setConstraint() {
@@ -324,16 +326,23 @@ class RegistrationEditViewController: UIViewController, PHPickerViewControllerDe
         view.addGestureRecognizer(tapGesture)
     }
 
-    @objc private func keyboardDownAction(_ sender: UISwipeGestureRecognizer) {
-        self.view.endEditing(true)
-        descriptionTextView.contentInset.bottom = Registration.descriptionTextViewInset
-    }
-
     private func registerForKeyboardNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
     }
 
-    @objc private func keyBoardShow(notification: NSNotification) {
+    @objc
+    private func addImage() {
+        present(imagePicker, animated: true)
+    }
+
+    @objc
+    private func keyboardDownAction(_ sender: UISwipeGestureRecognizer) {
+        self.view.endEditing(true)
+        descriptionTextView.contentInset.bottom = Registration.descriptionTextViewInset
+    }
+
+    @objc
+    private func keyBoardShow(notification: NSNotification) {
         guard let userInfo: NSDictionary = notification.userInfo as? NSDictionary else {
             return
         }
@@ -346,5 +355,15 @@ class RegistrationEditViewController: UIViewController, PHPickerViewControllerDe
         let keyboardHeight = keyboardRectangle.height
         
         descriptionTextView.contentInset.bottom = keyboardHeight
+    }
+
+    @objc
+    private func onClickDoneButton() {
+        viewModel.registerProduct()
+    }
+
+    @objc
+    private func goBackDetailViewController() {
+        navigationController?.popViewController(animated: true)
     }
 }

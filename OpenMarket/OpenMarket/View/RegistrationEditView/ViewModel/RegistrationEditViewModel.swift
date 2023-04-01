@@ -21,7 +21,7 @@ protocol RegistrationEditViewModelInterface {
     var output: RegistrationEditViewModelOutputInterface { get }
 }
 
-class RegistrationEditViewModel: RegistrationEditViewModelInterface,
+final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
                                  RegistrationEditViewModelOutputInterface {
     var input: RegistrationEditViewModelInputInterface { self }
     var output: RegistrationEditViewModelOutputInterface { self }

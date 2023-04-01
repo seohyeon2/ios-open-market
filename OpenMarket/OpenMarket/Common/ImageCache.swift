@@ -9,7 +9,7 @@ import Foundation
 import UIKit.UIImage
 import Combine
 
-class ImageCache {
+final class ImageCache {
     static let shared = ImageCache()
     private init() {}
     

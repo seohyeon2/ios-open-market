@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDelegate {
+final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDelegate {
 
     // MARK: Properties
     var productImages = [UIImage]()
