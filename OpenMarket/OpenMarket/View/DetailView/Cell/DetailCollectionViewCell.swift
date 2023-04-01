@@ -10,21 +10,12 @@ import UIKit
 final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDelegate {
 
     // MARK: Properties
-    var productImages = [UIImage]()
-
     var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.backgroundColor = .yellow
         pageControl.currentPage = 0
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
-    }()
-    
-    let productThumbnailImageView: UIImageView = {
-        let image = UIImageView()
-        image.contentMode = .scaleAspectFit
-        image.translatesAutoresizingMaskIntoConstraints = false
-        return image
     }()
 
     let productNameLabel: UILabel = {
@@ -57,8 +48,9 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
         let scrollView = UIScrollView()
         scrollView.frame = UIScreen.main.bounds
         scrollView.backgroundColor = .orange
-        scrollView.contentSize = CGSize(width: 500, height: 500)
-        scrollView.showsHorizontalScrollIndicator = true
+        scrollView.isPagingEnabled = true
+        scrollView.alwaysBounceHorizontal = false
+        scrollView.showsHorizontalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
@@ -146,9 +138,6 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
 
         descriptionScrollView.addSubview(descriptionLabel)
 
-        imageScrollView.addSubview(productThumbnailImageView)
-        imageScrollView.addSubview(pageControl)
-
         labelStackView.addArrangedSubview(productNameLabel)
         labelStackView.addArrangedSubview(stockPriceStackView)
 
@@ -157,34 +146,28 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
         stockPriceStackView.addArrangedSubview(bargainPriceLabel)
     }
 
-   func configureCell(product: MarketItem, completion: @escaping (Result<Data, Error>) -> Void) {
-        (0..<(product.images.count)).forEach { index in
-            let image = product.images[index]
-            guard let url = URL(string: image.url) else { return }
-
-            NetworkManager().networkPerform(for: URLRequest(url: url)) { result in
-                switch result {
-                case .success(let data):
-                    guard let image = UIImage(data: data) else { return }
-                    self.productImages.append(image)
-
-                    DispatchQueue.main.async {
-                        self.productThumbnailImageView.image = image
-                    }
-
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        }
-
+   func configureLabel(product: MarketItem) {
         self.productNameLabel.text = product.name
         self.descriptionLabel.text = product.description
         showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
-        showSoldOut(productStockQuntity: self.productStockQuantityLabel, product: product)
-
+        showSoldOut(productStockQuantity: self.productStockQuantityLabel, product: product)
     }
     
+    func configureImage(imageData: Data, index: Int, total: Int) {
+        let imageView = UIImageView()
+        let positionX = (imageScrollView.frame.width) * CGFloat(index)
+
+        imageView.frame = CGRect(
+            x: positionX,
+            y: 0,
+            width: imageScrollView.frame.width,
+            height: imageScrollView.frame.height
+        )
+        imageView.image = UIImage(data: imageData)
+        imageScrollView.addSubview(imageView)
+        imageScrollView.contentSize.width = imageScrollView.frame.width * CGFloat(total)
+    }
+
     func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: MarketItem) {
         priceLabel.text = "\(product.currency) \(product.price)"
         if product.discountedPrice == Metric.discountedPrice {

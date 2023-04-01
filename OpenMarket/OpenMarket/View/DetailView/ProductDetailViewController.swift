@@ -155,26 +155,26 @@ final class ProductDetailViewController: UIViewController {
 
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "detail", for: indexPath) as? DetailCollectionViewCell else { return DetailCollectionViewCell() }
 
-            cell.configureCell(product: product) { result in
-                switch result {
-                case .success(let images):
-                    // 이미지 5개 다 들어와서 여기서 적용!
-                    cell.pageControl.numberOfPages = images.count
+            let publishers = self.viewModel.output.getImagePublisher()
 
-                    for index in 0..<images.count {
-                        let imageView = UIImageView()
-                        let positionX = self.view.frame.width * CGFloat(index)
-                        imageView.frame = CGRect(x: positionX, y: 0, width: cell.imageScrollView.bounds.width, height: cell.imageScrollView.bounds.height)
-                        imageView.image = cell.productImages[index]
-                        cell.imageScrollView.contentSize.width = imageView.frame.width * CGFloat(index+1)
-                    }
-                return
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        self.showCustomAlert(title: nil, message: error.localizedDescription)
-                    }
-                }
-            }
+            publishers?.enumerated().forEach({ index, myPublisher in
+                myPublisher
+                    .receive(on: DispatchQueue.main)
+                    .sink(receiveCompletion: { completion in
+                        switch completion {
+                        case .finished:
+                            return
+                        case .failure(let error):
+                            print(error)
+                        }
+                    }, receiveValue: { imageData in
+                        cell.configureImage(imageData: imageData, index: index, total: (publishers?.count ?? 1))
+                    })
+                    .store(in: &self.cancellable)
+            })
+            cell.configureLabel(product: product)
+            cell.imageScrollView.addSubview(cell.pageControl)
+
             return cell
         }
         return dataSource

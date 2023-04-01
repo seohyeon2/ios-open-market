@@ -15,6 +15,8 @@ protocol ProductDetailViewModelInputInterface {
 protocol ProductDetailViewModelOutputInterface {
     var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
+    
+    func getImagePublisher() -> [AnyPublisher<Data, NetworkError>]?
 }
 
 protocol ProductDetailViewModelInterface {
@@ -61,6 +63,17 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
                 self.marketItem = marketItem
             }
             .store(in: &cancellable)
+    }
+    
+    func getImagePublisher() -> [AnyPublisher<Data, NetworkError>]? {
+        guard let images = marketItem?.images else {
+            return nil
+        }
+        
+        return images.map { image -> AnyPublisher<Data, NetworkError> in
+           let url = URL(string: image.url)
+                return networkManager.requestToServer(request: URLRequest(url: url!, httpMethod: .get))
+        }
     }
 }
 
