@@ -62,7 +62,7 @@ class ItemCollectionViewCell: UICollectionViewListCell {
 
     func showSoldOut(productStockQuantity: UILabel, product: PageInformation) {
         if product.stock == Metric.stock {
-            productStockQuantity.text = CollectionViewNamespace.soldout.name
+            productStockQuantity.text = CollectionViewNamespace.soldOut.name
             productStockQuantity.textColor = .systemOrange
         } else {
             productStockQuantity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"

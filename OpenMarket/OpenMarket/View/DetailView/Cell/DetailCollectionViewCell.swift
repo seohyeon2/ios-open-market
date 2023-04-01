@@ -18,7 +18,7 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
         return pageControl
     }()
 
-    let productNameLabel: UILabel = {
+    private let productNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .headline)
         label.adjustsFontForContentSizeCategory = true
@@ -26,19 +26,19 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
         return label
     }()
 
-    let productPriceLabel: UILabel = {
+    private let productPriceLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    let bargainPriceLabel: UILabel = {
+    private let bargainPriceLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    let productStockQuantityLabel: UILabel = {
+    private let productStockQuantityLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -182,13 +182,13 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
         }
     }
 
-    func showSoldOut(productStockQuntity: UILabel, product: MarketItem) {
+    func showSoldOut(productStockQuantity: UILabel, product: MarketItem) {
         if product.stock == Metric.stock {
-            productStockQuntity.text = CollectionViewNamespace.soldout.name
-            productStockQuntity.textColor = .systemOrange
+            productStockQuantity.text = CollectionViewNamespace.soldOut.name
+            productStockQuantity.textColor = .systemOrange
         } else {
-            productStockQuntity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
-            productStockQuntity.textColor = .systemGray
+            productStockQuantity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
+            productStockQuantity.textColor = .systemGray
         }
     }
 }
