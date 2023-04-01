@@ -59,8 +59,14 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
             Params.secret: secret
         ]
 
-        networkManager.postProduct(params: params,
-                                   imageData: imagesData)
+        guard marketItem != nil else {
+            networkManager.postProduct(params: params,
+                                       imageData: imagesData)
+            return
+        }
+
+        networkManager.patchProduct(productId: marketItem?.id ?? 0, modifiedInformation: params)
+
     }
     
     private func choiceCurrency() -> Currency? {
