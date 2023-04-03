@@ -12,8 +12,9 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
     // MARK: Properties
     var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.backgroundColor = .yellow
         pageControl.currentPage = 0
+        pageControl.isHidden = false
+        pageControl.clipsToBounds = true
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
     }()
@@ -126,12 +127,17 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
             descriptionLabel.topAnchor.constraint(equalTo: descriptionScrollView.topAnchor, constant: Metric.gridPositiveConstant),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant),
             descriptionLabel.bottomAnchor.constraint(equalTo: descriptionScrollView.bottomAnchor, constant: Metric.listNegativeConstant),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant)
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant),
+
+            pageControl.centerXAnchor.constraint(equalTo: imageScrollView.centerXAnchor),
+            pageControl.topAnchor.constraint(equalTo: imageScrollView.topAnchor, constant: 250),
+            pageControl.bottomAnchor.constraint(equalTo: imageScrollView.bottomAnchor)
         ])
     }
 
     private func setDetailStackView() {
         contentView.addSubview(totalDetailStackView)
+        contentView.addSubview(pageControl)
         totalDetailStackView.addArrangedSubview(imageScrollView)
         totalDetailStackView.addArrangedSubview(labelStackView)
         totalDetailStackView.addArrangedSubview(descriptionScrollView)

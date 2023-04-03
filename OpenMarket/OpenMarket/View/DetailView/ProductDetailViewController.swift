@@ -173,7 +173,7 @@ final class ProductDetailViewController: UIViewController {
                     .store(in: &self.cancellable)
             })
             cell.configureLabel(product: product)
-            cell.imageScrollView.addSubview(cell.pageControl)
+            cell.pageControl.numberOfPages = publishers?.count ?? 1
 
             return cell
         }
