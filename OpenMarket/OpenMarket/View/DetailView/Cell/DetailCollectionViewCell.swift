@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDelegate {
+final class DetailCollectionViewCell: UICollectionViewListCell {
 
     // MARK: Properties
     var pageControl: UIPageControl = {
@@ -49,6 +49,7 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
         let scrollView = UIScrollView()
         scrollView.frame = UIScreen.main.bounds
         scrollView.backgroundColor = .orange
+        scrollView.delegate = self
         scrollView.isPagingEnabled = true
         scrollView.alwaysBounceHorizontal = false
         scrollView.showsHorizontalScrollIndicator = false
@@ -108,6 +109,8 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
 
         setDetailStackView()
         setDetailConstraints()
+        
+        imageScrollView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -196,5 +199,14 @@ final class DetailCollectionViewCell: UICollectionViewListCell, UIScrollViewDele
             productStockQuantity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
             productStockQuantity.textColor = .systemGray
         }
+    }
+}
+
+extension DetailCollectionViewCell: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let totalWidth = scrollView.contentSize.width
+        let currentScrollPosition = scrollView.contentOffset.x
+        
+        pageControl.currentPage = Int((currentScrollPosition / totalWidth) * CGFloat(pageControl.numberOfPages))
     }
 }
