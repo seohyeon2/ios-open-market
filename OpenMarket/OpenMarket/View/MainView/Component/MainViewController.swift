@@ -69,14 +69,13 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUI()
-        
-        collectionView.prefetchDataSource = self
+    
         collectionView.delegate = self
         collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewNamespace.list.name)
         collectionView.register(GridCollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewNamespace.grid.name)
         
         dataSource = configureDataSource(id: CollectionViewNamespace.list.name)
-        self.snapshot.appendSections([.main])
+        snapshot.appendSections([.main])
 
         bind()
     }
@@ -88,9 +87,11 @@ final class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        snapshot.deleteAllItems()
+        snapshot.appendSections([.main])
         viewModel.input.getInformation(pageNumber: Metric.firstPage)
     }
-    
+
     // MARK: Method
     
     @objc private func moveProductRegistrationPage() {
@@ -221,26 +222,22 @@ final class MainViewController: UIViewController {
 
 // MARK: Extension
 
-extension MainViewController: UICollectionViewDataSourcePrefetching {
-    
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard let last = indexPaths.last else { return }
-        let currentPage = (last.row / Metric.itemCount) + 1
-        
-        if currentPage == productPageNumber {
-            self.loadingView.startAnimating()
-            
-            productPageNumber += 1
-        }
-        viewModel.input.getInformation(pageNumber: productPageNumber)
-    }
-}
-
 extension MainViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let id = snapshot.itemIdentifiers[indexPath.row].id
         viewModel.input.pushToDetailView(indexPath: indexPath, id: id)
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let bottomPosition = scrollView.contentSize.height - scrollView.bounds.height
+        let currentPosition = scrollView.contentOffset.y
+
+        if Int(scrollView.contentOffset.y) == Int(bottomPosition) {
+            self.loadingView.startAnimating()
+            productPageNumber += 1
+            viewModel.input.getInformation(pageNumber: productPageNumber)
+        }
     }
 }
