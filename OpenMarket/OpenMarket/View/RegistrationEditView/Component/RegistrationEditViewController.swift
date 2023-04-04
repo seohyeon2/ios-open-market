@@ -235,13 +235,34 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
             .receive(on: DispatchQueue.main)
             .sink { [weak self] imageData in
                 guard let self = self else { return }
-                
-                let imageView = UIImageView()
-                imageView.image = UIImage(data: imageData)
-                imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-                imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-                self.imageStackView.insertArrangedSubview(imageView, at: 0)
+                self.insertImage(imageData: imageData)
+
             }.store(in: &cancellable)
+    }
+
+    private func insertImage(imageData: Data) {
+        var containerView = UIView(frame: CGRect(x: 0, y: 0, width: 110, height: 110))
+        let deleteButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        deleteButton.tintColor = .systemGray3
+        deleteButton.backgroundColor = .black
+        deleteButton.layer.cornerRadius = 20
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+
+        let imageView = UIImageView()
+        imageView.image = UIImage(data: imageData)
+
+        containerView = imageView
+        containerView.addSubview(deleteButton)
+
+        NSLayoutConstraint.activate([
+            imageView.heightAnchor.constraint(equalToConstant: 100),
+            imageView.widthAnchor.constraint(equalToConstant: 100),
+            deleteButton.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
+            deleteButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: -10)
+        ])
+
+        self.imageStackView.insertArrangedSubview(containerView, at: 0)
     }
 
     private func configure(choose item: MarketItem) {
@@ -265,8 +286,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                     }
                 } receiveValue: { image in
                     let imageView = UIImageView()
-                    let editImage = UIImage(data: image)
-                    imageView.image = editImage
+                    imageView.image = UIImage(data: image)
                     imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
                     imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
                     self.imageStackView.insertArrangedSubview(imageView, at: 0)
@@ -299,11 +319,11 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
             imageScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             imageScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             imageScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            imageScrollView.heightAnchor.constraint(equalToConstant: Registration.imageSize)
+            imageScrollView.heightAnchor.constraint(equalToConstant: 110)
         ])
         
         NSLayoutConstraint.activate([
-            imageStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            imageStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             imageStackView.trailingAnchor.constraint(equalTo: imageScrollView.trailingAnchor),
             imageStackView.leadingAnchor.constraint(equalTo: imageScrollView.leadingAnchor),
             imageAddButton.heightAnchor.constraint(equalToConstant: Registration.imageSize),

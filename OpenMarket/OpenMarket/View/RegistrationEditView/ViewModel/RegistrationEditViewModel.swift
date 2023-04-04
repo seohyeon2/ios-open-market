@@ -76,6 +76,8 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
 
 extension RegistrationEditViewModel: RegistrationEditViewModelInputInterface {
     func getProductImageData(_ data: Data) {
+        guard imagesData.count < 5 else { return }
+
         imageDataSubject.send(data)
         imagesData.append(data)
     }

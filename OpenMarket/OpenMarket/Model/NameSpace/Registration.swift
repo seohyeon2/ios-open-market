@@ -19,7 +19,7 @@ enum Registration {
     static let textClear = ""
     static let initialNumber = 0
     static let scrollViewInset: CGFloat = 15
-    static let stackViewSpacing: CGFloat = 5
+    static let stackViewSpacing: CGFloat = 10
     static let imageSize: CGFloat = 100
     static let textStackViewPositiveSize: CGFloat = 10
     static let textStackViewNegativeSize: CGFloat = -10
