@@ -97,26 +97,7 @@ final class ProductDetailViewController: UIViewController {
         })
 
         let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
-
-//            NetworkManager().postSecret(productId: items.id) { result in
-//                switch result {
-//                case .success(_):
-//                    DispatchQueue.main.async {
-//                        let alertController = UIAlertController(title: "😝", message: "상품삭제가 정상적으로 완료되었습니다!", preferredStyle: .alert)
-//                        let okButton = UIAlertAction(title: "확인", style: .default) { _ in
-//                            self.navigationController?.popViewController(animated: true)
-//                            self.navigationController?.popViewController(animated: true)
-//                        }
-//                        alertController.addAction(okButton)
-//
-//                        self.present(alertController, animated: true)
-//                    }
-//                case .failure(let error):
-//                    DispatchQueue.main.async {
-//                        self.showCustomAlert(title: "😭", message: error.localizedDescription)
-//                    }
-//                }
-//            }
+            self.viewModel.output.deleteProduct()
         })
 
         let actionCancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)

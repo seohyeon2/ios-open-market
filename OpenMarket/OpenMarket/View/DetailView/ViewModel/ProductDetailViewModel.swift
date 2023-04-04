@@ -17,6 +17,7 @@ protocol ProductDetailViewModelOutputInterface {
     var alertPublisher: AnyPublisher<String, Never> { get }
     
     func getImagePublisher() -> [AnyPublisher<Data, NetworkError>]?
+    func deleteProduct()
 }
 
 protocol ProductDetailViewModelInterface {
@@ -74,6 +75,10 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
            let url = URL(string: image.url)
                 return networkManager.requestToServer(request: URLRequest(url: url!, httpMethod: .get))
         }
+    }
+    
+    func deleteProduct() {
+        networkManager.deleteProduct(productId: marketItem?.id)
     }
 }
 

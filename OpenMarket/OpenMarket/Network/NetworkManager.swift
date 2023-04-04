@@ -117,12 +117,50 @@ final class NetworkManager: NetworkManagerProtocol {
             } receiveValue: { _ in }
             .store(in: &cancellable)
     }
+
+    func deleteProduct(productId: Int?) {
+        guard let productId = productId else { return }
+        guard var request = try? ProductRequest.deleteURL(productId).createURLRequest() else {
+            return
+        }
+        
+        request.httpBody = OpenMarketRequest.createJson(params: [Params.secret: APIConstants.secret])
+        
+        requestToServer(request: request)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("url 가져오기 성공")
+                    return
+                case .failure(let error):
+                    print(error)
+                    return
+                }
+            } receiveValue: { [weak self] urlData in
+                guard let url = String(data: urlData, encoding: .utf8) else { return }
+                self?.delete(url: url)
+            }
+            .store(in: &cancellable)
+    }
     
-//    func deleteProduct(productId: Int, productSecretId: Data) {
-//        guard let secret = String(data: productSecretId, encoding: .utf8) else { return }
-//
-//        guard var request = try? ProductRequest.delete(id: productId, secret: secret).createURLRequest() else { return }
-//
-//        networkPerform(for: request) { _ in }
-//    }
+    private func delete(url: String) {
+        guard let request = try? ProductRequest.delete(url: url).createURLRequest() else {
+            return
+        }
+        
+        requestToServer(request: request)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("delete 성공")
+                    return
+                case .failure(let error):
+                    print(error)
+                    return
+                }
+            } receiveValue: { _ in
+                
+            }
+            .store(in: &cancellable)
+    }
 }

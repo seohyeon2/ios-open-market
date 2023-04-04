@@ -91,7 +91,7 @@ enum ProductRequest: RequestProtocol {
         switch self {
         case .registerItem:
             return [Multipart.contentType: Multipart.boundaryForm + "\"\(Multipart.boundaryValue)\""]
-        case .patchItem:
+        case .patchItem, .deleteURL:
             return [Multipart.contentType: Multipart.jsonContentType]
         default:
             return [:]
@@ -114,7 +114,7 @@ enum ProductRequest: RequestProtocol {
         case .deleteURL(let id):
             return "/api/products/\(id)/archived"
         case .delete(let url):
-            return "/api/products/\(url)"
+            return url
         default:
             return "/api/products"
         }
