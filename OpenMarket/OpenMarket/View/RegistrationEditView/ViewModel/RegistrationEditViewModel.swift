@@ -11,7 +11,7 @@ import Combine
 protocol RegistrationEditViewModelInputInterface {
     func getProductImageData(_ data: Data)
     func tappedDoneButton()
-    func tappedXMarkButton()
+    func tappedXMarkButton(_ sender: Int)
 }
 
 protocol RegistrationEditViewModelOutputInterface {
@@ -29,7 +29,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     var output: RegistrationEditViewModelOutputInterface { self }
     var marketItem: MarketItem?
     private var imagesData = [Data]()
-
+    var tagNumber = 0
 
     init(marketItem: MarketItem?) {
         self.marketItem = marketItem
@@ -87,7 +87,7 @@ extension RegistrationEditViewModel: RegistrationEditViewModelInputInterface {
         registerProduct()
     }
 
-    func tappedXMarkButton() {
-        print("사라져라")
+    func tappedXMarkButton(_ sender: Int) {
+        imagesData.remove(at: sender)
     }
 }

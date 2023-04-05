@@ -44,7 +44,6 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
     private let imageScrollView: UIScrollView = {
         let scrollView = UIScrollView()
-//        scrollView.contentInset = UIEdgeInsets(top: Registration.scrollViewInset, left: Registration.scrollViewInset, bottom: Registration.scrollViewInset, right: Registration.scrollViewInset)
         scrollView.showsHorizontalScrollIndicator = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
@@ -238,6 +237,8 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         deleteButton.backgroundColor = .black
         deleteButton.layer.cornerRadius = 20
         deleteButton.addTarget(self, action: #selector(tappedXMarkButton), for: .touchUpInside)
+        deleteButton.tag = viewModel.tagNumber
+        viewModel.tagNumber += 1
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
 
         let imageView = UIImageView()
@@ -248,6 +249,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         containerView.addSubview(imageView)
         containerView.addSubview(deleteButton)
         self.imageStackView.insertArrangedSubview(containerView, at: 0)
+        containerView.tag = deleteButton.tag + 1000
 
         NSLayoutConstraint.activate([
             containerView.heightAnchor.constraint(equalToConstant: 110),
@@ -407,7 +409,12 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     }
 
     @objc
-    private func tappedXMarkButton() {
-        viewModel.input.tappedXMarkButton()
+    private func tappedXMarkButton(_ sender: UIButton) {
+        guard let containerView = sender.superview?.viewWithTag(sender.tag + 1000) else {
+            return
+        }
+        containerView.removeFromSuperview()
+
+        viewModel.input.tappedXMarkButton(sender.tag)
     }
 }
