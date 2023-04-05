@@ -10,6 +10,8 @@ import Combine
 
 protocol RegistrationEditViewModelInputInterface {
     func getProductImageData(_ data: Data)
+    func tappedDoneButton()
+    func tappedXMarkButton()
 }
 
 protocol RegistrationEditViewModelOutputInterface {
@@ -48,7 +50,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     private let secret = "lk1erfg241t8ygh0"
     private let networkManager = NetworkManager()
     
-    func registerProduct() {
+    private func registerProduct() {
         let params: [String: Any?] = [
             Params.productName: productName,
             Params.productDescription: productDescription,
@@ -66,7 +68,6 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
         }
 
         networkManager.patchProduct(productId: marketItem?.id ?? 0, modifiedInformation: params)
-
     }
     
     private func choiceCurrency() -> Currency? {
@@ -80,5 +81,13 @@ extension RegistrationEditViewModel: RegistrationEditViewModelInputInterface {
 
         imageDataSubject.send(data)
         imagesData.append(data)
+    }
+
+    func tappedDoneButton() {
+        registerProduct()
+    }
+
+    func tappedXMarkButton() {
+        print("사라져라")
     }
 }
