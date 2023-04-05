@@ -75,10 +75,6 @@ extension URLRequest {
     }
 }
 
-protocol NetworkManagerProtocol {
-    func networkPerform(for request: URLRequest, identifier: String?, completion: @escaping (Result<Data, Error>) -> Void)
-}
-
 enum ProductRequest: RequestProtocol {
     case list(page: Int, itemPerPage: Int = 20) // 상품 리스트 조회
     case detailItem(Int) // 상품 상세 조회
