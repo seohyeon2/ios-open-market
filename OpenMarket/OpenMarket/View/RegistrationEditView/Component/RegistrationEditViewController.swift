@@ -232,6 +232,31 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                 self.insertImage(imageData: imageData)
 
             }.store(in: &cancellable)
+        
+        viewModel.output.alertPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                self?.showCustomAlert(title: nil, message: error)
+            }.store(in: &cancellable)
+        
+        viewModel.output.movementPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { itemId in
+                guard let navigationController = self.navigationController else {
+                    return
+                }
+                
+                let viewController = ProductDetailViewController(id: itemId)
+                navigationController.pushViewController(viewController, animated: true)
+                
+                guard let rootView = navigationController.viewControllers.first,
+                      let lastView = navigationController.viewControllers.last else {
+                    return
+                }
+                
+                navigationController.viewControllers = [rootView,lastView]
+
+            }.store(in: &cancellable)
     }
 
     private func insertImage(imageData: Data) {
@@ -290,12 +315,12 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                     case .failure(let error):
                         print(error.localizedDescription)
                     }
-                } receiveValue: { image in
+                } receiveValue: { [weak self] image in
                     let imageView = UIImageView()
                     imageView.image = UIImage(data: image)
                     imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
                     imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-                    self.imageStackView.insertArrangedSubview(imageView, at: 0)
+                    self?.imageStackView.insertArrangedSubview(imageView, at: 0)
                 }
                 .store(in: &cancellable)
         }

@@ -57,16 +57,16 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
 
         networkManager.getProductInquiry(pageNumber: pageNumber)?
             .decode(type: MarketInformation.self, decoder: JSONDecoder())
-            .sink { completion in
+            .sink { [weak self] completion in
                 switch completion {
                 case .finished:
                     return
                 case .failure(let error):
                     guard let error = error as? NetworkError else { return }
-                    self.alertSubject.send(error.message)
+                    self?.alertSubject.send(error.message)
                 }
             } receiveValue: { [weak self] productList in
-                guard let self else { return }
+                guard let self = self else { return }
                 self.isLoadingSubject.send(true)
                 self.marketInformationSubject.send(productList)
                 self.isLoadingSubject.send(false)

@@ -82,13 +82,13 @@ class ItemCollectionViewCell: UICollectionViewListCell {
                 case .failure:
                     return
                 }
-            } receiveValue: { thumbnailImage in
-                self.productThumbnailImageView.image = thumbnailImage
+            } receiveValue: { [weak self] thumbnailImage in
+                self?.productThumbnailImageView.image = thumbnailImage
             }.store(in: &cancellable)
 
-        self.productNameLabel.text = product.name
+        productNameLabel.text = product.name
 
-        showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
-        showSoldOut(productStockQuantity: self.productStockQuantityLabel, product: product)
+        showPrice(priceLabel: productPriceLabel, bargainPriceLabel: bargainPriceLabel, product: product)
+        showSoldOut(productStockQuantity: productStockQuantityLabel, product: product)
     }
 }

@@ -73,7 +73,7 @@ final class ProductDetailViewController: UIViewController {
         viewModel.output.detailMarketItemPublisher
             .receive(on: DispatchQueue.main)
             .sink (receiveValue: {  [weak self] marketItem in
-                guard let self else { return }
+                guard let self = self else { return }
                     self.navigationItem.title = marketItem.name
                 
                 self.snapshot.appendItems([marketItem])
@@ -86,6 +86,16 @@ final class ProductDetailViewController: UIViewController {
             .sink { [weak self] error in
                 self?.showCustomAlert(title: nil, message: error)
             }.store(in: &cancellable)
+        
+        viewModel.output.movementPublisher
+            .receive(on: DispatchQueue.main)
+            .filter({ isMove in
+                return isMove == true
+            })
+            .sink(receiveValue: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .store(in: &cancellable)
     }
     
     @objc private func showActionSheet() {

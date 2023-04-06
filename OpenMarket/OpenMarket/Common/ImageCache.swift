@@ -40,12 +40,11 @@ final class ImageCache {
                             promise(.failure(error))
                         }
                     }, receiveValue: { [weak self] imageData in
-                        guard let self = self,
-                              let image = UIImage(data: imageData) else {
+                        guard let image = UIImage(data: imageData) else {
                             promise(.failure(NetworkError.noneData))
                             return
                         }
-                        self.saveCachedImage(url: url, image: image)
+                        self?.saveCachedImage(url: url, image: image)
 
                         promise(.success(image))
                     })

@@ -96,16 +96,40 @@ final class NetworkManager {
             } receiveValue: { _ in }
             .store(in: &cancellable)
     }
+    
+    func getPostRequest(params: [String: Any?], imageData: [Data]) -> URLRequest? {
+        guard var request = try? ProductRequest.registerItem.createURLRequest(),
+              let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], imageData: imageData) else { return nil }
+        
+        request.httpBody = postData
+        
+        return request
+    }
+    
+    func getPatchRequest(productId: Int, modifiedInformation: [String: Any?]) -> URLRequest?{
+        guard var request = try? ProductRequest.patchItem(productId).createURLRequest(),
+              let patchData = OpenMarketRequest.createJson(params: modifiedInformation as [String : Any]) else { return nil }
+        
+        request.httpBody = patchData
+        
+        return request
+    }
 
-    func deleteProduct(productId: Int?) {
+    func registerEditProduct(request: URLRequest) -> AnyPublisher<Data, NetworkError> {
+        return requestToServer(request: request)
+            .eraseToAnyPublisher()
+    }
+
+    func deleteProduct(productId: Int?) -> AnyPublisher<Data, NetworkError> {
         guard let productId = productId,
               var request = try? ProductRequest.deleteURL(productId).createURLRequest() else {
-            return
+            return Fail<Data, NetworkError>(error: .failToResponse)
+                .eraseToAnyPublisher()
         }
 
         request.httpBody = OpenMarketRequest.createJson(params: [Params.secret: APIConstants.secret])
 
-        requestToServer(request: request)
+        return requestToServer(request: request)
             .flatMap({ urlData -> AnyPublisher<Data, NetworkError> in
 
                 guard let url = String(data: urlData, encoding: .utf8),
@@ -114,18 +138,6 @@ final class NetworkManager {
                               }
                 return self.requestToServer(request: deleteRequest)
             })
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    print("delete 성공")
-                    return
-                case .failure(let error):
-                    print(error)
-                    return
-                }
-            } receiveValue: { _ in
-
-            }
-            .store(in: &cancellable)
+            .eraseToAnyPublisher()
     }
 }
