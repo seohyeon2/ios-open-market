@@ -15,6 +15,7 @@ protocol ProductDetailViewModelInputInterface {
 protocol ProductDetailViewModelOutputInterface {
     var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
+    var movementPublisher: AnyPublisher<Bool, Never> { get }
     
     func getImagePublisher() -> [AnyPublisher<Data, NetworkError>]?
     func deleteProduct()
@@ -37,10 +38,14 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     var alertPublisher: AnyPublisher<String, Never> {
         return alertSubject.eraseToAnyPublisher()
     }
+    var movementPublisher: AnyPublisher<Bool, Never> {
+        return movementSubject.eraseToAnyPublisher()
+    }
 
     private let networkManager = NetworkManager()
-    private let alertSubject = PassthroughSubject<String, Never>()
     private let detailMarketItemSubject = PassthroughSubject<MarketItem, Never>()
+    private let alertSubject = PassthroughSubject<String, Never>()
+    private let movementSubject = PassthroughSubject<Bool, Never>()
     private var cancellable = Set<AnyCancellable>()
     var marketItem : MarketItem?
 
@@ -79,6 +84,19 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     
     func deleteProduct() {
         networkManager.deleteProduct(productId: marketItem?.id)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("delete 성공")
+                    return
+                case .failure(let error):
+                    self.alertSubject.send(error.message)
+                    return
+                }
+            } receiveValue: { _ in
+                self.movementSubject.send(true)
+            }
+            .store(in: &cancellable)
     }
 }
 
