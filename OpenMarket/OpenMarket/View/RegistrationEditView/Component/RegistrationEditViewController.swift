@@ -283,6 +283,8 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         self.imageStackView.insertArrangedSubview(containerView, at: 0)
 
         NSLayoutConstraint.activate([
+            self.imageScrollView.leadingAnchor.constraint(equalTo: imageAddButton.trailingAnchor, constant: 10),
+
             containerView.heightAnchor.constraint(equalToConstant: 110),
             containerView.widthAnchor.constraint(equalToConstant: 110),
 
@@ -316,11 +318,14 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                         print(error.localizedDescription)
                     }
                 } receiveValue: { [weak self] image in
+                    guard let self = self else { return }
                     let imageView = UIImageView()
                     imageView.image = UIImage(data: image)
                     imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
                     imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-                    self?.imageStackView.insertArrangedSubview(imageView, at: 0)
+                    self.imageAddButton.isHidden = true
+                    self.imageScrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20).isActive = true
+                    self.imageStackView.insertArrangedSubview(imageView, at: 0)
                 }
                 .store(in: &cancellable)
         }
@@ -367,7 +372,6 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
             //MARK: imageScrollViewConstraint
             imageScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             imageScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            imageScrollView.leadingAnchor.constraint(equalTo: imageAddButton.trailingAnchor, constant: 10),
             imageScrollView.heightAnchor.constraint(equalToConstant: 120),
 
             //MARK: imageStackViewConstraint
