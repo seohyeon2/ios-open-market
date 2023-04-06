@@ -86,20 +86,20 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
         }
         
         networkManager.registerEditProduct(request: request)
-            .sink { completion in
+            .sink { [weak self] completion in
                 switch completion {
                 case .finished:
                     print("생성 및 수정성공")
                     return
                 case .failure(let error):
-                    self.alertSubject.send(error.message)
+                    self?.alertSubject.send(error.message)
                     return
                 }
-            } receiveValue: { response in
+            } receiveValue: { [weak self] response in
                 
                 guard let marketItem = try? JSONDecoder().decode(MarketItem.self, from: response) else { return }
                 
-                self.movementSubject.send(marketItem.id)
+                self?.movementSubject.send(marketItem.id)
             }
             .store(in: &cancellable)
     }

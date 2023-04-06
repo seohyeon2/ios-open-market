@@ -53,15 +53,15 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
         guard let request = try? ProductRequest.detailItem(id).createURLRequest() else { return }
 
         networkManager.requestToServer(request: request)
-            .sink { completion in
+            .sink { [weak self] completion in
                 switch completion {
                 case .finished:
                     return
                 case .failure(let error):
-                    self.alertSubject.send(error.message)
+                    self?.alertSubject.send(error.message)
                 }
             } receiveValue: { [weak self] data in
-                guard let self,
+                guard let self = self,
                       let marketItem = try? JSONDecoder().decode(MarketItem.self, from: data) else {
                     return
                 }
@@ -84,17 +84,17 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     
     func deleteProduct() {
         networkManager.deleteProduct(productId: marketItem?.id)
-            .sink { completion in
+            .sink { [weak self] completion in
                 switch completion {
                 case .finished:
                     print("delete 성공")
                     return
                 case .failure(let error):
-                    self.alertSubject.send(error.message)
+                    self?.alertSubject.send(error.message)
                     return
                 }
-            } receiveValue: { _ in
-                self.movementSubject.send(true)
+            } receiveValue: { [weak self] _ in
+                self?.movementSubject.send(true)
             }
             .store(in: &cancellable)
     }

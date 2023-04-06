@@ -309,12 +309,12 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                     case .failure(let error):
                         print(error.localizedDescription)
                     }
-                } receiveValue: { image in
+                } receiveValue: { [weak self] image in
                     let imageView = UIImageView()
                     imageView.image = UIImage(data: image)
                     imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
                     imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
-                    self.imageStackView.insertArrangedSubview(imageView, at: 0)
+                    self?.imageStackView.insertArrangedSubview(imageView, at: 0)
                 }
                 .store(in: &cancellable)
         }

@@ -73,7 +73,7 @@ final class ProductDetailViewController: UIViewController {
         viewModel.output.detailMarketItemPublisher
             .receive(on: DispatchQueue.main)
             .sink (receiveValue: {  [weak self] marketItem in
-                guard let self else { return }
+                guard let self = self else { return }
                     self.navigationItem.title = marketItem.name
                 
                 self.snapshot.appendItems([marketItem])
