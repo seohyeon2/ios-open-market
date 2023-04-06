@@ -17,7 +17,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private var imageCount = Registration.initialNumber
     var images = [UIImage]()
 
-    private var imagePicker : PHPickerViewController = {
+    private let imagePicker : PHPickerViewController = {
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = 5
         let picker = PHPickerViewController(configuration: configuration)
@@ -44,6 +44,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
     private let imageScrollView: UIScrollView = {
         let scrollView = UIScrollView()
+        scrollView.contentInset = UIEdgeInsets(top: Registration.scrollViewInset, left: Registration.scrollViewInset, bottom: Registration.scrollViewInset, right: Registration.scrollViewInset)
         scrollView.showsHorizontalScrollIndicator = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
@@ -61,12 +62,10 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
     lazy var imageAddButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(systemName: "camera.fill")
+        let image = UIImage(systemName: CollectionViewNamespace.plus.name)
         button.addTarget(self, action: #selector(addImage), for: .touchUpInside)
         button.setImage(image, for: .normal)
-        button.tintColor = .systemGray3
-        button.backgroundColor = .gray
-        button.layer.borderWidth = 1
+        button.backgroundColor = .systemGray5
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -159,9 +158,23 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: doneButton)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
 
-        imagePicker.delegate = self
+        view.addSubview(imageScrollView)
+        view.addSubview(textStackView)
+        
+        imageScrollView.addSubview(imageStackView)
+        imageStackView.addArrangedSubview(imageAddButton)
 
-        addSubViews()
+        imagePicker.delegate = self
+        
+        textStackView.addArrangedSubview(productNameTextField)
+        textStackView.addArrangedSubview(priceStackView)
+        textStackView.addArrangedSubview(discountedPriceTextField)
+        textStackView.addArrangedSubview(stockTextField)
+        textStackView.addArrangedSubview(descriptionTextView)
+        
+        priceStackView.addArrangedSubview(productPriceTextField)
+        priceStackView.addArrangedSubview(segmentedControl)
+        
         setConstraint()
         setViewGesture()
         registerForKeyboardNotification()
@@ -171,11 +184,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     
     // MARK: Method
 
-    func picker(_ picker: PHPickerViewController,
-                didFinishPicking results: [PHPickerResult]) {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 5
-
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         for selectedImage in results {
             let itemProvider = selectedImage.itemProvider
             itemProvider.canLoadObject(ofClass: UIImage.self)
@@ -183,14 +192,11 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                 guard let self = self,
                       let addedImage = picture as? UIImage,
                       let imageData = addedImage.compress() else { return }
+                
                 self.viewModel.input.getProductImageData(imageData)
             }
         }
-
         picker.dismiss(animated: true)
-
-        imagePicker = PHPickerViewController(configuration: configuration)
-        imagePicker.delegate = self
     }
     
     private func bind() {
@@ -235,40 +241,28 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     }
 
     private func insertImage(imageData: Data) {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-
+        var containerView = UIView(frame: CGRect(x: 0, y: 0, width: 110, height: 110))
         let deleteButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
         deleteButton.tintColor = .systemGray3
         deleteButton.backgroundColor = .black
         deleteButton.layer.cornerRadius = 20
-        deleteButton.addTarget(self, action: #selector(tappedXMarkButton), for: .touchUpInside)
-        deleteButton.tag = viewModel.tagNumber
-        viewModel.tagNumber += 1
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
 
         let imageView = UIImageView()
         imageView.image = UIImage(data: imageData)
-        imageView.isUserInteractionEnabled = false
-        imageView.translatesAutoresizingMaskIntoConstraints = false
 
-        containerView.addSubview(imageView)
+        containerView = imageView
         containerView.addSubview(deleteButton)
-        self.imageStackView.insertArrangedSubview(containerView, at: 0)
 
         NSLayoutConstraint.activate([
-            containerView.heightAnchor.constraint(equalToConstant: 110),
-            containerView.widthAnchor.constraint(equalToConstant: 110),
-
-            imageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
-            imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
-            imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-
+            imageView.heightAnchor.constraint(equalToConstant: 100),
+            imageView.widthAnchor.constraint(equalToConstant: 100),
             deleteButton.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
             deleteButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: -10)
         ])
+
+        self.imageStackView.insertArrangedSubview(containerView, at: 0)
     }
 
     private func configure(choose item: MarketItem) {
@@ -320,44 +314,23 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         return Currency.init(rawValue: segmentedControl.selectedSegmentIndex)
     }
 
-    private func addSubViews() {
-        view.addSubview(imageScrollView)
-        view.addSubview(textStackView)
-        view.addSubview(imageAddButton)
-
-        imageScrollView.addSubview(imageStackView)
-
-        textStackView.addArrangedSubview(productNameTextField)
-        textStackView.addArrangedSubview(priceStackView)
-        textStackView.addArrangedSubview(discountedPriceTextField)
-        textStackView.addArrangedSubview(stockTextField)
-        textStackView.addArrangedSubview(descriptionTextView)
-
-        priceStackView.addArrangedSubview(productPriceTextField)
-        priceStackView.addArrangedSubview(segmentedControl)
-    }
-
     private func setConstraint() {
         NSLayoutConstraint.activate([
-            //MARK: imageScrollViewConstraint
-            imageScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            imageScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             imageScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            imageScrollView.leadingAnchor.constraint(equalTo: imageAddButton.trailingAnchor, constant: 10),
-            imageScrollView.heightAnchor.constraint(equalToConstant: 120),
-
-            //MARK: imageStackViewConstraint
-            imageStackView.topAnchor.constraint(equalTo: imageScrollView.topAnchor),
+            imageScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            imageScrollView.heightAnchor.constraint(equalToConstant: 110)
+        ])
+        
+        NSLayoutConstraint.activate([
+            imageStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             imageStackView.trailingAnchor.constraint(equalTo: imageScrollView.trailingAnchor),
             imageStackView.leadingAnchor.constraint(equalTo: imageScrollView.leadingAnchor),
-            imageStackView.bottomAnchor.constraint(equalTo: imageScrollView.bottomAnchor),
-
-            //MARK: imageAddButtonConstraint
-            imageAddButton.heightAnchor.constraint(equalToConstant: 100),
-            imageAddButton.widthAnchor.constraint(equalToConstant: 100),
-            imageAddButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            imageAddButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-
-            //MARK: textStackViewConstraint
+            imageAddButton.heightAnchor.constraint(equalToConstant: Registration.imageSize),
+            imageAddButton.widthAnchor.constraint(equalToConstant: Registration.imageSize)
+        ])
+        
+        NSLayoutConstraint.activate([
             textStackView.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: Registration.textStackViewPositiveSize),
             textStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Registration.textStackViewNegativeSize),
             textStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Registration.textStackViewNegativeSize),
@@ -406,18 +379,11 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
     @objc
     private func onClickDoneButton() {
-        viewModel.input.tappedDoneButton()
+        viewModel.registerProduct()
     }
 
     @objc
     private func goBackDetailViewController() {
         navigationController?.popViewController(animated: true)
-    }
-
-    @objc
-    private func tappedXMarkButton(_ sender: UIButton) {
-        sender.superview?.removeFromSuperview()
-
-        viewModel.input.tappedXMarkButton(sender.tag)
     }
 }
