@@ -10,6 +10,8 @@ import Combine
 
 protocol RegistrationEditViewModelInputInterface {
     func getProductImageData(_ data: Data)
+    func tappedDoneButton()
+    func tappedXMarkButton(_ sender: Int)
 }
 
 protocol RegistrationEditViewModelOutputInterface {
@@ -40,7 +42,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     
     
     private var imagesData = [Data]()
-
+    var tagNumber = 0
 
     init(marketItem: MarketItem?) {
         self.marketItem = marketItem
@@ -62,7 +64,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     private let networkManager = NetworkManager()
     private var cancellable = Set<AnyCancellable>()
     
-    func registerProduct() {
+    private func registerProduct() {
         let params: [String: Any?] = [
             Params.productName: productName,
             Params.productDescription: productDescription,
@@ -115,5 +117,14 @@ extension RegistrationEditViewModel: RegistrationEditViewModelInputInterface {
 
         imageDataSubject.send(data)
         imagesData.append(data)
+    }
+
+    func tappedDoneButton() {
+        registerProduct()
+    }
+
+    func tappedXMarkButton(_ sender: Int) {
+        imagesData.remove(at: sender)
+        tagNumber -= 1
     }
 }

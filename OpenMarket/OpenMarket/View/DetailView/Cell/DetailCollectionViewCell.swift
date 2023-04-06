@@ -48,7 +48,7 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
     let imageScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.frame = UIScreen.main.bounds
-        scrollView.backgroundColor = .orange
+        scrollView.backgroundColor = .systemBackground
         scrollView.isPagingEnabled = true
         scrollView.alwaysBounceHorizontal = false
         scrollView.showsHorizontalScrollIndicator = false
