@@ -36,7 +36,7 @@ final class ProductDetailViewController: UIViewController {
 
     private lazy var actionButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(systemName: "square.and.arrow.up")
+        let image = UIImage(systemName: "ellipsis")
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(showActionSheet), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
