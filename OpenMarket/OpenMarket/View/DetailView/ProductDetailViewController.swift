@@ -89,11 +89,13 @@ final class ProductDetailViewController: UIViewController {
         
         viewModel.output.movementPublisher
             .receive(on: DispatchQueue.main)
-            .sink { isMove in
-                if isMove {
-                    self.navigationController?.popViewController(animated: true)
-                }
-            }.store(in: &cancellable)
+            .filter({ isMove in
+                return isMove == true
+            })
+            .sink(receiveValue: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .store(in: &cancellable)
     }
     
     @objc private func showActionSheet() {
