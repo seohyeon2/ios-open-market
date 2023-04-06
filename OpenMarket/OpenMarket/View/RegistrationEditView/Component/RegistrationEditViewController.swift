@@ -17,7 +17,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private var imageCount = Registration.initialNumber
     var images = [UIImage]()
 
-    private let imagePicker : PHPickerViewController = {
+    private var imagePicker : PHPickerViewController = {
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = 5
         let picker = PHPickerViewController(configuration: configuration)
@@ -171,7 +171,11 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     
     // MARK: Method
 
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+    func picker(_ picker: PHPickerViewController,
+                didFinishPicking results: [PHPickerResult]) {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 5
+
         for selectedImage in results {
             let itemProvider = selectedImage.itemProvider
             itemProvider.canLoadObject(ofClass: UIImage.self)
@@ -179,11 +183,14 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                 guard let self = self,
                       let addedImage = picture as? UIImage,
                       let imageData = addedImage.compress() else { return }
-                
                 self.viewModel.input.getProductImageData(imageData)
             }
         }
+
         picker.dismiss(animated: true)
+
+        imagePicker = PHPickerViewController(configuration: configuration)
+        imagePicker.delegate = self
     }
     
     private func bind() {
@@ -249,7 +256,6 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         containerView.addSubview(imageView)
         containerView.addSubview(deleteButton)
         self.imageStackView.insertArrangedSubview(containerView, at: 0)
-        containerView.tag = deleteButton.tag + 1000
 
         NSLayoutConstraint.activate([
             containerView.heightAnchor.constraint(equalToConstant: 110),
@@ -410,10 +416,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
     @objc
     private func tappedXMarkButton(_ sender: UIButton) {
-        guard let containerView = sender.superview?.viewWithTag(sender.tag + 1000) else {
-            return
-        }
-        containerView.removeFromSuperview()
+        sender.superview?.removeFromSuperview()
 
         viewModel.input.tappedXMarkButton(sender.tag)
     }

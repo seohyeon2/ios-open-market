@@ -89,5 +89,6 @@ extension RegistrationEditViewModel: RegistrationEditViewModelInputInterface {
 
     func tappedXMarkButton(_ sender: Int) {
         imagesData.remove(at: sender)
+        tagNumber -= 1
     }
 }
