@@ -14,6 +14,8 @@ protocol RegistrationEditViewModelInputInterface {
 
 protocol RegistrationEditViewModelOutputInterface {
     var imageDataPublisher: AnyPublisher<Data, Never> { get }
+    var alertPublisher: AnyPublisher<String, Never> { get }
+    var movementPublisher: AnyPublisher<Int, Never> { get }
 }
 
 protocol RegistrationEditViewModelInterface {
@@ -26,6 +28,17 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     var input: RegistrationEditViewModelInputInterface { self }
     var output: RegistrationEditViewModelOutputInterface { self }
     var marketItem: MarketItem?
+    
+    var alertPublisher: AnyPublisher<String, Never> {
+        return alertSubject.eraseToAnyPublisher()
+    }
+    var movementPublisher: AnyPublisher<Int, Never> {
+        return movementSubject.eraseToAnyPublisher()
+    }
+    private let alertSubject = PassthroughSubject<String, Never>()
+    private let movementSubject = PassthroughSubject<Int, Never>()
+    
+    
     private var imagesData = [Data]()
 
 
@@ -47,6 +60,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     private let imageDataSubject = PassthroughSubject <Data, Never>()
     private let secret = "lk1erfg241t8ygh0"
     private let networkManager = NetworkManager()
+    private var cancellable = Set<AnyCancellable>()
     
     func registerProduct() {
         let params: [String: Any?] = [
@@ -58,15 +72,36 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
             Params.stock: Int(stock) ?? 0,
             Params.secret: secret
         ]
-
-        guard marketItem != nil else {
-            networkManager.postProduct(params: params,
-                                       imageData: imagesData)
+        
+        var request: URLRequest?
+        if marketItem == nil {
+            request = networkManager.getPostRequest(params: params,
+                                                 imageData: imagesData)
+        } else {
+            request = networkManager.getPatchRequest(productId: marketItem?.id ?? 0, modifiedInformation: params)
+        }
+        
+        guard let request = request else {
             return
         }
-
-        networkManager.patchProduct(productId: marketItem?.id ?? 0, modifiedInformation: params)
-
+        
+        networkManager.registerEditProduct(request: request)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("생성 및 수정성공")
+                    return
+                case .failure(let error):
+                    self.alertSubject.send(error.message)
+                    return
+                }
+            } receiveValue: { response in
+                
+                guard let marketItem = try? JSONDecoder().decode(MarketItem.self, from: response) else { return }
+                
+                self.movementSubject.send(marketItem.id)
+            }
+            .store(in: &cancellable)
     }
     
     private func choiceCurrency() -> Currency? {

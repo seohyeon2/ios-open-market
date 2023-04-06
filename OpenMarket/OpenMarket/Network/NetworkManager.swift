@@ -96,6 +96,29 @@ final class NetworkManager {
             } receiveValue: { _ in }
             .store(in: &cancellable)
     }
+    
+    func getPostRequest(params: [String: Any?], imageData: [Data]) -> URLRequest? {
+        guard var request = try? ProductRequest.registerItem.createURLRequest(),
+              let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], imageData: imageData) else { return nil }
+        
+        request.httpBody = postData
+        
+        return request
+    }
+    
+    func getPatchRequest(productId: Int, modifiedInformation: [String: Any?]) -> URLRequest?{
+        guard var request = try? ProductRequest.patchItem(productId).createURLRequest(),
+              let patchData = OpenMarketRequest.createJson(params: modifiedInformation as [String : Any]) else { return nil }
+        
+        request.httpBody = patchData
+        
+        return request
+    }
+
+    func registerEditProduct(request: URLRequest) -> AnyPublisher<Data, NetworkError> {
+        return requestToServer(request: request)
+            .eraseToAnyPublisher()
+    }
 
     func deleteProduct(productId: Int?) -> AnyPublisher<Data, NetworkError> {
         guard let productId = productId,

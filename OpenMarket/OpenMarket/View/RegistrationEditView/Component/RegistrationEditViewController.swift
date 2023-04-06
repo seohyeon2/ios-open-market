@@ -238,6 +238,31 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                 self.insertImage(imageData: imageData)
 
             }.store(in: &cancellable)
+        
+        viewModel.output.alertPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                self?.showCustomAlert(title: nil, message: error)
+            }.store(in: &cancellable)
+        
+        viewModel.output.movementPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { itemId in
+                guard let navigationController = self.navigationController else {
+                    return
+                }
+                
+                let viewController = ProductDetailViewController(id: itemId)
+                navigationController.pushViewController(viewController, animated: true)
+                
+                guard let rootView = navigationController.viewControllers.first,
+                      let lastView = navigationController.viewControllers.last else {
+                    return
+                }
+                
+                navigationController.viewControllers = [rootView,lastView]
+
+            }.store(in: &cancellable)
     }
 
     private func insertImage(imageData: Data) {
