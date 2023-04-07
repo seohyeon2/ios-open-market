@@ -27,7 +27,7 @@ enum Params {
     static let productDescription = "description"
     static let productPrice = "price"
     static let currency = "currency"
-    static let discountedPrice = "discountedPrice"
+    static let discountedPrice = "discounted_price"
     static let stock = "stock"
     static let secret = "secret"
 }

@@ -299,12 +299,19 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     }
 
     private func configure(choose item: MarketItem) {
+        if item.currency == Currency.KRW.name {
+            productPriceTextField.text = String(Int(item.price))
+            discountedPriceTextField.text = String(Int(item.discountedPrice))
+            segmentedControl.selectedSegmentIndex = Currency.KRW.rawValue
+        } else {
+            productPriceTextField.text = String(item.price)
+            discountedPriceTextField.text = String(item.discountedPrice)
+            segmentedControl.selectedSegmentIndex = Currency.USD.rawValue
+        }
+        
         productNameTextField.text = item.name
-        productPriceTextField.text = String(item.price)
-        discountedPriceTextField.text = String(item.discountedPrice)
         stockTextField.text = String(item.stock)
         descriptionTextView.text = item.description
-        segmentedControl.selectedSegmentIndex = item.currency.hashValue
 
         item.images.forEach { image in
             guard let url = URL(string: image.url) else { return }

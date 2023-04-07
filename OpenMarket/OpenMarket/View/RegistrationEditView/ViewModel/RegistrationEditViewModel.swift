@@ -46,14 +46,21 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
 
     init(marketItem: MarketItem?) {
         self.marketItem = marketItem
+        
+        productName = marketItem?.name ?? ""
+        productDescription = marketItem?.description ?? ""
+        productPrice = String(marketItem?.price ?? 0)
+        currency = 0
+        discountedPrice = String(marketItem?.discountedPrice ?? 0)
+        stock = String(marketItem?.stock ?? 0)
     }
 
-    @Published var productName: String = ""
-    @Published var productDescription: String = ""
-    @Published var productPrice: String = ""
-    @Published var currency: Int = 0
-    @Published var discountedPrice: String = ""
-    @Published var stock: String = ""
+    @Published var productName: String
+    @Published var productDescription: String
+    @Published var productPrice: String
+    @Published var currency: Int
+    @Published var discountedPrice: String
+    @Published var stock: String
    
     var imageDataPublisher: AnyPublisher<Data, Never> {
         return imageDataSubject.eraseToAnyPublisher()
@@ -68,9 +75,9 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
         let params: [String: Any?] = [
             Params.productName: productName,
             Params.productDescription: productDescription,
-            Params.productPrice: Int(productPrice) ?? 0,
+            Params.productPrice: Double(productPrice) ?? 0,
             Params.currency: choiceCurrency()?.name,
-            Params.discountedPrice: Int(discountedPrice) ?? 0,
+            Params.discountedPrice: Double(discountedPrice) ?? 0,
             Params.stock: Int(stock) ?? 0,
             Params.secret: secret
         ]
