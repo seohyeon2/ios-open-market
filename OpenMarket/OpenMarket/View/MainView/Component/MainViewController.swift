@@ -38,10 +38,10 @@ final class MainViewController: UIViewController {
         segment.selectedSegmentIndex = Metric.firstSegment
         segment.addTarget(self, action: #selector(handleSegmentChange), for: .valueChanged)
         segment.translatesAutoresizingMaskIntoConstraints = false
-        segment.selectedSegmentTintColor = .systemBlue
+        segment.selectedSegmentTintColor = .secondary
         segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: UIControl.State.selected)
-        segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.link], for: UIControl.State.normal)
-        segment.layer.borderColor = UIColor.systemBlue.cgColor
+        segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.secondary ?? UIColor.black], for: UIControl.State.normal)
+        segment.layer.borderColor = UIColor.secondary?.cgColor
         segment.layer.borderWidth = Metric.borderWidth
         return segment
     }()
@@ -52,6 +52,7 @@ final class MainViewController: UIViewController {
         let image = UIImage(systemName: CollectionViewNamespace.plus.name, withConfiguration: configuration)
         button.addTarget(self, action: #selector(moveProductRegistrationPage), for: .touchUpInside)
         button.setImage(image, for: .normal)
+        button.tintColor = .secondary
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -234,7 +235,7 @@ extension MainViewController: UICollectionViewDelegate {
         let bottomPosition = scrollView.contentSize.height - scrollView.bounds.height
         let currentPosition = scrollView.contentOffset.y
 
-        if Int(scrollView.contentOffset.y) == Int(bottomPosition) {
+        if Int(currentPosition) == Int(bottomPosition) {
             self.loadingView.startAnimating()
             productPageNumber += 1
             viewModel.input.getInformation(pageNumber: productPageNumber)

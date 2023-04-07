@@ -14,15 +14,19 @@ class ItemCollectionViewCell: UICollectionViewListCell {
     // MARK: Properties
 
     let productThumbnailImageView: UIImageView = {
-        let image = UIImageView()
-        image.contentMode = .scaleAspectFit
-        image.translatesAutoresizingMaskIntoConstraints = false
-        return image
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.borderColor = UIColor.primary?.cgColor
+        imageView.layer.borderWidth = Metric.borderWidth
+        imageView.layer.cornerRadius = Metric.cornerRadius
+        imageView.layer.masksToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
 
     let productNameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.font = UIFont.preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -42,6 +46,8 @@ class ItemCollectionViewCell: UICollectionViewListCell {
 
     let productStockQuantityLabel: UILabel = {
         let label = UILabel()
+        label.textColor = .systemGray
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -49,24 +55,28 @@ class ItemCollectionViewCell: UICollectionViewListCell {
     func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: PageInformation) {
         priceLabel.text = "\(product.currency) \(product.price)"
         if product.discountedPrice == Metric.discountedPrice {
-            priceLabel.textColor = .systemGray
             bargainPriceLabel.isHidden = true
+            priceLabel.textColor = .black
+            priceLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            priceLabel.attributedText = NSAttributedString(string: priceLabel.text  ?? "")
         } else {
             bargainPriceLabel.isHidden = false
-            priceLabel.textColor = .systemRed
+            priceLabel.textColor = .systemGray
+            priceLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
             priceLabel.attributedText = priceLabel.text?.strikeThrough()
             bargainPriceLabel.text = "\(product.currency) \(product.bargainPrice)"
-            bargainPriceLabel.textColor = .systemGray
+            bargainPriceLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            bargainPriceLabel.textColor = .tertiary
         }
     }
 
     func showSoldOut(productStockQuantity: UILabel, product: PageInformation) {
         if product.stock == Metric.stock {
             productStockQuantity.text = CollectionViewNamespace.soldOut.name
-            productStockQuantity.textColor = .systemOrange
+            productStockQuantity.backgroundColor = .primary
         } else {
             productStockQuantity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
-            productStockQuantity.textColor = .systemGray
+            productStockQuantity.backgroundColor = .clear
         }
     }
 

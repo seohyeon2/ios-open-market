@@ -19,7 +19,8 @@ final class GridCollectionViewCell: ItemCollectionViewCell {
         
         self.layer.cornerRadius = Metric.cornerRadius
         self.layer.borderWidth = Metric.borderWidth
-        self.layer.borderColor = UIColor.systemGray3.cgColor
+        self.layer.borderColor = UIColor.primary?.cgColor
+        productThumbnailImageView.layer.borderWidth = 0
     }
     
     required init?(coder: NSCoder) {
@@ -42,9 +43,9 @@ final class GridCollectionViewCell: ItemCollectionViewCell {
     private func setGridStackView() {
         totalGridStackView.addArrangedSubview(productThumbnailImageView)
         totalGridStackView.addArrangedSubview(productNameLabel)
+        totalGridStackView.addArrangedSubview(productStockQuantityLabel)
         totalGridStackView.addArrangedSubview(productPriceLabel)
         totalGridStackView.addArrangedSubview(bargainPriceLabel)
-        totalGridStackView.addArrangedSubview(productStockQuantityLabel)
     }
     
     private func setGridConstraints() {
