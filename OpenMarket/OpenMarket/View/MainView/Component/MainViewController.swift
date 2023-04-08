@@ -48,11 +48,8 @@ final class MainViewController: UIViewController {
     
     private lazy var addedButton: UIButton = {
         let button = UIButton()
-        let configuration = UIImage.SymbolConfiguration(weight: .bold)
-        let image = UIImage(systemName: CollectionViewNamespace.plus.name, withConfiguration: configuration)
         button.addTarget(self, action: #selector(moveProductRegistrationPage), for: .touchUpInside)
-        button.setImage(image, for: .normal)
-        button.tintColor = .secondary
+        button.setImage(UIImage(named: "addedButton1"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -104,10 +101,10 @@ final class MainViewController: UIViewController {
         view.backgroundColor = .white
         
         navigationItem.titleView = segmentedControl
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addedButton)
-        
+
         view.addSubview(collectionView)
         view.addSubview(loadingView)
+        view.addSubview(addedButton)
         
         setCollectionViewConstraint()
     }
@@ -117,7 +114,11 @@ final class MainViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            
+            addedButton.bottomAnchor.constraint(equalTo:
+                                                    view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            addedButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -35)
         ])
     }
 
@@ -239,6 +240,12 @@ extension MainViewController: UICollectionViewDelegate {
             self.loadingView.startAnimating()
             productPageNumber += 1
             viewModel.input.getInformation(pageNumber: productPageNumber)
+        }
+        
+        if scrollView.contentOffset.y > 0 {
+            addedButton.setImage(UIImage(named: "addedButton2"), for: .normal)
+        } else if scrollView.contentOffset.y <= 0 {
+            addedButton.setImage(UIImage(named: "addedButton1"), for: .normal)
         }
     }
 }
