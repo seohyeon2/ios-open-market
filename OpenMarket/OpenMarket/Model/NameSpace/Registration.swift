@@ -21,8 +21,8 @@ enum Registration {
     static let scrollViewInset: CGFloat = 15
     static let stackViewSpacing: CGFloat = 10
     static let imageSize: CGFloat = 100
-    static let textStackViewPositiveSize: CGFloat = 10
-    static let textStackViewNegativeSize: CGFloat = -10
+    static let textStackViewPositiveSize: CGFloat = 20
+    static let textStackViewNegativeSize: CGFloat = -20
     static let descriptionTextViewInset: CGFloat = 0
     static let maxImageCount = 4
     static let firstIndex = 0
