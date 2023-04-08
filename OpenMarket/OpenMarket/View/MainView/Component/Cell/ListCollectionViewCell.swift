@@ -47,6 +47,7 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
         stackView.alignment = .leading
         stackView.distribution = .fill
         stackView.axis = .vertical
+        stackView.spacing = 2
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -115,7 +116,7 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
 extension CALayer {
     func addBottomBorder() {
         let border = CALayer()
-        let borderFrameSize = CGRect(x: 8, y: frame.height + 8, width: frame.width - 20, height: 1)
+        let borderFrameSize = CGRect(x: 8, y: frame.height - 6, width: frame.width - 20, height: 1)
 
         border.backgroundColor = UIColor.primary?.cgColor
         border.frame = borderFrameSize

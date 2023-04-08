@@ -72,8 +72,13 @@ class ItemCollectionViewCell: UICollectionViewListCell {
 
     func showSoldOut(productStockQuantity: UILabel, product: PageInformation) {
         if product.stock == Metric.stock {
-            productStockQuantity.text = CollectionViewNamespace.soldOut.name
-            productStockQuantity.backgroundColor = .primary
+            let attributedString = NSMutableAttributedString()
+            let imageAttachment = NSTextAttachment()
+            imageAttachment.image = UIImage(named: "soldOut")
+            imageAttachment.bounds = CGRect(x: 0, y: 0, width: 42, height: 18)
+            attributedString.append(NSAttributedString(attachment: imageAttachment))
+            productStockQuantity.attributedText = attributedString
+            productStockQuantity.sizeToFit()
         } else {
             productStockQuantity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
             productStockQuantity.backgroundColor = .clear

@@ -38,8 +38,8 @@ enum Metric {
     static let listItemHeight: CGFloat = 1.35
     static let listGroupCount: Int = 1
     static let listGroupWidth: CGFloat = 1.0
-    static let listGroupHeight: CGFloat = 0.11
+    static let listGroupHeight: CGFloat = 0.15
     static let listGroupSpacing: CGFloat = 15
     
-    static let imageSize: CGFloat = 80
+    static let imageSize: CGFloat = 100
 }
