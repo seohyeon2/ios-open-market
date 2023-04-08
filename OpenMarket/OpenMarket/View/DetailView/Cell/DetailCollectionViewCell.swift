@@ -22,6 +22,8 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
     private let productNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.numberOfLines = 3
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         label.adjustsFontForContentSizeCategory = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -75,9 +77,10 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
 
     private let stockPriceStackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.alignment = .center
+        stackView.alignment = .trailing
         stackView.distribution = .fill
         stackView.axis = .vertical
+        stackView.setContentCompressionResistancePriority(.required, for: .horizontal)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -144,14 +147,15 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         totalDetailStackView.addArrangedSubview(labelStackView)
         totalDetailStackView.addArrangedSubview(descriptionScrollView)
 
-        descriptionScrollView.addSubview(descriptionLabel)
-
         labelStackView.addArrangedSubview(productNameLabel)
         labelStackView.addArrangedSubview(stockPriceStackView)
 
         stockPriceStackView.addArrangedSubview(productStockQuantityLabel)
         stockPriceStackView.addArrangedSubview(productPriceLabel)
         stockPriceStackView.addArrangedSubview(bargainPriceLabel)
+        
+        descriptionScrollView.addSubview(descriptionLabel)
+        descriptionScrollView.layer.addBorder(frame: CGRect(x: 0, y: 0, width: frame.width - 10, height: 1))
     }
 
    func configureLabel(product: MarketItem) {
@@ -179,24 +183,33 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
     func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: MarketItem) {
         priceLabel.text = "\(product.currency) \(product.price)"
         if product.discountedPrice == Metric.discountedPrice {
-            priceLabel.textColor = .systemGray
             bargainPriceLabel.isHidden = true
+            priceLabel.textColor = .black
+            priceLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            priceLabel.attributedText = NSAttributedString(string: priceLabel.text  ?? "")
         } else {
             bargainPriceLabel.isHidden = false
-            priceLabel.textColor = .systemRed
+            priceLabel.textColor = .systemGray
+            priceLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
             priceLabel.attributedText = priceLabel.text?.strikeThrough()
             bargainPriceLabel.text = "\(product.currency) \(product.bargainPrice)"
-            bargainPriceLabel.textColor = .systemGray
+            bargainPriceLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            bargainPriceLabel.textColor = .tertiary
         }
     }
 
     func showSoldOut(productStockQuantity: UILabel, product: MarketItem) {
         if product.stock == Metric.stock {
-            productStockQuantity.text = CollectionViewNamespace.soldOut.name
-            productStockQuantity.textColor = .systemOrange
+            let attributedString = NSMutableAttributedString()
+            let imageAttachment = NSTextAttachment()
+            imageAttachment.image = UIImage(named: "soldOut")
+            imageAttachment.bounds = CGRect(x: 0, y: 0, width: 42, height: 18)
+            attributedString.append(NSAttributedString(attachment: imageAttachment))
+            productStockQuantity.attributedText = attributedString
+            productStockQuantity.sizeToFit()
         } else {
             productStockQuantity.text = "\(CollectionViewNamespace.remainingQuantity.name) \(product.stock)"
-            productStockQuantity.textColor = .systemGray
+            productStockQuantity.backgroundColor = .clear
         }
     }
 }

@@ -12,6 +12,7 @@
 		052E9896289C9F4A0051D439 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E9895289C9F4A0051D439 /* APIConstants.swift */; };
 		0549E8E4288FFD9D00260891 /* Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0549E8E3288FFD9D00260891 /* Metric.swift */; };
 		054E774A288AC13000E7460B /* ItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054E7749288AC13000E7460B /* ItemCollectionViewCell.swift */; };
+		05881CA929E1E3D900893F33 /* CALayer + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05881CA829E1E3D900893F33 /* CALayer + extension.swift */; };
 		05922A2D29D6AF12004D0624 /* RegistrationEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05922A2C29D6AF12004D0624 /* RegistrationEditViewModel.swift */; };
 		05AB1A4229E094CD007FCE17 /* UIColor + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AB1A4129E094CD007FCE17 /* UIColor + extension.swift */; };
 		05ABA2BE29D2AC6300D8F146 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABA2BD29D2AC6300D8F146 /* ImageCache.swift */; };
@@ -71,6 +72,7 @@
 		052E9895289C9F4A0051D439 /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		0549E8E3288FFD9D00260891 /* Metric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metric.swift; sourceTree = "<group>"; };
 		054E7749288AC13000E7460B /* ItemCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCollectionViewCell.swift; sourceTree = "<group>"; };
+		05881CA829E1E3D900893F33 /* CALayer + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer + extension.swift"; sourceTree = "<group>"; };
 		05922A2C29D6AF12004D0624 /* RegistrationEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationEditViewModel.swift; sourceTree = "<group>"; };
 		05AB1A4129E094CD007FCE17 /* UIColor + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor + extension.swift"; sourceTree = "<group>"; };
 		05ABA2BD29D2AC6300D8F146 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
@@ -217,6 +219,7 @@
 				8F5E88B7289812D000008560 /* UIImage + extension.swift */,
 				8F90025D2895091C00BAA539 /* Data + extension.swift */,
 				05AB1A4129E094CD007FCE17 /* UIColor + extension.swift */,
+				05881CA829E1E3D900893F33 /* CALayer + extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -509,6 +512,7 @@
 				05B5A7E5287D915B00865293 /* MockURLSessionDataTask.swift in Sources */,
 				8F90026028950B7E00BAA539 /* Request.swift in Sources */,
 				05922A2D29D6AF12004D0624 /* RegistrationEditViewModel.swift in Sources */,
+				05881CA929E1E3D900893F33 /* CALayer + extension.swift in Sources */,
 				054E774A288AC13000E7460B /* ItemCollectionViewCell.swift in Sources */,
 				8F1A0BB6287D91EB0071EF7A /* MockURLSession.swift in Sources */,
 				8F019818288A4A0600C47CF0 /* String + extension.swift in Sources */,

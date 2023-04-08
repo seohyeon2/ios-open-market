@@ -19,7 +19,7 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
         setListConstraints()
         
         self.accessories = [.disclosureIndicator()]
-        self.contentView.layer.addBottomBorder()
+        self.contentView.layer.addBorder(frame: CGRect(x: 8, y: frame.height - 6, width: frame.width - 20, height: 1))
     }
     
     required init?(coder: NSCoder) {
@@ -110,16 +110,5 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
             totalListStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.stackViewSpacing),
             totalListStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant)
         ])
-    }
-}
-
-extension CALayer {
-    func addBottomBorder() {
-        let border = CALayer()
-        let borderFrameSize = CGRect(x: 8, y: frame.height - 6, width: frame.width - 20, height: 1)
-
-        border.backgroundColor = UIColor.primary?.cgColor
-        border.frame = borderFrameSize
-        self.addSublayer(border)
     }
 }
