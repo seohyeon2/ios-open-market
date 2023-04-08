@@ -15,7 +15,6 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private var cancellable = Set<AnyCancellable>()
 
     private var imageCount = Registration.initialNumber
-    var images = [UIImage]()
 
     private var imagePicker : PHPickerViewController = {
         var configuration = PHPickerConfiguration()
@@ -262,7 +261,8 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private func insertImage(imageData: Data) {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPressGesture.minimumPressDuration = 0.2
-        
+        longPressGesture.allowableMovement = 20
+
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addGestureRecognizer(longPressGesture)
@@ -344,7 +344,6 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     }
 
     private func resetRegistrationPage() {
-        images = []
         imageCount = Registration.initialNumber
         imageStackView.subviews.forEach { view in
             view.removeFromSuperview()
@@ -465,18 +464,42 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     @objc
     func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         guard let draggedView = gestureRecognizer.view else { return }
-        let point = gestureRecognizer.location(in: imageScrollView)
+        let point = gestureRecognizer.location(in: imageStackView)
+        let images = imageStackView.arrangedSubviews
+
         switch gestureRecognizer.state {
         case .ended:
-            for subview in imageStackView.subviews {
-                if subview != draggedView {
-                    if draggedView.center.x < subview.center.x {
-                        imageStackView.insertSubview(draggedView, belowSubview: subview)
+            print(point)
+            images.enumerated()
+                .forEach { index, subView in
+                    let containerWidth = subView.frame.origin.x
+
+                    let indexCGFloat = CGFloat(index)
+                    if containerWidth * (indexCGFloat + 1) > point.x {
+                        print("😎")
                         return
+                    } else if containerWidth * (indexCGFloat) < point.x && containerWidth * (indexCGFloat + 1) < point.x {
+
+                        imageStackView.insertArrangedSubview(draggedView, at: index + 1)
                     }
                 }
-            }
-            imageStackView.addArrangedSubview(draggedView)
+//            if let closestSubview = closestSubview {
+//                if draggedView.center.x < closestSubview.center.x {
+//                    imageStackView.insertSubview(draggedView, belowSubview: closestSubview)
+//                } else {
+//                    imageStackView.insertSubview(draggedView, aboveSubview: closestSubview)
+//                }
+//            } else {
+//                imageStackView.addArrangedSubview(draggedView)
+//            }
+            //            for subview in imageStackView.subviews {
+            //                if subview != draggedView {
+            //                    if draggedView.center.x < subview.center.x {
+            //                        imageStackView.insertSubview(draggedView, belowSubview: subview)
+            //                        return
+            //                    }
+            //                }
+            //            }
         case .changed:
             draggedView.center = point
         default:
