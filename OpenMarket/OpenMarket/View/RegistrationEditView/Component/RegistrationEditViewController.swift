@@ -260,8 +260,13 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     }
 
     private func insertImage(imageData: Data) {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        longPressGesture.minimumPressDuration = 0.2
+        
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addGestureRecognizer(longPressGesture)
+        containerView.isUserInteractionEnabled = true
 
         let deleteButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
@@ -280,10 +285,10 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
         containerView.addSubview(imageView)
         containerView.addSubview(deleteButton)
-        self.imageStackView.insertArrangedSubview(containerView, at: 0)
+        imageStackView.insertArrangedSubview(containerView, at: 0)
 
         NSLayoutConstraint.activate([
-            self.imageScrollView.leadingAnchor.constraint(equalTo: imageAddButton.trailingAnchor, constant: 10),
+            imageScrollView.leadingAnchor.constraint(equalTo: imageAddButton.trailingAnchor, constant: 10),
 
             containerView.heightAnchor.constraint(equalToConstant: 110),
             containerView.widthAnchor.constraint(equalToConstant: 110),
@@ -455,5 +460,27 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         sender.superview?.removeFromSuperview()
 
         viewModel.input.tappedXMarkButton(sender.tag)
+    }
+
+    @objc
+    func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        guard let draggedView = gestureRecognizer.view else { return }
+        let point = gestureRecognizer.location(in: imageScrollView)
+        switch gestureRecognizer.state {
+        case .ended:
+            for subview in imageStackView.subviews {
+                if subview != draggedView {
+                    if draggedView.center.x < subview.center.x {
+                        imageStackView.insertSubview(draggedView, belowSubview: subview)
+                        return
+                    }
+                }
+            }
+            imageStackView.addArrangedSubview(draggedView)
+        case .changed:
+            draggedView.center = point
+        default:
+            break
+        }
     }
 }
