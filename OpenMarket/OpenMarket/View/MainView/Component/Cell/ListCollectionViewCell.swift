@@ -19,7 +19,7 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
         setListConstraints()
         
         self.accessories = [.disclosureIndicator()]
-        self.contentView.layer.addBottomBorder()
+        self.contentView.layer.addBorder(frame: CGRect(x: 8, y: frame.height - 6, width: frame.width - 20, height: 1))
     }
     
     required init?(coder: NSCoder) {
@@ -44,19 +44,19 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
     
     private let upperStackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.alignment = .bottom
+        stackView.alignment = .leading
         stackView.distribution = .fill
-        stackView.axis = .horizontal
+        stackView.axis = .vertical
+        stackView.spacing = 2
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
     private let downStackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.alignment = .top
+        stackView.alignment = .leading
         stackView.distribution = .fill
-        stackView.axis = .horizontal
-        stackView.spacing = Metric.stackViewSpacing
+        stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -65,6 +65,7 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
         let stackView = UIStackView()
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
+        stackView.spacing = Metric.stackViewSpacing
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
@@ -109,16 +110,5 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
             totalListStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.stackViewSpacing),
             totalListStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant)
         ])
-    }
-}
-
-extension CALayer {
-    func addBottomBorder() {
-        let border = CALayer()
-        let borderFrameSize = CGRect(x: 8, y: frame.height + 5, width: frame.width, height: 1)
-
-        border.backgroundColor = UIColor.systemGray3.cgColor
-        border.frame = borderFrameSize
-        self.addSublayer(border)
     }
 }

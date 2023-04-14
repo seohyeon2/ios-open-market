@@ -27,7 +27,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private lazy var doneButton: UIButton = {
         let button = UIButton()
         button.setTitle(Registration.done, for: .normal)
-        button.setTitleColor(UIColor.systemBlue, for: .normal)
+        button.setTitleColor(UIColor.secondary, for: .normal)
         button.addTarget(self, action: #selector(onClickDoneButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -36,7 +36,7 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle(Registration.cancel, for: .normal)
-        button.setTitleColor(UIColor.systemBlue, for: .normal)
+        button.setTitleColor(UIColor.secondary, for: .normal)
         button.addTarget(self, action: #selector(goBackDetailViewController), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -64,13 +64,55 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         let image = UIImage(systemName: "camera.fill")
         button.addTarget(self, action: #selector(addImage), for: .touchUpInside)
         button.setImage(image, for: .normal)
-        button.tintColor = .systemGray3
-        button.backgroundColor = .gray
+        button.tintColor = .secondary
         button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.systemGray5.cgColor
+        button.layer.cornerRadius = 5
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
+    let productNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = Registration.productName
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    let productPriceLabel: UILabel = {
+        let label = UILabel()
+        label.text = Registration.productPrice
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    let discountedPriceLabel: UILabel = {
+        let label = UILabel()
+        label.text = Registration.productName
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    let stockLabel: UILabel = {
+        let label = UILabel()
+        label.text = Registration.stock
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "상품 상세 설명"
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    
     let productNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = Registration.productName
@@ -111,6 +153,9 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
     let descriptionTextView: UITextView = {
         let textView = UITextView()
+        textView.layer.borderWidth = 1
+        textView.layer.borderColor = UIColor.systemGray5.cgColor
+        textView.layer.cornerRadius = 5
         return textView
     }()
 
@@ -364,10 +409,15 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
         imageScrollView.addSubview(imageStackView)
 
+        textStackView.addArrangedSubview(productNameLabel)
         textStackView.addArrangedSubview(productNameTextField)
+        textStackView.addArrangedSubview(productPriceLabel)
         textStackView.addArrangedSubview(priceStackView)
+        textStackView.addArrangedSubview(discountedPriceLabel)
         textStackView.addArrangedSubview(discountedPriceTextField)
+        textStackView.addArrangedSubview(stockLabel)
         textStackView.addArrangedSubview(stockTextField)
+        textStackView.addArrangedSubview(descriptionLabel)
         textStackView.addArrangedSubview(descriptionTextView)
 
         priceStackView.addArrangedSubview(productPriceTextField)

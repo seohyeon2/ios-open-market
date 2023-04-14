@@ -38,20 +38,18 @@ final class MainViewController: UIViewController {
         segment.selectedSegmentIndex = Metric.firstSegment
         segment.addTarget(self, action: #selector(handleSegmentChange), for: .valueChanged)
         segment.translatesAutoresizingMaskIntoConstraints = false
-        segment.selectedSegmentTintColor = .systemBlue
+        segment.selectedSegmentTintColor = .secondary
         segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: UIControl.State.selected)
-        segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.link], for: UIControl.State.normal)
-        segment.layer.borderColor = UIColor.systemBlue.cgColor
+        segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.secondary ?? UIColor.black], for: UIControl.State.normal)
+        segment.layer.borderColor = UIColor.secondary?.cgColor
         segment.layer.borderWidth = Metric.borderWidth
         return segment
     }()
     
     private lazy var addedButton: UIButton = {
         let button = UIButton()
-        let configuration = UIImage.SymbolConfiguration(weight: .bold)
-        let image = UIImage(systemName: CollectionViewNamespace.plus.name, withConfiguration: configuration)
         button.addTarget(self, action: #selector(moveProductRegistrationPage), for: .touchUpInside)
-        button.setImage(image, for: .normal)
+        button.setImage(UIImage(named: "addedButton1"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -103,10 +101,10 @@ final class MainViewController: UIViewController {
         view.backgroundColor = .white
         
         navigationItem.titleView = segmentedControl
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addedButton)
-        
+
         view.addSubview(collectionView)
         view.addSubview(loadingView)
+        view.addSubview(addedButton)
         
         setCollectionViewConstraint()
     }
@@ -116,7 +114,11 @@ final class MainViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            
+            addedButton.bottomAnchor.constraint(equalTo:
+                                                    view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            addedButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -35)
         ])
     }
 
@@ -234,10 +236,16 @@ extension MainViewController: UICollectionViewDelegate {
         let bottomPosition = scrollView.contentSize.height - scrollView.bounds.height
         let currentPosition = scrollView.contentOffset.y
 
-        if Int(scrollView.contentOffset.y) == Int(bottomPosition) {
+        if Int(currentPosition) == Int(bottomPosition) {
             self.loadingView.startAnimating()
             productPageNumber += 1
             viewModel.input.getInformation(pageNumber: productPageNumber)
+        }
+        
+        if scrollView.contentOffset.y > 0 {
+            addedButton.setImage(UIImage(named: "addedButton2"), for: .normal)
+        } else if scrollView.contentOffset.y <= 0 {
+            addedButton.setImage(UIImage(named: "addedButton1"), for: .normal)
         }
     }
 }

@@ -38,6 +38,7 @@ final class ProductDetailViewController: UIViewController {
         let button = UIButton()
         let image = UIImage(systemName: "ellipsis")
         button.setImage(image, for: .normal)
+        button.tintColor = .secondary
         button.addTarget(self, action: #selector(showActionSheet), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -57,6 +58,7 @@ final class ProductDetailViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: actionButton)
+        navigationController?.navigationBar.tintColor = .secondary
         collectionView.register(DetailCollectionViewCell.self, forCellWithReuseIdentifier: "detail")
         dataSource = configureDataSource(id: "detail")
         self.snapshot.appendSections([.main])
