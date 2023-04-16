@@ -123,6 +123,14 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         return stackView
     }()
 
+    private lazy var collectionView: UICollectionView = {
+        let layout = createGridLayout()
+        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.autoresizingMask = [.flexibleWidth]
+        return collectionView
+    }()
+
     private let textStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -139,6 +147,8 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
         guard let item = viewModel.marketItem else {
             self.title = Registration.registrationProduct
+            self.imageScrollView.isHidden = true
+            configureCollectionView()
             return
         }
         configure(choose: item)
@@ -154,7 +164,9 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
+        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.dataSource = self
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: doneButton)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
 
@@ -182,7 +194,10 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                 guard let self = self,
                       let addedImage = picture as? UIImage,
                       let imageData = addedImage.compress() else { return }
-                self.viewModel.input.getProductImageData(imageData)
+                DispatchQueue.main.async {
+                    self.viewModel.input.getProductImageData(imageData)
+                    self.collectionView.reloadData()
+                }
             }
         }
 
@@ -224,13 +239,12 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
             .assign(to: \.currency, on: viewModel)
             .store(in: &cancellable)
         
-        viewModel.output.imageDataPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] imageData in
-                guard let self = self else { return }
-                self.insertImage(imageData: imageData)
-
-            }.store(in: &cancellable)
+//        viewModel.output.imageDataPublisher
+//            .receive(on: DispatchQueue.main)
+//            .sink { [weak self] imageData in
+//                guard let self = self else { return }
+//                self.insertImage(imageData: imageData)
+//            }.store(in: &cancellable)
         
         viewModel.output.alertPublisher
             .receive(on: DispatchQueue.main)
@@ -259,14 +273,8 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     }
 
     private func insertImage(imageData: Data) {
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-        longPressGesture.minimumPressDuration = 0.2
-        longPressGesture.allowableMovement = 20
-
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addGestureRecognizer(longPressGesture)
-        containerView.isUserInteractionEnabled = true
 
         let deleteButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
@@ -300,6 +308,16 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
             deleteButton.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
             deleteButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: -10)
+        ])
+    }
+
+    private func configureCollectionView() {
+        view.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            collectionView.heightAnchor.constraint(equalToConstant: 120),
+            collectionView.leadingAnchor.constraint(equalTo: imageAddButton.trailingAnchor, constant: 10),
         ])
     }
 
@@ -417,6 +435,13 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
     }
 
+    private func createGridLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 110, height: 110)
+        return layout
+    }
+
     @objc
     private func addImage() {
         present(imagePicker, animated: true)
@@ -460,50 +485,24 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
         viewModel.input.tappedXMarkButton(sender.tag)
     }
+}
 
-    @objc
-    func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
-        guard let draggedView = gestureRecognizer.view else { return }
-        let point = gestureRecognizer.location(in: imageStackView)
-        let images = imageStackView.arrangedSubviews
+extension RegistrationEditViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        viewModel.imagesData.count
+    }
 
-        switch gestureRecognizer.state {
-        case .ended:
-            print(point)
-            images.enumerated()
-                .forEach { index, subView in
-                    let containerWidth = subView.frame.origin.x
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? ImageCollectionViewCell else { return ImageCollectionViewCell() }
+        cell.backgroundColor = .red
+        print("뷰모델")
+        guard !viewModel.imagesData.isEmpty else { return cell }
 
-                    let indexCGFloat = CGFloat(index)
-                    if containerWidth * (indexCGFloat + 1) > point.x {
-                        print("😎")
-                        return
-                    } else if containerWidth * (indexCGFloat) < point.x && containerWidth * (indexCGFloat + 1) < point.x {
-
-                        imageStackView.insertArrangedSubview(draggedView, at: index + 1)
-                    }
-                }
-//            if let closestSubview = closestSubview {
-//                if draggedView.center.x < closestSubview.center.x {
-//                    imageStackView.insertSubview(draggedView, belowSubview: closestSubview)
-//                } else {
-//                    imageStackView.insertSubview(draggedView, aboveSubview: closestSubview)
-//                }
-//            } else {
-//                imageStackView.addArrangedSubview(draggedView)
-//            }
-            //            for subview in imageStackView.subviews {
-            //                if subview != draggedView {
-            //                    if draggedView.center.x < subview.center.x {
-            //                        imageStackView.insertSubview(draggedView, belowSubview: subview)
-            //                        return
-            //                    }
-            //                }
-            //            }
-        case .changed:
-            draggedView.center = point
-        default:
-            break
+        viewModel.imagesData.forEach { data in
+            print(data)
         }
+        cell.setGridStackView(imageData: viewModel.imagesData[indexPath.row])
+
+        return cell
     }
 }

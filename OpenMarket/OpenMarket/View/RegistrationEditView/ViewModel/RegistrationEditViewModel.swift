@@ -41,7 +41,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     private let movementSubject = PassthroughSubject<Int, Never>()
     
     
-    private var imagesData = [Data]()
+    var imagesData = [Data]()
     var tagNumber = 0
 
     init(marketItem: MarketItem?) {
