@@ -89,7 +89,13 @@ final class MainViewController: UIViewController {
         super.viewWillAppear(true)
         snapshot.deleteAllItems()
         snapshot.appendSections([.main])
-        viewModel.input.getInformation(pageNumber: Metric.firstPage)
+        
+        if let selectedIndex = viewModel.indexPath {
+            collectionView.scrollToItem(at: selectedIndex, at: .centeredVertically, animated: true)
+            viewModel.indexPath = nil
+        } else {
+            viewModel.input.getInformation(pageNumber: viewModel.productPageNumber)
+        }
     }
 
     // MARK: Method
@@ -278,6 +284,8 @@ extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
         
+        viewModel.indexPath = indexPath
+        
         let id = snapshot.itemIdentifiers[indexPath.row].id
         viewModel.input.pushToDetailView(indexPath: indexPath,
                                          id: id)
@@ -291,6 +299,7 @@ extension MainViewController: UICollectionViewDelegate {
             self.loadingView.startAnimating()
             productPageNumber += 1
             viewModel.input.getInformation(pageNumber: productPageNumber)
+            viewModel.input.didScrollSubject.send(true)
         }
         
         if scrollView.contentOffset.y > 0 {

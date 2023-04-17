@@ -11,6 +11,7 @@ import Combine
 protocol MainViewModelInputInterface {
     func getInformation(pageNumber: Int)
     func pushToDetailView(indexPath: IndexPath, id:Int)
+    var didScrollSubject: PassthroughSubject<Bool, Never> { get }
 }
 
 protocol MainViewModelOutputInterface {
@@ -28,13 +29,22 @@ protocol MainViewModelInterface {
 final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface {
     var input: MainViewModelInputInterface { self }
     var output: MainViewModelOutputInterface { self }
+    
+    var indexPath: IndexPath?
 
     private var cancellable = Set<AnyCancellable>()
     private let marketInformationSubject = PassthroughSubject<MarketInformation, Never>()
     private let isLoadingSubject = PassthroughSubject<Bool, Never>()
     private let alertSubject = PassthroughSubject<String, Never>()
     private let marketItemIdSubject = PassthroughSubject<Int, Never>()
-
+    let didScrollSubject = PassthroughSubject<Bool, Never>()
+    
+    private var productPageNumber = 1
+    
+    private var didScrollPublisher: AnyPublisher<Bool, Never> {
+        return didScrollSubject.eraseToAnyPublisher()
+    }
+    
     var marketInformationPublisher: AnyPublisher<MarketInformation, Never> {
         return marketInformationSubject.eraseToAnyPublisher()
     }
@@ -53,6 +63,24 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
 
     private let networkManager = NetworkManager()
 
+    
+    private func bind() {
+        didScrollPublisher
+            .sink { [weak self] isScroll in
+                guard let self = self else {
+                    return
+                }
+                if isScroll {
+                    self.productPageNumber += 1
+                } else {
+                    self.productPageNumber = 1
+                }
+                
+                self.getProductList(pageNumber: self.productPageNumber)
+            }
+            .store(in: &cancellable)
+    }
+    
     private func getProductList(pageNumber: Int) {
 
         networkManager.getProductInquiry(pageNumber: pageNumber)?
@@ -77,7 +105,9 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
 
 extension MainViewModel: MainViewModelInputInterface {
     func getInformation(pageNumber: Int) {
+        
         getProductList(pageNumber: pageNumber)
+
     }
 
     func pushToDetailView(indexPath: IndexPath, id:Int) {

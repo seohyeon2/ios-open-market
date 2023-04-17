@@ -92,7 +92,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface, Regis
             return
         }
         
-        networkManager.registerEditProduct(request: request)
+        networkManager.requestToServer(request: request)
             .sink { [weak self] completion in
                 switch completion {
                 case .finished:

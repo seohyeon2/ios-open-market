@@ -66,11 +66,6 @@ final class NetworkManager {
         return request
     }
 
-    func registerEditProduct(request: URLRequest) -> AnyPublisher<Data, NetworkError> {
-        return requestToServer(request: request)
-            .eraseToAnyPublisher()
-    }
-
     func deleteProduct(productId: Int?) -> AnyPublisher<Data, NetworkError> {
         guard let productId = productId,
               var request = try? ProductRequest.deleteURL(productId).createURLRequest() else {
