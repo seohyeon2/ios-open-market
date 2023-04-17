@@ -9,7 +9,8 @@ import UIKit
 
 struct OpenMarketRequest {
 
-    static func createPostBody(params: [String: Any], imageData: [Data]?) -> Data? {
+    static func createPostBody(params: [String: Any],
+                               imageData: [Data]?) -> Data? {
         var postData = Data()
         let boundary = Multipart.boundaryValue
 

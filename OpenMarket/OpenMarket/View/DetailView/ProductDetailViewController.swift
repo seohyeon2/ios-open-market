@@ -20,7 +20,8 @@ final class ProductDetailViewController: UIViewController {
 
     init(id: Int) {
         self.viewModel.input.getMarketItem(id)
-        super.init(nibName: nil, bundle: nil)
+        super.init(nibName: nil,
+                   bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -37,18 +38,23 @@ final class ProductDetailViewController: UIViewController {
     private lazy var actionButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: "ellipsis")
-        button.setImage(image, for: .normal)
+        button.setImage(image,
+                        for: .normal)
         button.tintColor = .secondary
-        button.addTarget(self, action: #selector(showActionSheet), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(showActionSheet),
+                         for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     private lazy var collectionView: UICollectionView = {
         let layout = createDetailLayout()
-        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        let collectionView = UICollectionView(frame: view.bounds,
+                                              collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.autoresizingMask = [.flexibleWidth,
+                                           .flexibleHeight]
         return collectionView
     }()
 
@@ -59,7 +65,8 @@ final class ProductDetailViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: actionButton)
         navigationController?.navigationBar.tintColor = .secondary
-        collectionView.register(DetailCollectionViewCell.self, forCellWithReuseIdentifier: "detail")
+        collectionView.register(DetailCollectionViewCell.self,
+                                forCellWithReuseIdentifier: "detail")
         dataSource = configureDataSource(id: "detail")
         self.snapshot.appendSections([.main])
 
@@ -87,7 +94,8 @@ final class ProductDetailViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] error in
                 self?.showCustomAlert(title: nil, message: error)
-            }.store(in: &cancellable)
+            }
+            .store(in: &cancellable)
         
         viewModel.output.movementPublisher
             .receive(on: DispatchQueue.main)
@@ -103,34 +111,48 @@ final class ProductDetailViewController: UIViewController {
     @objc private func showActionSheet() {
         let actionSheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let actionModify = UIAlertAction(title: "수정", style: .default, handler: { [weak self] _ in
+        let actionModify = UIAlertAction(title: "수정",
+                                         style: .default,
+                                         handler: { [weak self] _ in
             let editViewController = RegistrationEditViewController(viewModel: RegistrationEditViewModel(marketItem: self?.viewModel.marketItem))
-            self?.navigationController?.pushViewController(editViewController, animated: true)
+            self?.navigationController?.pushViewController(editViewController,
+                                                           animated: true)
         })
 
-        let actionDelete = UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
+        let actionDelete = UIAlertAction(title: "삭제",
+                                         style: .destructive,
+                                         handler: { _ in
             self.viewModel.output.deleteProduct()
         })
 
-        let actionCancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let actionCancel = UIAlertAction(title: "취소",
+                                         style: .cancel,
+                                         handler: nil)
 
         actionSheetController.addAction(actionModify)
         actionSheetController.addAction(actionDelete)
         actionSheetController.addAction(actionCancel)
 
-        self.present(actionSheetController, animated: true, completion: nil)
+        self.present(actionSheetController,
+                     animated: true,
+                     completion: nil)
     }
 
     private func createDetailLayout() -> UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                              heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-        group.contentInsets = NSDirectionalEdgeInsets(top: Metric.padding, leading: Metric.padding, bottom: Metric.padding, trailing: Metric.padding)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                               heightDimension: .fractionalHeight(1))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
+                                                       subitem: item, count: 1)
+        group.contentInsets = NSDirectionalEdgeInsets(top: Metric.padding, leading: Metric.padding,
+                                                      bottom: Metric.padding, trailing: Metric.padding)
 
         let section = NSCollectionLayoutSection(group: group)
         let layout = UICollectionViewCompositionalLayout(section: section)
+
         return layout
     }
 
@@ -144,10 +166,13 @@ final class ProductDetailViewController: UIViewController {
     }
 
     private func configureDataSource(id: String) -> DiffableDataSource? {
-        dataSource = DiffableDataSource(collectionView: collectionView) { [weak self] (collectionView: UICollectionView, indexPath: IndexPath, product: MarketItem) -> UICollectionViewCell? in
+        dataSource = DiffableDataSource(collectionView: collectionView) { [weak self] (collectionView: UICollectionView,
+                                                                                       indexPath: IndexPath,
+                                                                                       product: MarketItem) -> UICollectionViewCell? in
 
             guard let self = self,
-                  let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "detail", for: indexPath) as? DetailCollectionViewCell else { return DetailCollectionViewCell() }
+                  let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "detail",
+                                                                for: indexPath) as? DetailCollectionViewCell else { return DetailCollectionViewCell() }
 
             let publishers = self.viewModel.output.getImagePublisher()
 
@@ -162,7 +187,9 @@ final class ProductDetailViewController: UIViewController {
                             print(error)
                         }
                     }, receiveValue: { imageData in
-                        cell.configureImage(imageData: imageData, index: index, total: (publishers?.count ?? 1))
+                        cell.configureImage(imageData: imageData,
+                                            index: index,
+                                            total: (publishers?.count ?? 1))
                     })
                     .store(in: &self.cancellable)
             })

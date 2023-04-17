@@ -9,9 +9,15 @@ import UIKit
 
 extension UIColor {
     /// Primary color - #F2C4CD
-    class var primary: UIColor? { return UIColor(named: "primary") }
+    class var primary: UIColor? {
+        return UIColor(named: "primary")
+    }
     /// Secondary color - #F26B8F
-    class var secondary: UIColor? { return UIColor(named: "secondary") }
+    class var secondary: UIColor? {
+        return UIColor(named: "secondary")
+    }
     /// Tertiary color - #F23D6D
-    class var tertiary: UIColor? { return UIColor(named: "tertiary") }
+    class var tertiary: UIColor? {
+        return UIColor(named: "tertiary")
+    }
 }

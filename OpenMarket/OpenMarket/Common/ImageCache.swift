@@ -30,7 +30,8 @@ final class ImageCache {
                 promise(.success(image))
             }
         } else {
-            return Future { promise in
+            return Future { [weak self] promise in
+                guard let self = self else { return }
                 NetworkManager().requestToServer(request: URLRequest(url: url))
                     .sink(receiveCompletion: { completion in
                         switch completion {

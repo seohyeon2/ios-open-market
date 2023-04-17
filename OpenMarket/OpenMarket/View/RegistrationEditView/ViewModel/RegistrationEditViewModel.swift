@@ -25,8 +25,7 @@ protocol RegistrationEditViewModelInterface {
     var output: RegistrationEditViewModelOutputInterface { get }
 }
 
-final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
-                                 RegistrationEditViewModelOutputInterface {
+final class RegistrationEditViewModel: RegistrationEditViewModelInterface, RegistrationEditViewModelOutputInterface {
     var input: RegistrationEditViewModelInputInterface { self }
     var output: RegistrationEditViewModelOutputInterface { self }
     var marketItem: MarketItem?
@@ -39,8 +38,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     }
     private let alertSubject = PassthroughSubject<String, Never>()
     private let movementSubject = PassthroughSubject<Int, Never>()
-    
-    
+
     private var imagesData = [Data]()
     var tagNumber = 0
 
@@ -67,7 +65,6 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
     }
     
     private let imageDataSubject = PassthroughSubject <Data, Never>()
-    private let secret = "lk1erfg241t8ygh0"
     private let networkManager = NetworkManager()
     private var cancellable = Set<AnyCancellable>()
     
@@ -79,7 +76,7 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
             Params.currency: choiceCurrency()?.name,
             Params.discountedPrice: Double(discountedPrice) ?? 0,
             Params.stock: Int(stock) ?? 0,
-            Params.secret: secret
+            Params.secret: APIConstants.secret
         ]
         
         var request: URLRequest?
@@ -87,7 +84,8 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
             request = networkManager.getPostRequest(params: params,
                                                  imageData: imagesData)
         } else {
-            request = networkManager.getPatchRequest(productId: marketItem?.id ?? 0, modifiedInformation: params)
+            request = networkManager.getPatchRequest(productId: marketItem?.id ?? 0,
+                                                     modifiedInformation: params)
         }
         
         guard let request = request else {
@@ -98,7 +96,6 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
             .sink { [weak self] completion in
                 switch completion {
                 case .finished:
-                    print("생성 및 수정성공")
                     return
                 case .failure(let error):
                     self?.alertSubject.send(error.message)
@@ -106,7 +103,8 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface,
                 }
             } receiveValue: { [weak self] response in
                 
-                guard let marketItem = try? JSONDecoder().decode(MarketItem.self, from: response) else { return }
+                guard let marketItem = try? JSONDecoder().decode(MarketItem.self,
+                                                                 from: response) else { return }
                 
                 self?.movementSubject.send(marketItem.id)
             }

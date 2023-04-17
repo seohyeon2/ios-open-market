@@ -14,9 +14,6 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private var viewModel: RegistrationEditViewModel = RegistrationEditViewModel(marketItem: nil)
     private var cancellable = Set<AnyCancellable>()
 
-    private var imageCount = Registration.initialNumber
-    var images = [UIImage]()
-
     private var imagePicker : PHPickerViewController = {
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = 5
@@ -26,18 +23,26 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
     private lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.setTitle(Registration.done, for: .normal)
-        button.setTitleColor(UIColor.secondary, for: .normal)
-        button.addTarget(self, action: #selector(onClickDoneButton), for: .touchUpInside)
+        button.setTitle(Registration.done,
+                        for: .normal)
+        button.setTitleColor(UIColor.secondary,
+                             for: .normal)
+        button.addTarget(self,
+                         action: #selector(onClickDoneButton),
+                         for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle(Registration.cancel, for: .normal)
-        button.setTitleColor(UIColor.secondary, for: .normal)
-        button.addTarget(self, action: #selector(goBackDetailViewController), for: .touchUpInside)
+        button.setTitle(Registration.cancel,
+                        for: .normal)
+        button.setTitleColor(UIColor.secondary,
+                             for: .normal)
+        button.addTarget(self,
+                         action: #selector(goBackDetailViewController),
+                         for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -62,8 +67,11 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     lazy var imageAddButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: "camera.fill")
-        button.addTarget(self, action: #selector(addImage), for: .touchUpInside)
-        button.setImage(image, for: .normal)
+        button.addTarget(self,
+                         action: #selector(addImage),
+                         for: .touchUpInside)
+        button.setImage(image,
+                        for: .normal)
         button.tintColor = .secondary
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.systemGray5.cgColor
@@ -145,7 +153,8 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     }()
 
     lazy var segmentedControl: UISegmentedControl = {
-        let segment = UISegmentedControl(items: [Currency.KRW.name, Currency.USD.name])
+        let segment = UISegmentedControl(items: [Currency.KRW.name,
+                                                 Currency.USD.name])
         segment.selectedSegmentIndex = Registration.initialNumber
         segment.translatesAutoresizingMaskIntoConstraints = false
         return segment
@@ -241,33 +250,39 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private func bind() {
         productNameTextField.textPublisher
             .receive(on: DispatchQueue.main)
-            .assign(to: \.productName, on: viewModel)
+            .assign(to: \.productName,
+                    on: viewModel)
             .store(in: &cancellable)
         
         descriptionTextView.textPublisher
             .receive(on: DispatchQueue.main)
-            .assign(to: \.productDescription, on: viewModel)
+            .assign(to: \.productDescription,
+                    on: viewModel)
             .store(in: &cancellable)
         
         productPriceTextField.textPublisher
             .receive(on: DispatchQueue.main)
-            .assign(to: \.productPrice, on: viewModel)
+            .assign(to: \.productPrice,
+                    on: viewModel)
             .store(in: &cancellable)
         
         discountedPriceTextField.textPublisher
             .receive(on: DispatchQueue.main)
-            .assign(to: \.discountedPrice, on: viewModel)
+            .assign(to: \.discountedPrice,
+                    on: viewModel)
             .store(in: &cancellable)
         
         stockTextField.textPublisher
             .receive(on: DispatchQueue.main)
-            .assign(to: \.stock, on: viewModel)
+            .assign(to: \.stock,
+                    on: viewModel)
             .store(in: &cancellable)
 
         segmentedControl
             .publisher(for: \.selectedSegmentIndex)
             .receive(on: DispatchQueue.main)
-            .assign(to: \.currency, on: viewModel)
+            .assign(to: \.currency,
+                    on: viewModel)
             .store(in: &cancellable)
         
         viewModel.output.imageDataPublisher
@@ -275,14 +290,16 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
             .sink { [weak self] imageData in
                 guard let self = self else { return }
                 self.insertImage(imageData: imageData)
-
-            }.store(in: &cancellable)
+            }
+            .store(in: &cancellable)
         
         viewModel.output.alertPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] error in
-                self?.showCustomAlert(title: nil, message: error)
-            }.store(in: &cancellable)
+                self?.showCustomAlert(title: nil,
+                                      message: error)
+            }
+            .store(in: &cancellable)
         
         viewModel.output.movementPublisher
             .receive(on: DispatchQueue.main)
@@ -292,7 +309,8 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                 }
                 
                 let viewController = ProductDetailViewController(id: itemId)
-                navigationController.pushViewController(viewController, animated: true)
+                navigationController.pushViewController(viewController,
+                                                        animated: true)
                 
                 guard let rootView = navigationController.viewControllers.first,
                       let lastView = navigationController.viewControllers.last else {
@@ -301,19 +319,29 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                 
                 navigationController.viewControllers = [rootView,lastView]
 
-            }.store(in: &cancellable)
+            }
+            .store(in: &cancellable)
     }
 
     private func insertImage(imageData: Data) {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        let containerView = UIView(frame: CGRect(x: 0,
+                                                 y: 0,
+                                                 width: 100,
+                                                 height: 100))
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
-        let deleteButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        let deleteButton = UIButton(frame: CGRect(x: 0,
+                                                  y: 0,
+                                                  width: 30,
+                                                  height: 30))
+        deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"),
+                              for: .normal)
         deleteButton.tintColor = .systemGray3
         deleteButton.backgroundColor = .black
         deleteButton.layer.cornerRadius = 20
-        deleteButton.addTarget(self, action: #selector(tappedXMarkButton), for: .touchUpInside)
+        deleteButton.addTarget(self,
+                               action: #selector(tappedXMarkButton),
+                               for: .touchUpInside)
         deleteButton.tag = viewModel.tagNumber
         viewModel.tagNumber += 1
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
@@ -325,21 +353,27 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
         containerView.addSubview(imageView)
         containerView.addSubview(deleteButton)
-        self.imageStackView.insertArrangedSubview(containerView, at: 0)
+        self.imageStackView.insertArrangedSubview(containerView,
+                                                  at: 0)
 
         NSLayoutConstraint.activate([
-            self.imageScrollView.leadingAnchor.constraint(equalTo: imageAddButton.trailingAnchor, constant: 10),
+            self.imageScrollView.leadingAnchor.constraint(equalTo: imageAddButton.trailingAnchor,
+                                                          constant: 10),
 
             containerView.heightAnchor.constraint(equalToConstant: 110),
             containerView.widthAnchor.constraint(equalToConstant: 110),
 
-            imageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+            imageView.topAnchor.constraint(equalTo: containerView.topAnchor,
+                                           constant: 10),
             imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,
+                                                constant: -10),
             imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
 
-            deleteButton.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
-            deleteButton.topAnchor.constraint(equalTo: imageView.topAnchor, constant: -10)
+            deleteButton.trailingAnchor.constraint(equalTo: imageView.trailingAnchor,
+                                                   constant: 10),
+            deleteButton.topAnchor.constraint(equalTo: imageView.topAnchor,
+                                              constant: -10)
         ])
     }
 
@@ -360,12 +394,13 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
         item.images.forEach { image in
             guard let url = URL(string: image.url) else { return }
-            NetworkManager().requestToServer(request: URLRequest(url: url, httpMethod: .get))
+            NetworkManager().requestToServer(request: URLRequest(url: url,
+                                                                 httpMethod: .get))
                 .receive(on: DispatchQueue.main)
                 .sink { completion in
                     switch completion {
                     case .finished:
-                        print("성공")
+                        return
                     case .failure(let error):
                         print(error.localizedDescription)
                     }
@@ -376,16 +411,16 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
                     imageView.heightAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
                     imageView.widthAnchor.constraint(equalToConstant: Registration.imageSize).isActive = true
                     self.imageAddButton.isHidden = true
-                    self.imageScrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20).isActive = true
-                    self.imageStackView.insertArrangedSubview(imageView, at: 0)
+                    self.imageScrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor,
+                                                                  constant: 20).isActive = true
+                    self.imageStackView.insertArrangedSubview(imageView,
+                                                              at: 0)
                 }
                 .store(in: &cancellable)
         }
     }
 
     private func resetRegistrationPage() {
-        images = []
-        imageCount = Registration.initialNumber
         imageStackView.subviews.forEach { view in
             view.removeFromSuperview()
         }
@@ -409,16 +444,19 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
 
         imageScrollView.addSubview(imageStackView)
 
-        textStackView.addArrangedSubview(productNameLabel)
-        textStackView.addArrangedSubview(productNameTextField)
-        textStackView.addArrangedSubview(productPriceLabel)
-        textStackView.addArrangedSubview(priceStackView)
-        textStackView.addArrangedSubview(discountedPriceLabel)
-        textStackView.addArrangedSubview(discountedPriceTextField)
-        textStackView.addArrangedSubview(stockLabel)
-        textStackView.addArrangedSubview(stockTextField)
-        textStackView.addArrangedSubview(descriptionLabel)
-        textStackView.addArrangedSubview(descriptionTextView)
+        [productNameLabel,
+         productNameTextField,
+         productPriceLabel,
+         priceStackView,
+         discountedPriceLabel,
+         discountedPriceTextField,
+         stockLabel,
+         stockTextField,
+         descriptionLabel,
+         descriptionTextView]
+            .forEach {
+            textStackView.addArrangedSubview($0)
+        }
 
         priceStackView.addArrangedSubview(productPriceTextField)
         priceStackView.addArrangedSubview(segmentedControl)
@@ -427,7 +465,8 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
     private func setConstraint() {
         NSLayoutConstraint.activate([
             //MARK: imageScrollViewConstraint
-            imageScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            imageScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                                 constant: 10),
             imageScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             imageScrollView.heightAnchor.constraint(equalToConstant: 120),
 
@@ -440,32 +479,45 @@ final class RegistrationEditViewController: UIViewController, PHPickerViewContro
             //MARK: imageAddButtonConstraint
             imageAddButton.heightAnchor.constraint(equalToConstant: 100),
             imageAddButton.widthAnchor.constraint(equalToConstant: 100),
-            imageAddButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            imageAddButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            imageAddButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                                constant: 20),
+            imageAddButton.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+                                                    constant: 20),
 
             //MARK: textStackViewConstraint
-            textStackView.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: Registration.textStackViewPositiveSize),
-            textStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Registration.textStackViewNegativeSize),
-            textStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Registration.textStackViewNegativeSize),
-            textStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Registration.textStackViewPositiveSize)
+            textStackView.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor,
+                                               constant: Registration.textStackViewPositiveSize),
+            textStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                                                    constant: Registration.textStackViewNegativeSize),
+            textStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                                  constant: Registration.textStackViewNegativeSize),
+            textStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                                                   constant: Registration.textStackViewPositiveSize)
         ])
         
-        imageScrollView.setContentHuggingPriority(.required, for: .vertical)
-        descriptionTextView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        imageScrollView.setContentHuggingPriority(.required,
+                                                  for: .vertical)
+        descriptionTextView.setContentHuggingPriority(.defaultLow,
+                                                      for: .vertical)
     }
 
     private func setViewGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(keyboardDownAction))
+        let tapGesture = UITapGestureRecognizer(target: self,
+                                                action: #selector(keyboardDownAction))
         view.addGestureRecognizer(tapGesture)
     }
 
     private func registerForKeyboardNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyBoardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyBoardShow),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
     }
 
     @objc
     private func addImage() {
-        present(imagePicker, animated: true)
+        present(imagePicker,
+                animated: true)
     }
 
     @objc

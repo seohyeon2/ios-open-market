@@ -50,10 +50,14 @@ final class GridCollectionViewCell: ItemCollectionViewCell {
     
     private func setGridConstraints() {
         NSLayoutConstraint.activate([
-            totalGridStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Metric.gridPositiveConstant),
-            totalGridStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant),
-            totalGridStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: Metric.listNegativeConstant),
-            totalGridStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant)
+            totalGridStackView.topAnchor.constraint(equalTo: contentView.topAnchor,
+                                                    constant: Metric.gridPositiveConstant),
+            totalGridStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                         constant: Metric.listNegativeConstant),
+            totalGridStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,
+                                                       constant: Metric.listNegativeConstant),
+            totalGridStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
+                                                        constant: Metric.gridPositiveConstant)
         ])
     }
 }

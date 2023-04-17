@@ -9,7 +9,9 @@ import Foundation
 
 extension Data {
     mutating func append(form: String) {
-        guard let data = form.data(using: .utf8) else { return }
+        guard let data = form.data(using: .utf8) else {
+            return
+        }
         self.append(data)
     }
 }

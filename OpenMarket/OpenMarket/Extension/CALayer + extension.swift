@@ -10,7 +10,6 @@ import UIKit
 extension CALayer {
     func addBorder(frame: CGRect) {
         let border = CALayer()
-
         border.backgroundColor = UIColor.primary?.cgColor
         border.frame = frame
         self.addSublayer(border)

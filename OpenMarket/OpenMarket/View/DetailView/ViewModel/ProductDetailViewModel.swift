@@ -77,8 +77,11 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
         }
         
         return images.map { image -> AnyPublisher<Data, NetworkError> in
-           let url = URL(string: image.url)
-                return networkManager.requestToServer(request: URLRequest(url: url!, httpMethod: .get))
+            guard let url = URL(string: image.url) else {
+                return Fail(error: NetworkError.noneData).eraseToAnyPublisher()
+            }
+
+                return networkManager.requestToServer(request: URLRequest(url: url, httpMethod: .get))
         }
     }
     
@@ -87,7 +90,6 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
             .sink { [weak self] completion in
                 switch completion {
                 case .finished:
-                    print("delete 성공")
                     return
                 case .failure(let error):
                     self?.alertSubject.send(error.message)

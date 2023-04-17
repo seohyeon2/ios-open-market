@@ -99,7 +99,8 @@ class ItemCollectionViewCell: UICollectionViewListCell {
                 }
             } receiveValue: { [weak self] thumbnailImage in
                 self?.productThumbnailImageView.image = thumbnailImage
-            }.store(in: &cancellable)
+            }
+            .store(in: &cancellable)
 
         productNameLabel.text = product.name
 

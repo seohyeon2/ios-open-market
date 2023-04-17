@@ -43,14 +43,16 @@ extension RequestProtocol {
 
         guard let url = components.url else { throw NetworkError.noneData }
 
-        var urlRequest = URLRequest(url: url, httpMethod: httpMethod)
+        var urlRequest = URLRequest(url: url,
+                                    httpMethod: httpMethod)
 
         if headers.isNotEmpty {
             urlRequest.allHTTPHeaderFields = headers
         }
 
         if needsIdentifier {
-            urlRequest.setValue(APIConstants.identifier, forHTTPHeaderField: Request.identifier)
+            urlRequest.setValue(APIConstants.identifier,
+                                forHTTPHeaderField: Request.identifier)
         }
 
         return urlRequest
@@ -76,18 +78,19 @@ extension URLRequest {
 }
 
 enum ProductRequest: RequestProtocol {
-    case list(page: Int, itemPerPage: Int = 20) // 상품 리스트 조회
-    case detailItem(Int) // 상품 상세 조회
-    case registerItem // 상품 생성
-    case patchItem(Int) // 상품 수정
-    case deleteURL(Int) // 상품 삭제 url 조회
-    case delete(url: String) // 상품 삭제
+    case list(page: Int, itemPerPage: Int = 20)
+    case detailItem(Int)
+    case registerItem
+    case patchItem(Int)
+    case deleteURL(Int)
+    case delete(url: String)
 
     var headers: [String: String] {
         switch self {
         case .registerItem:
             return [Multipart.contentType: Multipart.boundaryForm + "\"\(Multipart.boundaryValue)\""]
-        case .patchItem, .deleteURL:
+        case .patchItem,
+             .deleteURL:
             return [Multipart.contentType: Multipart.jsonContentType]
         default:
             return [:]
@@ -96,7 +99,8 @@ enum ProductRequest: RequestProtocol {
 
     var needsIdentifier: Bool {
         switch self {
-        case .list, .detailItem:
+        case .list,
+             .detailItem:
             return false
         default:
             return true
@@ -105,7 +109,8 @@ enum ProductRequest: RequestProtocol {
 
     var path: String {
         switch self {
-        case .detailItem(let id), .patchItem(let id):
+        case .detailItem(let id),
+             .patchItem(let id):
             return "/api/products/\(id)"
         case .deleteURL(let id):
             return "/api/products/\(id)/archived"

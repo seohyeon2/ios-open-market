@@ -8,11 +8,15 @@
 import UIKit
 
 extension UIViewController {
-    func showCustomAlert(title: String?, message: String) {
+    func showCustomAlert(title: String?,
+                         message: String) {
         let okTitle = "확인"
         
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okButton = UIAlertAction(title: okTitle, style: .default)
+        let alertController = UIAlertController(title: title,
+                                                message: message,
+                                                preferredStyle: .alert)
+        let okButton = UIAlertAction(title: okTitle,
+                                     style: .default)
         alertController.addAction(okButton)
         
         present(alertController, animated: true)

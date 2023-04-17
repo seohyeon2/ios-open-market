@@ -5,11 +5,17 @@
 //  Created by unchain, hyeon2 on 2022/07/12.
 //
 
-import Foundation
 import UIKit
 
+protocol URLSessionProtocol {
+    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
+}
+
+extension URLSession: URLSessionProtocol {}
+
 final class MockURLSession: URLSessionProtocol {
-    
+
+
     var isRequestSuccess: Bool
     init(isRequestSucess: Bool = true) {
         self.isRequestSuccess = isRequestSucess

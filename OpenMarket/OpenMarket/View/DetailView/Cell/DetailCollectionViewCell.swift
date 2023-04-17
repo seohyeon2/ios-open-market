@@ -23,7 +23,8 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .headline)
         label.numberOfLines = 3
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow,
+                                                      for: .horizontal)
         label.adjustsFontForContentSizeCategory = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -80,7 +81,8 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         stackView.alignment = .trailing
         stackView.distribution = .fill
         stackView.axis = .vertical
-        stackView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        stackView.setContentCompressionResistancePriority(.required,
+                                                          for: .horizontal)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -121,21 +123,32 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
 
     private func setDetailConstraints() {
         NSLayoutConstraint.activate([
-            totalDetailStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Metric.gridPositiveConstant),
-            totalDetailStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant),
-            totalDetailStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: Metric.listNegativeConstant),
-            totalDetailStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant),
+            totalDetailStackView.topAnchor.constraint(equalTo: contentView.topAnchor,
+                                                      constant: Metric.gridPositiveConstant),
+            totalDetailStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                           constant: Metric.listNegativeConstant),
+            totalDetailStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,
+                                                         constant: Metric.listNegativeConstant),
+            totalDetailStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
+                                                          constant: Metric.gridPositiveConstant),
 
-            imageScrollView.widthAnchor.constraint(equalTo: totalDetailStackView.widthAnchor, multiplier: 1),
-            imageScrollView.heightAnchor.constraint(equalTo: totalDetailStackView.heightAnchor, multiplier: 0.4),
+            imageScrollView.widthAnchor.constraint(equalTo: totalDetailStackView.widthAnchor,
+                                                   multiplier: 1),
+            imageScrollView.heightAnchor.constraint(equalTo: totalDetailStackView.heightAnchor,
+                                                    multiplier: 0.4),
 
-            descriptionLabel.topAnchor.constraint(equalTo: descriptionScrollView.topAnchor, constant: Metric.gridPositiveConstant),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant),
-            descriptionLabel.bottomAnchor.constraint(equalTo: descriptionScrollView.bottomAnchor, constant: Metric.listNegativeConstant),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.gridPositiveConstant),
+            descriptionLabel.topAnchor.constraint(equalTo: descriptionScrollView.topAnchor,
+                                                  constant: Metric.gridPositiveConstant),
+            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                       constant: Metric.listNegativeConstant),
+            descriptionLabel.bottomAnchor.constraint(equalTo: descriptionScrollView.bottomAnchor,
+                                                     constant: Metric.listNegativeConstant),
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
+                                                      constant: Metric.gridPositiveConstant),
 
             pageControl.centerXAnchor.constraint(equalTo: imageScrollView.centerXAnchor),
-            pageControl.topAnchor.constraint(equalTo: imageScrollView.topAnchor, constant: 250),
+            pageControl.topAnchor.constraint(equalTo: imageScrollView.topAnchor,
+                                             constant: 250),
             pageControl.bottomAnchor.constraint(equalTo: imageScrollView.bottomAnchor)
         ])
     }
@@ -155,17 +168,24 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         stockPriceStackView.addArrangedSubview(bargainPriceLabel)
         
         descriptionScrollView.addSubview(descriptionLabel)
-        descriptionScrollView.layer.addBorder(frame: CGRect(x: 0, y: 0, width: frame.width - 10, height: 1))
+        descriptionScrollView.layer.addBorder(frame: CGRect(x: 0,
+                                                            y: 0,
+                                                            width: frame.width - 10,
+                                                            height: 1))
     }
 
    func configureLabel(product: MarketItem) {
         self.productNameLabel.text = product.name
         self.descriptionLabel.text = product.description
-        showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel, product: product)
-        showSoldOut(productStockQuantity: self.productStockQuantityLabel, product: product)
+        showPrice(priceLabel: self.productPriceLabel, bargainPriceLabel: self.bargainPriceLabel,
+                  product: product)
+        showSoldOut(productStockQuantity: self.productStockQuantityLabel,
+                    product: product)
     }
     
-    func configureImage(imageData: Data, index: Int, total: Int) {
+    func configureImage(imageData: Data,
+                        index: Int,
+                        total: Int) {
         let imageView = UIImageView()
         let positionX = (imageScrollView.frame.width) * CGFloat(index)
 
@@ -180,7 +200,9 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         imageScrollView.contentSize.width = imageScrollView.frame.width * CGFloat(total)
     }
 
-    func showPrice(priceLabel: UILabel, bargainPriceLabel: UILabel, product: MarketItem) {
+    func showPrice(priceLabel: UILabel,
+                   bargainPriceLabel: UILabel,
+                   product: MarketItem) {
         priceLabel.text = "\(product.currency) \(product.price)"
         if product.discountedPrice == Metric.discountedPrice {
             bargainPriceLabel.isHidden = true
@@ -198,12 +220,16 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         }
     }
 
-    func showSoldOut(productStockQuantity: UILabel, product: MarketItem) {
+    func showSoldOut(productStockQuantity: UILabel,
+                     product: MarketItem) {
         if product.stock == Metric.stock {
             let attributedString = NSMutableAttributedString()
             let imageAttachment = NSTextAttachment()
             imageAttachment.image = UIImage(named: "soldOut")
-            imageAttachment.bounds = CGRect(x: 0, y: 0, width: 42, height: 18)
+            imageAttachment.bounds = CGRect(x: 0,
+                                            y: 0,
+                                            width: 42,
+                                            height: 18)
             attributedString.append(NSAttributedString(attachment: imageAttachment))
             productStockQuantity.attributedText = attributedString
             productStockQuantity.sizeToFit()

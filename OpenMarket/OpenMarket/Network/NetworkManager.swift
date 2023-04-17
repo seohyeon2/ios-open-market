@@ -10,16 +10,8 @@ import Combine
 
 final class NetworkManager {
     
-    private let session: URLSessionProtocol
     private var cancellable = Set<AnyCancellable>()
-    init() {
-        self.session = URLSession(configuration: URLSessionConfiguration.default)
-    }
-    
-    init(session: URLSessionProtocol) {
-        self.session = session
-    }
-    
+
     func requestToServer(request: URLRequest) -> AnyPublisher<Data, NetworkError> {
         return URLSession.shared
             .dataTaskPublisher(for: request)
@@ -53,60 +45,19 @@ final class NetworkManager {
 
         return requestToServer(request: request)
     }
-    
-    func postProduct(params: [String: Any?], imageData: [Data]) {
 
-        guard var request = try? ProductRequest.registerItem.createURLRequest() else { return }
-
-        let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], imageData: imageData)
-
-        request.httpBody = postData
-
-        requestToServer(request: request)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    print("포스트성공")
-                    return
-                case .failure(let error):
-                    print(error)
-                    return
-                }
-            } receiveValue: { _ in }
-            .store(in: &cancellable)
-    }
-
-    func patchProduct(productId: Int, modifiedInformation: [String: Any?]) {
-        
-        guard var request = try? ProductRequest.patchItem(productId).createURLRequest() else { return }
-        guard let postData = OpenMarketRequest.createJson(params: modifiedInformation as [String : Any]) else { return }
-        
-        request.httpBody = postData
-        
-        requestToServer(request: request)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    print("수정성공")
-                    return
-                case .failure(let error):
-                    print(error)
-                    return
-                }
-            } receiveValue: { _ in }
-            .store(in: &cancellable)
-    }
-    
     func getPostRequest(params: [String: Any?], imageData: [Data]) -> URLRequest? {
         guard var request = try? ProductRequest.registerItem.createURLRequest(),
-              let postData = OpenMarketRequest.createPostBody(params: params as [String: Any], imageData: imageData) else { return nil }
+              let postData = OpenMarketRequest.createPostBody(params: params as [String: Any],
+                                                              imageData: imageData) else { return nil }
         
         request.httpBody = postData
         
         return request
     }
     
-    func getPatchRequest(productId: Int, modifiedInformation: [String: Any?]) -> URLRequest?{
+    func getPatchRequest(productId: Int,
+                         modifiedInformation: [String: Any?]) -> URLRequest?{
         guard var request = try? ProductRequest.patchItem(productId).createURLRequest(),
               let patchData = OpenMarketRequest.createJson(params: modifiedInformation as [String : Any]) else { return nil }
         
@@ -132,7 +83,8 @@ final class NetworkManager {
         return requestToServer(request: request)
             .flatMap({ urlData -> AnyPublisher<Data, NetworkError> in
 
-                guard let url = String(data: urlData, encoding: .utf8),
+                guard let url = String(data: urlData,
+                                       encoding: .utf8),
                       let deleteRequest = try? ProductRequest.delete(url: url).createURLRequest() else {
                     return Fail(error: NetworkError.noneData).eraseToAnyPublisher()
                               }

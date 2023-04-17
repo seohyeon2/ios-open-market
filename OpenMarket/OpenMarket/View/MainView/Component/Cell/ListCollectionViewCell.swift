@@ -96,9 +96,12 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
         downStackView.addArrangedSubview(productPriceLabel)
         downStackView.addArrangedSubview(bargainPriceLabel)
         
-        productNameLabel.setContentHuggingPriority(UILayoutPriority.defaultLow, for: .horizontal)
-        productStockQuantityLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
-        productPriceLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
+        productNameLabel.setContentHuggingPriority(UILayoutPriority.defaultLow,
+                                                   for: .horizontal)
+        productStockQuantityLabel.setContentHuggingPriority(UILayoutPriority.required,
+                                                            for: .horizontal)
+        productPriceLabel.setContentHuggingPriority(UILayoutPriority.required,
+                                                    for: .horizontal)
     }
     
     private func setListConstraints() {
@@ -107,8 +110,10 @@ final class ListCollectionViewCell: ItemCollectionViewCell {
             productThumbnailImageView.heightAnchor.constraint(equalToConstant: Metric.imageSize),
             totalListStackView.topAnchor.constraint(equalTo: productThumbnailImageView.topAnchor),
             totalListStackView.bottomAnchor.constraint(equalTo: productThumbnailImageView.bottomAnchor),
-            totalListStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metric.stackViewSpacing),
-            totalListStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Metric.listNegativeConstant)
+            totalListStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
+                                                        constant: Metric.stackViewSpacing),
+            totalListStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                         constant: Metric.listNegativeConstant)
         ])
     }
 }

@@ -5,7 +5,7 @@
 //  Created by unchain, hyeon2 on 2022/08/02.
 //
 
-import UIKit
+import CoreGraphics
 
 enum Registration {
     static let done = "Done"
