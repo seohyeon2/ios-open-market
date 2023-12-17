@@ -21,6 +21,33 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         return pageControl
     }()
 
+    private let userImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(systemName: "person.circle.fill")
+        imageView.tintColor = UIColor.primary
+        imageView.layer.masksToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+
+    private let userNameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let userStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+
     private let productNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .headline)
@@ -144,8 +171,12 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         contentView.addSubview(totalDetailStackView)
         contentView.addSubview(pageControl)
         totalDetailStackView.addArrangedSubview(imageScrollView)
+        totalDetailStackView.addArrangedSubview(userStackView)
         totalDetailStackView.addArrangedSubview(labelStackView)
         totalDetailStackView.addArrangedSubview(descriptionScrollView)
+
+        userStackView.addArrangedSubview(userImageView)
+        userStackView.addArrangedSubview(userNameLabel)
 
         labelStackView.addArrangedSubview(productNameLabel)
         labelStackView.addArrangedSubview(stockPriceStackView)
@@ -192,7 +223,14 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
                 equalTo: totalDetailStackView.heightAnchor,
                 multiplier: 0.4
             ),
-
+            
+            userImageView.widthAnchor.constraint(
+                equalToConstant: 40
+            ),
+            userImageView.heightAnchor.constraint(
+                equalToConstant: 40
+            ),
+            
             descriptionLabel.topAnchor.constraint(
                 equalTo: descriptionScrollView.topAnchor,
                 constant: Metric.gridPositiveConstant
@@ -226,7 +264,8 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
     private func configureImage(
         image: ItemImage,
         index: Int,
-        total: Int) {
+        total: Int
+    ) {
         guard let url = URL(string: image.url) else {
             return
         }
@@ -243,7 +282,7 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
             } receiveValue: { [weak self] image in
                 let imageView = UIImageView()
                 let positionX = (self?.imageScrollView.frame.width ?? 1) * CGFloat(index)
-
+                
                 imageView.frame = CGRect(
                     x: positionX,
                     y: 0,
@@ -258,25 +297,28 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
     }
     
     private func configureLabel(product: MarketItem) {
-         self.productNameLabel.text = product.name
-         self.descriptionLabel.text = product.description
-         showPrice(
-             priceLabel: self.productPriceLabel,
-             bargainPriceLabel: self.bargainPriceLabel,
-             product: product
-         )
-         showStockQuantity(
-             productStockQuantity: self.productStockQuantityLabel,
-             product: product
-         )
-     }
+        self.userNameLabel.text = product.vendors.name
+        self.productNameLabel.text = product.name
+        self.descriptionLabel.text = product.description
+
+        showPrice(
+            priceLabel: self.productPriceLabel,
+            bargainPriceLabel: self.bargainPriceLabel,
+            product: product
+        )
+        showStockQuantity(
+            productStockQuantity: self.productStockQuantityLabel,
+            product: product
+        )
+    }
 
     private func showPrice(
         priceLabel: UILabel,
         bargainPriceLabel: UILabel,
-        product: MarketItem) {
+        product: MarketItem
+    ) {
         priceLabel.text = "\(product.currency) \(product.price)"
-            
+
         if product.discountedPrice == Metric.discountedPrice {
             bargainPriceLabel.isHidden = true
             priceLabel.textColor = .black
@@ -297,7 +339,8 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
 
     private func showStockQuantity(
         productStockQuantity: UILabel,
-        product: MarketItem) {
+        product: MarketItem
+    ) {
         if product.stock == Metric.stockZero {
             let attributedString = NSMutableAttributedString()
             let imageAttachment = NSTextAttachment()
