@@ -7,10 +7,6 @@
 import UIKit
 import Combine
 
-enum Section {
-    case main
-}
-
 final class MainViewController: UIViewController {
     private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, PageInformation>
     

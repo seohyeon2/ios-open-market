@@ -9,11 +9,6 @@ import UIKit
 import Combine
 
 final class ProductDetailViewController: UIViewController {
-
-    private enum Section {
-        case main
-    }
-
     private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, MarketItem>
 
     // MARK: Initializtion
