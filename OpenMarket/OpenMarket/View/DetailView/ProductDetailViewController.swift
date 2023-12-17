@@ -71,16 +71,13 @@ final class ProductDetailViewController: UIViewController {
 
         bind()
     }
-    
-    // MARK: Configure UI Method
+
+    // MARK: UI Method
     private func setView() {
         view.backgroundColor = .white
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            customView: actionButton
-        )
         navigationController?.navigationBar.tintColor = .secondary
-        
+
         view.addSubview(collectionView)
     }
     
@@ -167,9 +164,16 @@ final class ProductDetailViewController: UIViewController {
         viewModel.output.detailMarketItemPublisher
             .receive(on: DispatchQueue.main)
             .sink (receiveValue: {  [weak self] marketItem in
-                guard let self = self else { return }
-                    self.navigationItem.title = marketItem.name
-                
+                guard let self = self else {
+                    return
+                }
+                self.navigationItem.title = marketItem.name
+                if viewModel.input.isLoggedInUserItem() {
+                    navigationItem.rightBarButtonItem = UIBarButtonItem(
+                        customView: actionButton
+                    )
+                }
+
                 self.snapshot.appendItems([marketItem])
                 self.dataSource?.apply(self.snapshot)
             })
@@ -220,7 +224,7 @@ final class ProductDetailViewController: UIViewController {
             title: "삭제",
             style: .destructive,
             handler: { _ in
-            self.viewModel.output.deleteProduct()
+            self.viewModel.input.deleteProduct()
         })
 
         let actionCancel = UIAlertAction(

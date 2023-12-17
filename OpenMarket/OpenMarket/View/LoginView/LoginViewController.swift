@@ -123,6 +123,7 @@ class LoginViewController: UIViewController {
             if authResult != nil {
                 self?.showMainView()
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                UserDefaults.standard.set("seohyeon2", forKey: "loggedInUserName")
             } else {
                 self?.showCustomAlert(
                     title: "로그인 실패",

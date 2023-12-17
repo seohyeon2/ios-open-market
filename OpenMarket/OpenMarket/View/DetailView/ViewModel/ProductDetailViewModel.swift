@@ -11,14 +11,14 @@ import Alamofire
 
 protocol ProductDetailViewModelInputInterface {
     func getMarketItem(_ id: Int)
+    func deleteProduct()
+    func isLoggedInUserItem() -> Bool
 }
 
 protocol ProductDetailViewModelOutputInterface {
     var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
     var movementPublisher: AnyPublisher<Bool, Never> { get }
-
-    func deleteProduct()
 }
 
 protocol ProductDetailViewModelInterface {
@@ -68,7 +68,13 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
                 }
             }
     }
-    
+}
+
+extension ProductDetailViewModel: ProductDetailViewModelInputInterface {
+    func getMarketItem(_ id: Int) {
+        getProductDetail(id: id)
+    }
+
     func deleteProduct() {
         networkManager.deleteProduct(productId: marketItem?.id)
             .sink { [weak self] completion in
@@ -84,10 +90,13 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
             }
             .store(in: &cancellable)
     }
-}
-
-extension ProductDetailViewModel: ProductDetailViewModelInputInterface {
-    func getMarketItem(_ id: Int) {
-        getProductDetail(id: id)
+    
+    func isLoggedInUserItem() -> Bool {
+        if let loggedInUserName = UserDefaults.standard.string(forKey: "loggedInUserName"),
+           marketItem?.vendors.name == loggedInUserName {
+            return true
+        }
+        
+        return false
     }
 }
