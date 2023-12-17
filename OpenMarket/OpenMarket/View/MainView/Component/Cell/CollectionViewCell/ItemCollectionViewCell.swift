@@ -71,7 +71,7 @@ class ItemCollectionViewCell: UICollectionViewListCell {
     }
 
     func showSoldOut(productStockQuantity: UILabel, product: PageInformation) {
-        if product.stock == Metric.stock {
+        if product.stock == Metric.stockZero {
             let attributedString = NSMutableAttributedString()
             let imageAttachment = NSTextAttachment()
             imageAttachment.image = UIImage(named: "soldOut")

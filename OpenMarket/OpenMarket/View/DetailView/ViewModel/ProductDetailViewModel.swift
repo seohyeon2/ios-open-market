@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import Alamofire
 
 protocol ProductDetailViewModelInputInterface {
     func getMarketItem(_ id: Int)
@@ -16,8 +17,7 @@ protocol ProductDetailViewModelOutputInterface {
     var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
     var movementPublisher: AnyPublisher<Bool, Never> { get }
-    
-    func getImagePublisher() -> [AnyPublisher<Data, NetworkError>]?
+
     func deleteProduct()
 }
 
@@ -50,39 +50,25 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     var marketItem : MarketItem?
 
     private func getProductDetail(id: Int) {
-        guard let request = try? ProductRequest.detailItem(id).createURLRequest() else { return }
-
-        networkManager.requestToServer(request: request)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    return
-                case .failure(let error):
-                    self?.alertSubject.send(error.message)
-                }
-            } receiveValue: { [weak self] data in
-                guard let self = self,
-                      let marketItem = try? JSONDecoder().decode(MarketItem.self, from: data) else {
-                    return
-                }
-                self.detailMarketItemSubject.send(marketItem)
-                self.marketItem = marketItem
-            }
-            .store(in: &cancellable)
-    }
-    
-    func getImagePublisher() -> [AnyPublisher<Data, NetworkError>]? {
-        guard let images = marketItem?.images else {
-            return nil
+        guard let request = try? ProductRequest.detailItem(id).createURLRequest(),
+              let url = request.url else {
+            alertSubject.send("해당 상품에 대한 정보를 불러올 수 없습니다.😭")
+            return
         }
         
-        return images.map { image -> AnyPublisher<Data, NetworkError> in
-            guard let url = URL(string: image.url) else {
-                return Fail(error: NetworkError.noneData).eraseToAnyPublisher()
+        AF.request(url)
+            .responseDecodable(of: MarketItem.self) { [weak self] response in
+                
+                if let marketItem = response.value {
+                    self?.detailMarketItemSubject.send(marketItem)
+                    self?.marketItem = marketItem
+                } else {
+                    self?.alertSubject.send(
+                        response.error?.localizedDescription ??
+                        "해당 상품에 대한 정보를 불러올 수 없습니다.😭"
+                    )
+                }
             }
-
-                return networkManager.requestToServer(request: URLRequest(url: url, httpMethod: .get))
-        }
     }
     
     func deleteProduct() {

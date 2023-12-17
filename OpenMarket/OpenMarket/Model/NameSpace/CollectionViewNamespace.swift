@@ -11,6 +11,7 @@ enum CollectionViewNamespace {
     case plus
     case soldOut
     case remainingQuantity
+    case detail
     
     var name: String {
         switch self {
@@ -24,6 +25,8 @@ enum CollectionViewNamespace {
             return "품절"
         case .remainingQuantity:
             return "잔여수량 :"
+        case .detail:
+            return "detail"
         }
     }
 }
