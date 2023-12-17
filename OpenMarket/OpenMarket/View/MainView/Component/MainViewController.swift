@@ -88,8 +88,18 @@ final class MainViewController: UIViewController {
         setView()
         setCollectionViewConstraint()
         setCollectionView()
-        setSnapshot()
+        
         bind()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(true)
+        viewModel.input.initializeProductPageNumber()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        setSnapshot()
     }
     
     // MARK: Configure UI Method

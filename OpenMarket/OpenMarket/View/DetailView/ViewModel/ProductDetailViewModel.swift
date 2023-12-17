@@ -50,15 +50,13 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     var marketItem : MarketItem?
 
     private func getProductDetail(id: Int) {
-        guard let request = try? ProductRequest.detailItem(id).createURLRequest(),
-              let url = request.url else {
+        guard let request = try? ProductRequest.detailItem(id).createURLRequest() else {
             alertSubject.send("해당 상품에 대한 정보를 불러올 수 없습니다.😭")
             return
         }
         
-        AF.request(url)
+        AF.request(request)
             .responseDecodable(of: MarketItem.self) { [weak self] response in
-                
                 if let marketItem = response.value {
                     self?.detailMarketItemSubject.send(marketItem)
                     self?.marketItem = marketItem

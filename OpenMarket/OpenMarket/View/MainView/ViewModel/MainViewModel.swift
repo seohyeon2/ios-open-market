@@ -12,6 +12,7 @@ import Alamofire
 protocol MainViewModelInputInterface {
     func getInformation()
     func increaseProductPageNumber()
+    func initializeProductPageNumber()
     func pushToDetailView(indexPath: IndexPath, id:Int)
 }
 
@@ -51,13 +52,12 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
     private let marketItemIdSubject = PassthroughSubject<Int, Never>()
 
     private func getProductList(pageNumber: Int) {
-        guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest(),
-              let url = request.url else {
+        guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest() else {
             alertSubject.send("상품을 불러올 수 없습니다.😭")
             return
         }
         
-        AF.request(url)
+        AF.request(request)
             .responseDecodable(of: MarketInformation.self) { [weak self] response in
                 
                 if let productList = response.value {
@@ -78,6 +78,10 @@ extension MainViewModel: MainViewModelInputInterface {
     
     func increaseProductPageNumber() {
         productPageNumber += 1
+    }
+    
+    func initializeProductPageNumber() {
+        productPageNumber = 1
     }
     
     func pushToDetailView(indexPath: IndexPath, id:Int) {
