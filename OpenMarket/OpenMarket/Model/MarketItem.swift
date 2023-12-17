@@ -20,7 +20,7 @@ struct MarketItem: Decodable, Hashable {
     let stock: Int
     let createdAt: String
     let issuedAt: String
-    let images: [Images]
+    let images: [ItemImage]
     let vendors: VendorDTO
 
     enum CodingKeys: String, CodingKey {
@@ -33,7 +33,7 @@ struct MarketItem: Decodable, Hashable {
     }
 }
 
-struct Images: Decodable, Hashable {
+struct ItemImage: Decodable, Hashable {
     let id: Int
     let url: String
     let thumbnailUrl: String

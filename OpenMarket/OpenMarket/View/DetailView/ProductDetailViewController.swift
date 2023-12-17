@@ -9,19 +9,15 @@ import UIKit
 import Combine
 
 final class ProductDetailViewController: UIViewController {
-
-    private enum Section {
-        case main
-    }
-
     private typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, MarketItem>
 
-    // MARK: Initializtion
-
+    // MARK: Initialization
     init(id: Int) {
         self.viewModel.input.getMarketItem(id)
-        super.init(nibName: nil,
-                   bundle: nil)
+        super.init(
+            nibName: nil,
+            bundle: nil
+        )
     }
 
     required init?(coder: NSCoder) {
@@ -29,7 +25,6 @@ final class ProductDetailViewController: UIViewController {
     }
 
     // MARK: Properties
-
     private let viewModel = ProductDetailViewModel()
     private var cancellable = Set<AnyCancellable>()
     private var dataSource: DiffableDataSource?
@@ -38,53 +33,147 @@ final class ProductDetailViewController: UIViewController {
     private lazy var actionButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: "ellipsis")
-        button.setImage(image,
-                        for: .normal)
+        button.setImage(
+            image,
+            for: .normal
+        )
         button.tintColor = .secondary
-        button.addTarget(self,
-                         action: #selector(showActionSheet),
-                         for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(showActionSheet),
+            for: .touchUpInside
+        )
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     private lazy var collectionView: UICollectionView = {
         let layout = createDetailLayout()
-        let collectionView = UICollectionView(frame: view.bounds,
-                                              collectionViewLayout: layout)
+        let collectionView = UICollectionView(
+            frame: view.bounds,
+            collectionViewLayout: layout
+        )
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.autoresizingMask = [.flexibleWidth,
-                                           .flexibleHeight]
+        collectionView.autoresizingMask = [
+            .flexibleWidth,
+            .flexibleHeight
+        ]
         return collectionView
     }()
 
     // MARK: View Life Cycle
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: actionButton)
-        navigationController?.navigationBar.tintColor = .secondary
-        collectionView.register(DetailCollectionViewCell.self,
-                                forCellWithReuseIdentifier: "detail")
-        dataSource = configureDataSource(id: "detail")
-        self.snapshot.appendSections([.main])
-
-        view.addSubview(collectionView)
+        setView()
         setCollectionViewConstraint()
-        
+        setCollectionView()
+        setSnapshot()
+
         bind()
     }
 
-    // MARK: Method
+    // MARK: UI Method
+    private func setView() {
+        view.backgroundColor = .white
+        
+        navigationController?.navigationBar.tintColor = .secondary
 
+        view.addSubview(collectionView)
+    }
+    
+    private func setCollectionViewConstraint() {
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor
+            ),
+            collectionView.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor
+            ),
+            collectionView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            ),
+            collectionView.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor
+            )
+        ])
+    }
+    
+    private func setCollectionView() {
+        collectionView.delegate = self
+        collectionView.register(
+            DetailCollectionViewCell.self,
+            forCellWithReuseIdentifier: CollectionViewNamespace.detail.name
+        )
+        dataSource = configureDataSource(
+            id: CollectionViewNamespace.detail.name
+        )
+    }
+    
+    private func configureDataSource(id: String) -> DiffableDataSource? {
+        dataSource = DiffableDataSource(collectionView: collectionView) {(
+            collectionView: UICollectionView,
+            indexPath: IndexPath,
+            product: MarketItem) -> UICollectionViewCell? in
+
+            guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: CollectionViewNamespace.detail.name,
+                    for: indexPath
+                  ) as? DetailCollectionViewCell else { return DetailCollectionViewCell()
+            }
+            cell.configureCell(product: product)
+
+            return cell
+        }
+        return dataSource
+    }
+    
+    private func setSnapshot() {
+        snapshot.appendSections([.main])
+    }
+    
+    private func createDetailLayout() -> UICollectionViewCompositionalLayout {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .fractionalHeight(1)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .fractionalHeight(1)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitem: item, count: 1
+        )
+        group.contentInsets = NSDirectionalEdgeInsets(
+            top: Metric.padding,
+            leading: Metric.padding,
+            bottom: Metric.padding,
+            trailing: Metric.padding
+        )
+
+        let section = NSCollectionLayoutSection(group: group)
+        let layout = UICollectionViewCompositionalLayout(section: section)
+
+        return layout
+    }
+    
+    // MARK: Bind Method
     private func bind() {
         viewModel.output.detailMarketItemPublisher
             .receive(on: DispatchQueue.main)
             .sink (receiveValue: {  [weak self] marketItem in
-                guard let self = self else { return }
-                    self.navigationItem.title = marketItem.name
-                
+                guard let self = self else {
+                    return
+                }
+                self.navigationItem.title = marketItem.name
+                if viewModel.input.isLoggedInUserItem() {
+                    navigationItem.rightBarButtonItem = UIBarButtonItem(
+                        customView: actionButton
+                    )
+                }
+
                 self.snapshot.appendItems([marketItem])
                 self.dataSource?.apply(self.snapshot)
             })
@@ -108,96 +197,65 @@ final class ProductDetailViewController: UIViewController {
             .store(in: &cancellable)
     }
     
+    // MARK: Action Method
     @objc private func showActionSheet() {
-        let actionSheetController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let actionSheetController = UIAlertController(
+            title: nil,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
-        let actionModify = UIAlertAction(title: "수정",
-                                         style: .default,
-                                         handler: { [weak self] _ in
-            let editViewController = RegistrationEditViewController(viewModel: RegistrationEditViewModel(marketItem: self?.viewModel.marketItem))
-            self?.navigationController?.pushViewController(editViewController,
-                                                           animated: true)
+        let actionModify = UIAlertAction(
+            title: "수정",
+            style: .default,
+            handler: { [weak self] _ in
+            let editViewController = RegistrationEditViewController(
+                viewModel: RegistrationEditViewModel(
+                    marketItem: self?.viewModel.marketItem
+                )
+            )
+            self?.navigationController?.pushViewController(
+                editViewController,
+                animated: true
+            )
         })
 
-        let actionDelete = UIAlertAction(title: "삭제",
-                                         style: .destructive,
-                                         handler: { _ in
-            self.viewModel.output.deleteProduct()
+        let actionDelete = UIAlertAction(
+            title: "삭제",
+            style: .destructive,
+            handler: { _ in
+            self.viewModel.input.deleteProduct()
         })
 
-        let actionCancel = UIAlertAction(title: "취소",
-                                         style: .cancel,
-                                         handler: nil)
+        let actionCancel = UIAlertAction(
+            title: "취소",
+            style: .cancel,
+            handler: nil
+        )
 
         actionSheetController.addAction(actionModify)
         actionSheetController.addAction(actionDelete)
         actionSheetController.addAction(actionCancel)
 
-        self.present(actionSheetController,
-                     animated: true,
-                     completion: nil)
+        self.present(
+            actionSheetController,
+            animated: true,
+            completion: nil
+        )
     }
+}
 
-    private func createDetailLayout() -> UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                              heightDimension: .fractionalHeight(1))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                               heightDimension: .fractionalHeight(1))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
-                                                       subitem: item, count: 1)
-        group.contentInsets = NSDirectionalEdgeInsets(top: Metric.padding, leading: Metric.padding,
-                                                      bottom: Metric.padding, trailing: Metric.padding)
-
-        let section = NSCollectionLayoutSection(group: group)
-        let layout = UICollectionViewCompositionalLayout(section: section)
-
-        return layout
+extension ProductDetailViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath) {
+            collectionView.deselectItem(at: indexPath, animated: true)
     }
-
-    private func setCollectionViewConstraint() {
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-        ])
-    }
-
-    private func configureDataSource(id: String) -> DiffableDataSource? {
-        dataSource = DiffableDataSource(collectionView: collectionView) { [weak self] (collectionView: UICollectionView,
-                                                                                       indexPath: IndexPath,
-                                                                                       product: MarketItem) -> UICollectionViewCell? in
-
-            guard let self = self,
-                  let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "detail",
-                                                                for: indexPath) as? DetailCollectionViewCell else { return DetailCollectionViewCell() }
-
-            let publishers = self.viewModel.output.getImagePublisher()
-
-            publishers?.enumerated().forEach({ index, myPublisher in
-                myPublisher
-                    .receive(on: DispatchQueue.main)
-                    .sink(receiveCompletion: { completion in
-                        switch completion {
-                        case .finished:
-                            return
-                        case .failure(let error):
-                            print(error)
-                        }
-                    }, receiveValue: { imageData in
-                        cell.configureImage(imageData: imageData,
-                                            index: index,
-                                            total: (publishers?.count ?? 1))
-                    })
-                    .store(in: &self.cancellable)
-            })
-            cell.configureLabel(product: product)
-            cell.pageControl.numberOfPages = publishers?.count ?? 1
-
-            return cell
-        }
-        return dataSource
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        shouldHighlightItemAt indexPath: IndexPath
+    ) -> Bool {
+        return false
     }
 }

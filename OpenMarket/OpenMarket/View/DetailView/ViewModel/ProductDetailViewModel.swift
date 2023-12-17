@@ -7,18 +7,18 @@
 
 import Combine
 import Foundation
+import Alamofire
 
 protocol ProductDetailViewModelInputInterface {
     func getMarketItem(_ id: Int)
+    func deleteProduct()
+    func isLoggedInUserItem() -> Bool
 }
 
 protocol ProductDetailViewModelOutputInterface {
     var detailMarketItemPublisher: AnyPublisher<MarketItem, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
     var movementPublisher: AnyPublisher<Bool, Never> { get }
-    
-    func getImagePublisher() -> [AnyPublisher<Data, NetworkError>]?
-    func deleteProduct()
 }
 
 protocol ProductDetailViewModelInterface {
@@ -50,60 +50,81 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
     var marketItem : MarketItem?
 
     private func getProductDetail(id: Int) {
-        guard let request = try? ProductRequest.detailItem(id).createURLRequest() else { return }
-
-        networkManager.requestToServer(request: request)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    return
-                case .failure(let error):
-                    self?.alertSubject.send(error.message)
-                }
-            } receiveValue: { [weak self] data in
-                guard let self = self,
-                      let marketItem = try? JSONDecoder().decode(MarketItem.self, from: data) else {
-                    return
-                }
-                self.detailMarketItemSubject.send(marketItem)
-                self.marketItem = marketItem
-            }
-            .store(in: &cancellable)
-    }
-    
-    func getImagePublisher() -> [AnyPublisher<Data, NetworkError>]? {
-        guard let images = marketItem?.images else {
-            return nil
+        guard let request = try? ProductRequest.detailItem(id).createURLRequest() else {
+            alertSubject.send("해당 상품에 대한 정보를 불러올 수 없습니다.😭")
+            return
         }
         
-        return images.map { image -> AnyPublisher<Data, NetworkError> in
-            guard let url = URL(string: image.url) else {
-                return Fail(error: NetworkError.noneData).eraseToAnyPublisher()
-            }
-
-                return networkManager.requestToServer(request: URLRequest(url: url, httpMethod: .get))
-        }
-    }
-    
-    func deleteProduct() {
-        networkManager.deleteProduct(productId: marketItem?.id)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    return
-                case .failure(let error):
-                    self?.alertSubject.send(error.message)
-                    return
+        AF.request(request)
+            .responseDecodable(of: MarketItem.self) { [weak self] response in
+                if let marketItem = response.value {
+                    self?.detailMarketItemSubject.send(marketItem)
+                    self?.marketItem = marketItem
+                } else {
+                    self?.alertSubject.send(
+                        response.error?.localizedDescription ??
+                        "해당 상품에 대한 정보를 불러올 수 없습니다.😭"
+                    )
                 }
-            } receiveValue: { [weak self] _ in
-                self?.movementSubject.send(true)
             }
-            .store(in: &cancellable)
     }
 }
 
 extension ProductDetailViewModel: ProductDetailViewModelInputInterface {
     func getMarketItem(_ id: Int) {
         getProductDetail(id: id)
+    }
+
+    func deleteProduct() {
+        guard let productId = marketItem?.id,
+              var urlRequest = try? ProductRequest.deleteURL(productId).createURLRequest() else {
+            alertSubject.send("상품을 삭제할 수 없습니다.😭")
+            return
+        }
+        
+        urlRequest.httpBody = OpenMarketRequest.createJson(params: [Params.secret: APIConstants.secret])
+        
+        AF.request(urlRequest)
+            .validate()
+            .response { [weak self] response in
+                switch response.result {
+                case .success(let urlDate):
+                    guard let urlDate = urlDate,
+                          let url = String(
+                            data: urlDate,
+                            encoding: .utf8
+                          ),
+                          let deleteRequest = try? ProductRequest.delete(url: url).createURLRequest() else {
+                        self?.alertSubject.send("상품을 삭제할 수 없습니다.😭")
+                        return
+                    }
+                    
+                    AF.request(deleteRequest)
+                        .validate()
+                        .response { [weak self] response in
+                            guard let self = self else { return }
+                            
+                            switch response.result {
+                            case .success:
+                                self.movementSubject.send(true)
+                                
+                            case .failure(let error):
+                                self.alertSubject.send(error.localizedDescription)
+                            }
+                        }
+                    
+                case .failure(let error):
+                    self?.alertSubject.send(error.localizedDescription)
+                }
+            }
+    }
+    
+    func isLoggedInUserItem() -> Bool {
+        if let loggedInUserName = UserDefaults.standard.string(forKey: "loggedInUserName"),
+           marketItem?.vendors.name == loggedInUserName {
+            return true
+        }
+        
+        return false
     }
 }

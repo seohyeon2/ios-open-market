@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -21,10 +21,15 @@
 		05B5A7D4287D4E4E00865293 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B5A7D3287D4E4E00865293 /* NetworkManager.swift */; };
 		05B5A7E5287D915B00865293 /* MockURLSessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B5A7E4287D915B00865293 /* MockURLSessionDataTask.swift */; };
 		05B5A7FA287D926B00865293 /* NetworkManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B5A7F9287D926B00865293 /* NetworkManagerTests.swift */; };
+		05B92B162B2F4E8900B84977 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B92B152B2F4E8900B84977 /* Section.swift */; };
+		05B92B192B2F87BD00B84977 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B92B182B2F87BD00B84977 /* LoginViewController.swift */; };
+		05B92B1B2B2F919000B84977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 05B92B1A2B2F919000B84977 /* GoogleService-Info.plist */; };
 		05CF56A029CC257800808277 /* UITextField + Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CF569F29CC257800808277 /* UITextField + Publisher.swift */; };
 		05CF56A229CC259900808277 /* UITextView + Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CF56A129CC259900808277 /* UITextView + Publisher.swift */; };
 		05D993A1289C0F2F008AFE30 /* UIViewController + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D993A0289C0F2F008AFE30 /* UIViewController + extension.swift */; };
 		05DC9F71288571390097B6E3 /* OpenMarketRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DC9F70288571390097B6E3 /* OpenMarketRequest.swift */; };
+		74B4FEA8E539A2634B46C117 /* Pods_OpenMarketTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB060264DD70F218D8C7BC5C /* Pods_OpenMarketTests.framework */; };
+		7893545CE199D707DFF40073 /* Pods_OpenMarket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1DAF05D15913419D91B6583 /* Pods_OpenMarket.framework */; };
 		8F019818288A4A0600C47CF0 /* String + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F019817288A4A0600C47CF0 /* String + extension.swift */; };
 		8F019820288AF16900C47CF0 /* CollectionViewNamespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F01981F288AF16900C47CF0 /* CollectionViewNamespace.swift */; };
 		8F1475DD289D05B10034B4DA /* ProductDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1475DC289D05B10034B4DA /* ProductDetailViewController.swift */; };
@@ -80,6 +85,9 @@
 		05B5A7E4287D915B00865293 /* MockURLSessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLSessionDataTask.swift; sourceTree = "<group>"; };
 		05B5A7F7287D926B00865293 /* OpenMarketTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMarketTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05B5A7F9287D926B00865293 /* NetworkManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerTests.swift; sourceTree = "<group>"; };
+		05B92B152B2F4E8900B84977 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
+		05B92B182B2F87BD00B84977 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		05B92B1A2B2F919000B84977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		05CF569F29CC257800808277 /* UITextField + Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField + Publisher.swift"; sourceTree = "<group>"; };
 		05CF56A129CC259900808277 /* UITextView + Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView + Publisher.swift"; sourceTree = "<group>"; };
 		05D993A0289C0F2F008AFE30 /* UIViewController + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController + extension.swift"; sourceTree = "<group>"; };
@@ -100,6 +108,9 @@
 		8F90025F28950B7E00BAA539 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		8F97F06429CA917F0091ADC5 /* ProductDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailViewModel.swift; sourceTree = "<group>"; };
 		8F97F06629CAA4010091ADC5 /* MarketItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketItem.swift; sourceTree = "<group>"; };
+		9384299008F871D4669C4E77 /* Pods-OpenMarket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenMarket.debug.xcconfig"; path = "Target Support Files/Pods-OpenMarket/Pods-OpenMarket.debug.xcconfig"; sourceTree = "<group>"; };
+		93B55ECD291531278BC9CBF8 /* Pods-OpenMarketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenMarketTests.debug.xcconfig"; path = "Target Support Files/Pods-OpenMarketTests/Pods-OpenMarketTests.debug.xcconfig"; sourceTree = "<group>"; };
+		AB060264DD70F218D8C7BC5C /* Pods_OpenMarketTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OpenMarketTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C70FB0F725BEF61C00C9924E /* OpenMarket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenMarket.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C70FB0FA25BEF61C00C9924E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C70FB0FC25BEF61C00C9924E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -107,6 +118,9 @@
 		C70FB10325BEF61D00C9924E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C70FB10625BEF61D00C9924E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C70FB10825BEF61D00C9924E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D1DAF05D15913419D91B6583 /* Pods_OpenMarket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OpenMarket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8A68EA2739E889EE0147F0E /* Pods-OpenMarketTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenMarketTests.release.xcconfig"; path = "Target Support Files/Pods-OpenMarketTests/Pods-OpenMarketTests.release.xcconfig"; sourceTree = "<group>"; };
+		EBD6602B46331988FAB55992 /* Pods-OpenMarket.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenMarket.release.xcconfig"; path = "Target Support Files/Pods-OpenMarket/Pods-OpenMarket.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74B4FEA8E539A2634B46C117 /* Pods_OpenMarketTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,6 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7893545CE199D707DFF40073 /* Pods_OpenMarket.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,6 +158,14 @@
 				8F1A0BB4287D91B10071EF7A /* Mock */,
 			);
 			path = OpenMarketTests;
+			sourceTree = "<group>";
+		};
+		05B92B172B2F879600B84977 /* LoginView */ = {
+			isa = PBXGroup;
+			children = (
+				05B92B182B2F87BD00B84977 /* LoginViewController.swift */,
+			);
+			path = LoginView;
 			sourceTree = "<group>";
 		};
 		05CF569929CC241300808277 /* RegistrationEditView */ = {
@@ -192,11 +216,23 @@
 		05F2975728990E4500EB7F41 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				05B92B172B2F879600B84977 /* LoginView */,
 				8F7E490929BF675F00D259DF /* MainView */,
 				8F7E490D29BF67AA00D259DF /* DetailView */,
 				05CF569929CC241300808277 /* RegistrationEditView */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		437A92F5EE5519C0F3579BA3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9384299008F871D4669C4E77 /* Pods-OpenMarket.debug.xcconfig */,
+				EBD6602B46331988FAB55992 /* Pods-OpenMarket.release.xcconfig */,
+				93B55ECD291531278BC9CBF8 /* Pods-OpenMarketTests.debug.xcconfig */,
+				E8A68EA2739E889EE0147F0E /* Pods-OpenMarketTests.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		8F0198122887D4E200C47CF0 /* CollectionViewCell */ = {
@@ -236,6 +272,7 @@
 				8F4809B3287CFB3A00A77BCD /* MarketInformation.swift */,
 				8F97F06629CAA4010091ADC5 /* MarketItem.swift */,
 				8F4F82C32885AD3C00C76E98 /* NameSpace */,
+				05B92B152B2F4E8900B84977 /* Section.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -322,6 +359,8 @@
 				C70FB0F925BEF61C00C9924E /* OpenMarket */,
 				05B5A7F8287D926B00865293 /* OpenMarketTests */,
 				C70FB0F825BEF61C00C9924E /* Products */,
+				437A92F5EE5519C0F3579BA3 /* Pods */,
+				EDDC70169C326AB90F1EDBFF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -347,8 +386,18 @@
 				C70FB10325BEF61D00C9924E /* Assets.xcassets */,
 				C70FB10525BEF61D00C9924E /* LaunchScreen.storyboard */,
 				C70FB10825BEF61D00C9924E /* Info.plist */,
+				05B92B1A2B2F919000B84977 /* GoogleService-Info.plist */,
 			);
 			path = OpenMarket;
+			sourceTree = "<group>";
+		};
+		EDDC70169C326AB90F1EDBFF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D1DAF05D15913419D91B6583 /* Pods_OpenMarket.framework */,
+				AB060264DD70F218D8C7BC5C /* Pods_OpenMarketTests.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -377,9 +426,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C70FB10B25BEF61D00C9924E /* Build configuration list for PBXNativeTarget "OpenMarket" */;
 			buildPhases = (
+				810BE999FEF97AF91F162CF4 /* [CP] Check Pods Manifest.lock */,
 				C70FB0F325BEF61C00C9924E /* Sources */,
 				C70FB0F425BEF61C00C9924E /* Frameworks */,
 				C70FB0F525BEF61C00C9924E /* Resources */,
+				38ED2E25611DD9F31E54C719 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -441,6 +492,7 @@
 			files = (
 				C70FB10725BEF61D00C9924E /* LaunchScreen.storyboard in Resources */,
 				C70FB10425BEF61D00C9924E /* Assets.xcassets in Resources */,
+				05B92B1B2B2F919000B84977 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,6 +515,45 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-OpenMarketTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		38ED2E25611DD9F31E54C719 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OpenMarket/Pods-OpenMarket-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OpenMarket/Pods-OpenMarket-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-OpenMarket/Pods-OpenMarket-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		810BE999FEF97AF91F162CF4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OpenMarket-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -493,6 +584,8 @@
 				8F1475DF289D3DF90034B4DA /* DetailCollectionViewCell.swift in Sources */,
 				8F4F82C52885AD7500C76E98 /* ModelNameSpace.swift in Sources */,
 				05B5A7D4287D4E4E00865293 /* NetworkManager.swift in Sources */,
+				05B92B192B2F87BD00B84977 /* LoginViewController.swift in Sources */,
+				05B92B162B2F4E8900B84977 /* Section.swift in Sources */,
 				052E9892289C9DE00051D439 /* RequestProtocol.swift in Sources */,
 				C70FB0FF25BEF61C00C9924E /* MainViewController.swift in Sources */,
 				05B3530F2887CA7F0027DCDE /* GridCollectionViewCell.swift in Sources */,
@@ -552,6 +645,7 @@
 /* Begin XCBuildConfiguration section */
 		05B5A7FE287D926B00865293 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93B55ECD291531278BC9CBF8 /* Pods-OpenMarketTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_STYLE = Automatic;
@@ -569,6 +663,7 @@
 		};
 		05B5A7FF287D926B00865293 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E8A68EA2739E889EE0147F0E /* Pods-OpenMarketTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_STYLE = Automatic;
@@ -702,18 +797,19 @@
 		};
 		C70FB10C25BEF61D00C9924E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9384299008F871D4669C4E77 /* Pods-OpenMarket.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = QW8FL6CWBT;
+				DEVELOPMENT_TEAM = W2QDPU2ZUJ;
 				INFOPLIST_FILE = OpenMarket/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = unchain123;
+				PRODUCT_BUNDLE_IDENTIFIER = openMarket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -722,18 +818,19 @@
 		};
 		C70FB10D25BEF61D00C9924E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBD6602B46331988FAB55992 /* Pods-OpenMarket.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = W2QDPU2ZUJ;
 				INFOPLIST_FILE = OpenMarket/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = chainyMarket;
+				PRODUCT_BUNDLE_IDENTIFIER = openMarket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
