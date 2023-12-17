@@ -76,19 +76,47 @@ extension ProductDetailViewModel: ProductDetailViewModelInputInterface {
     }
 
     func deleteProduct() {
-        networkManager.deleteProduct(productId: marketItem?.id)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    return
+        guard let productId = marketItem?.id,
+              var urlRequest = try? ProductRequest.deleteURL(productId).createURLRequest() else {
+            alertSubject.send("상품을 삭제할 수 없습니다.😭")
+            return
+        }
+        
+        urlRequest.httpBody = OpenMarketRequest.createJson(params: [Params.secret: APIConstants.secret])
+        
+        AF.request(urlRequest)
+            .validate()
+            .response { [weak self] response in
+                switch response.result {
+                case .success(let urlDate):
+                    guard let urlDate = urlDate,
+                          let url = String(
+                            data: urlDate,
+                            encoding: .utf8
+                          ),
+                          let deleteRequest = try? ProductRequest.delete(url: url).createURLRequest() else {
+                        self?.alertSubject.send("상품을 삭제할 수 없습니다.😭")
+                        return
+                    }
+                    
+                    AF.request(deleteRequest)
+                        .validate()
+                        .response { [weak self] response in
+                            guard let self = self else { return }
+                            
+                            switch response.result {
+                            case .success:
+                                self.movementSubject.send(true)
+                                
+                            case .failure(let error):
+                                self.alertSubject.send(error.localizedDescription)
+                            }
+                        }
+                    
                 case .failure(let error):
-                    self?.alertSubject.send(error.message)
-                    return
+                    self?.alertSubject.send(error.localizedDescription)
                 }
-            } receiveValue: { [weak self] _ in
-                self?.movementSubject.send(true)
             }
-            .store(in: &cancellable)
     }
     
     func isLoggedInUserItem() -> Bool {
