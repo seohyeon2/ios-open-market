@@ -7,6 +7,7 @@ target 'OpenMarket' do
 
   # Pods for OpenMarket
 pod 'SwiftLint'
+pod 'Alamofire'
   target 'OpenMarketTests' do
     inherit! :search_paths
     # Pods for testing
