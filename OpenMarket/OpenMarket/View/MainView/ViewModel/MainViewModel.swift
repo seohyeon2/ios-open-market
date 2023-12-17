@@ -7,9 +7,11 @@
 
 import Foundation
 import Combine
+import Alamofire
 
 protocol MainViewModelInputInterface {
-    func getInformation(pageNumber: Int)
+    func getInformation()
+    func increaseProductPageNumber()
     func pushToDetailView(indexPath: IndexPath, id:Int)
 }
 
@@ -29,57 +31,55 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
     var input: MainViewModelInputInterface { self }
     var output: MainViewModelOutputInterface { self }
 
-    private var cancellable = Set<AnyCancellable>()
+    var marketInformationPublisher: AnyPublisher<MarketInformation, Never> {
+        return marketInformationSubject.eraseToAnyPublisher()
+    }
+    var isLoadingPublisher: AnyPublisher<Bool, Never> {
+        return isLoadingSubject.eraseToAnyPublisher()
+    }
+    var alertPublisher: AnyPublisher<String, Never> {
+        return alertSubject.eraseToAnyPublisher()
+    }
+    var marketItemIdPublisher: AnyPublisher<Int, Never> {
+        return marketItemIdSubject.eraseToAnyPublisher()
+    }
+
+    private var productPageNumber = Metric.firstPage
     private let marketInformationSubject = PassthroughSubject<MarketInformation, Never>()
     private let isLoadingSubject = PassthroughSubject<Bool, Never>()
     private let alertSubject = PassthroughSubject<String, Never>()
     private let marketItemIdSubject = PassthroughSubject<Int, Never>()
 
-    var marketInformationPublisher: AnyPublisher<MarketInformation, Never> {
-        return marketInformationSubject.eraseToAnyPublisher()
-    }
-
-    var isLoadingPublisher: AnyPublisher<Bool, Never> {
-        return isLoadingSubject.eraseToAnyPublisher()
-    }
-
-    var alertPublisher: AnyPublisher<String, Never> {
-        return alertSubject.eraseToAnyPublisher()
-    }
-
-    var marketItemIdPublisher: AnyPublisher<Int, Never> {
-        return marketItemIdSubject.eraseToAnyPublisher()
-    }
-
-    private let networkManager = NetworkManager()
-
     private func getProductList(pageNumber: Int) {
-
-        networkManager.getProductInquiry(pageNumber: pageNumber)?
-            .decode(type: MarketInformation.self, decoder: JSONDecoder())
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    return
-                case .failure(let error):
-                    guard let error = error as? NetworkError else { return }
-                    self?.alertSubject.send(error.message)
+        guard let request = try? ProductRequest.list(page: pageNumber).createURLRequest(),
+              let url = request.url else {
+            alertSubject.send("상품을 불러올 수 없습니다.😭")
+            return
+        }
+        
+        AF.request(url)
+            .responseDecodable(of: MarketInformation.self) { [weak self] response in
+                
+                if let productList = response.value {
+                    self?.isLoadingSubject.send(true)
+                    self?.marketInformationSubject.send(productList)
+                    self?.isLoadingSubject.send(false)
+                } else {
+                    self?.alertSubject.send(response.error?.localizedDescription ?? "상품을 불러올 수 없습니다.😭")
                 }
-            } receiveValue: { [weak self] productList in
-                guard let self = self else { return }
-                self.isLoadingSubject.send(true)
-                self.marketInformationSubject.send(productList)
-                self.isLoadingSubject.send(false)
             }
-            .store(in: &cancellable)
     }
 }
 
 extension MainViewModel: MainViewModelInputInterface {
-    func getInformation(pageNumber: Int) {
-        getProductList(pageNumber: pageNumber)
+    func getInformation() {
+        getProductList(pageNumber: productPageNumber)
     }
-
+    
+    func increaseProductPageNumber() {
+        productPageNumber += 1
+    }
+    
     func pushToDetailView(indexPath: IndexPath, id:Int) {
         marketItemIdSubject.send(id)
     }
