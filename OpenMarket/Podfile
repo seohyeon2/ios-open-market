@@ -8,6 +8,8 @@ target 'OpenMarket' do
   # Pods for OpenMarket
 pod 'SwiftLint'
 pod 'Alamofire'
+pod 'Firebase/Auth'
+pod 'FirebaseFirestore'
   target 'OpenMarketTests' do
     inherit! :search_paths
     # Pods for testing
