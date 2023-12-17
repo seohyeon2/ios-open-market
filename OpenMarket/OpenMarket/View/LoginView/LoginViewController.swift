@@ -112,7 +112,6 @@ class LoginViewController: UIViewController {
     // MARK: Action Method
     @objc 
     private func loginButtonTapped() {
-        print("로그인 버튼이 눌렸습니다.")
         LoginWithFirebaseAuth()
     }
     
@@ -123,9 +122,8 @@ class LoginViewController: UIViewController {
         ) { [weak self] authResult, error in
             if authResult != nil {
                 self?.showMainView()
+                UserDefaults.standard.set(true, forKey: "isLoggedIn")
             } else {
-                print("로그인 실패")
-                print(error.debugDescription)
                 self?.showCustomAlert(
                     title: "로그인 실패",
                     message: "이메일 또는 비밀번호를 잘못 입력했습니다. \n입력하신 내용을 다시 확인해주세요."
@@ -133,7 +131,7 @@ class LoginViewController: UIViewController {
             }
         }
     }
-    
+
     private func showMainView() {
         let mainViewController = MainViewController()
         navigationController?.setViewControllers(

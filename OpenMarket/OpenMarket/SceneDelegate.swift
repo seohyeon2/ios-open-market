@@ -17,9 +17,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
         window = UIWindow(windowScene: windowScene)
-        let loginViewController = LoginViewController()
-        let navigationController = UINavigationController(rootViewController: loginViewController)
-        window?.rootViewController = navigationController
+        
+        let isLoggedIn: Bool = UserDefaults.standard.bool(forKey: "isLoggedIn")
+        
+        if isLoggedIn {
+            let mainViewController = MainViewController()
+            let navigationController = UINavigationController(rootViewController: mainViewController)
+            window?.rootViewController = navigationController
+        } else {
+            let loginViewController = LoginViewController()
+            let navigationController = UINavigationController(rootViewController: loginViewController)
+            window?.rootViewController = navigationController
+        }
+
         window?.makeKeyAndVisible()
     }
 }
