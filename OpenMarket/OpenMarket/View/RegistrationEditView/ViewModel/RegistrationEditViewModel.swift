@@ -7,10 +7,12 @@
 
 import Foundation
 import Combine
+import Alamofire
 
 protocol RegistrationEditViewModelInputInterface {
-    func getProductImageData(_ data: Data)
     func tappedDoneButton()
+    func increaseDeleteButtonTagNumber()
+    func getProductImageData(_ data: Data)
     func tappedXMarkButton(_ sender: Int)
 }
 
@@ -18,6 +20,8 @@ protocol RegistrationEditViewModelOutputInterface {
     var imageDataPublisher: AnyPublisher<Data, Never> { get }
     var alertPublisher: AnyPublisher<String, Never> { get }
     var movementPublisher: AnyPublisher<Int, Never> { get }
+    
+    func getDeleteButtonTagNumber() -> Int
 }
 
 protocol RegistrationEditViewModelInterface {
@@ -26,9 +30,15 @@ protocol RegistrationEditViewModelInterface {
 }
 
 final class RegistrationEditViewModel: RegistrationEditViewModelInterface, RegistrationEditViewModelOutputInterface {
+    @Published var productName: String
+    @Published var productDescription: String
+    @Published var productPrice: String
+    @Published var currency: Int
+    @Published var discountedPrice: String
+    @Published var stock: String
+    
     var input: RegistrationEditViewModelInputInterface { self }
     var output: RegistrationEditViewModelOutputInterface { self }
-    var marketItem: MarketItem?
     
     var alertPublisher: AnyPublisher<String, Never> {
         return alertSubject.eraseToAnyPublisher()
@@ -36,12 +46,20 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface, Regis
     var movementPublisher: AnyPublisher<Int, Never> {
         return movementSubject.eraseToAnyPublisher()
     }
+    var imageDataPublisher: AnyPublisher<Data, Never> {
+        return imageDataSubject.eraseToAnyPublisher()
+    }
+    
+    private(set) var marketItem: MarketItem?
+    private var imagesData = [Data]()
+    private var tagNumber = 0
+    private var cancellable = Set<AnyCancellable>()
+    
     private let alertSubject = PassthroughSubject<String, Never>()
     private let movementSubject = PassthroughSubject<Int, Never>()
-
-    private var imagesData = [Data]()
-    var tagNumber = 0
-
+    private let imageDataSubject = PassthroughSubject <Data, Never>()
+    private let networkManager = NetworkManager()
+    
     init(marketItem: MarketItem?) {
         self.marketItem = marketItem
         
@@ -52,24 +70,27 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface, Regis
         discountedPrice = String(marketItem?.discountedPrice ?? 0)
         stock = String(marketItem?.stock ?? 0)
     }
+    
+    func getDeleteButtonTagNumber() -> Int {
+        return tagNumber
+    }
 
-    @Published var productName: String
-    @Published var productDescription: String
-    @Published var productPrice: String
-    @Published var currency: Int
-    @Published var discountedPrice: String
-    @Published var stock: String
-   
-    var imageDataPublisher: AnyPublisher<Data, Never> {
-        return imageDataSubject.eraseToAnyPublisher()
+    private func performProductRegistration() {
+        let params = createParams()
+        
+        guard let request = createRequest(params: params) else {
+            alertSubject.send("상품 등록에 실패했습니다.😭")
+            return
+        }
+        
+        AF.request(request)
+            .responseDecodable(of: MarketItem.self) { [weak self] response in
+                self?.handleResponse(response)
+            }
     }
     
-    private let imageDataSubject = PassthroughSubject <Data, Never>()
-    private let networkManager = NetworkManager()
-    private var cancellable = Set<AnyCancellable>()
-    
-    private func registerProduct() {
-        let params: [String: Any?] = [
+    private func createParams() -> [String: Any?] {
+        return [
             Params.productName: productName,
             Params.productDescription: productDescription,
             Params.productPrice: Double(productPrice) ?? 0,
@@ -78,54 +99,49 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface, Regis
             Params.stock: Int(stock) ?? 0,
             Params.secret: APIConstants.secret
         ]
-        
-        var request: URLRequest?
-        if marketItem == nil {
-            request = networkManager.getPostRequest(params: params,
-                                                 imageData: imagesData)
-        } else {
-            request = networkManager.getPatchRequest(productId: marketItem?.id ?? 0,
-                                                     modifiedInformation: params)
-        }
-        
-        guard let request = request else {
-            return
-        }
-        
-        networkManager.registerEditProduct(request: request)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    return
-                case .failure(let error):
-                    self?.alertSubject.send(error.message)
-                    return
-                }
-            } receiveValue: { [weak self] response in
-                
-                guard let marketItem = try? JSONDecoder().decode(MarketItem.self,
-                                                                 from: response) else { return }
-                
-                self?.movementSubject.send(marketItem.id)
-            }
-            .store(in: &cancellable)
     }
     
     private func choiceCurrency() -> Currency? {
         return Currency.init(rawValue: currency)
     }
+
+    private func createRequest(params: [String: Any?]) -> URLRequest? {
+        if marketItem == nil {
+            return networkManager.getPostRequest(
+                params: params,
+                imageData: imagesData
+            )
+        } else {
+            return networkManager.getPatchRequest(
+                productId: marketItem?.id ?? 0,
+                modifiedInformation: params
+            )
+        }
+    }
+
+    private func handleResponse(_ response: AFDataResponse<MarketItem>) {
+        if let marketItem = response.value {
+            movementSubject.send(marketItem.id)
+        } else {
+            alertSubject.send(response.error?.localizedDescription ?? "상품 등록에 실패했습니다.😭")
+        }
+    }
 }
 
 extension RegistrationEditViewModel: RegistrationEditViewModelInputInterface {
+    func tappedDoneButton() {
+        performProductRegistration()
+    }
+    
+    func increaseDeleteButtonTagNumber() {
+        tagNumber += 1
+    }
+    
     func getProductImageData(_ data: Data) {
         guard imagesData.count < 5 else { return }
 
         imageDataSubject.send(data)
         imagesData.append(data)
-    }
-
-    func tappedDoneButton() {
-        registerProduct()
     }
 
     func tappedXMarkButton(_ sender: Int) {

@@ -14,6 +14,7 @@ enum Registration {
     static let productPrice = "상품가격"
     static let discountedPrice = "할인금액"
     static let stock = "재고수량"
+    static let productDetails = "상품 상세 설명"
     static let registrationProduct = "상품등록"
     static let editProduct = "상품수정"
     static let textClear = ""
