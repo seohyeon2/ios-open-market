@@ -56,15 +56,14 @@ final class ProductDetailViewModel: ProductDetailViewModelInterface, ProductDeta
         }
         
         AF.request(request)
+            .validate()
             .responseDecodable(of: MarketItem.self) { [weak self] response in
-                if let marketItem = response.value {
+                switch response.result {
+                case .success(let marketItem):
                     self?.detailMarketItemSubject.send(marketItem)
                     self?.marketItem = marketItem
-                } else {
-                    self?.alertSubject.send(
-                        response.error?.localizedDescription ??
-                        "해당 상품에 대한 정보를 불러올 수 없습니다.😭"
-                    )
+                case .failure(let error):
+                    self?.alertSubject.send(error.localizedDescription)
                 }
             }
     }

@@ -58,14 +58,15 @@ final class MainViewModel: MainViewModelInterface, MainViewModelOutputInterface 
         }
         
         AF.request(request)
+            .validate()
             .responseDecodable(of: MarketInformation.self) { [weak self] response in
-                
-                if let productList = response.value {
+                switch response.result {
+                case .success(let productList):
                     self?.isLoadingSubject.send(true)
                     self?.marketInformationSubject.send(productList)
                     self?.isLoadingSubject.send(false)
-                } else {
-                    self?.alertSubject.send(response.error?.localizedDescription ?? "상품을 불러올 수 없습니다.😭")
+                case .failure(let error):
+                    self?.alertSubject.send(error.localizedDescription)
                 }
             }
     }

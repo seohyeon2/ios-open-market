@@ -82,10 +82,16 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface, Regis
             alertSubject.send("상품 등록에 실패했습니다.😭")
             return
         }
-        
+
         AF.request(request)
+            .validate()
             .responseDecodable(of: MarketItem.self) { [weak self] response in
-                self?.handleResponse(response)
+                switch response.result {
+                case .success(let marketItem):
+                    self?.movementSubject.send(marketItem.id)
+                case .failure(let error):
+                    self?.alertSubject.send(error.localizedDescription)
+                }
             }
     }
     
@@ -116,14 +122,6 @@ final class RegistrationEditViewModel: RegistrationEditViewModelInterface, Regis
                 productId: marketItem?.id ?? 0,
                 modifiedInformation: params
             )
-        }
-    }
-
-    private func handleResponse(_ response: AFDataResponse<MarketItem>) {
-        if let marketItem = response.value {
-            movementSubject.send(marketItem.id)
-        } else {
-            alertSubject.send(response.error?.localizedDescription ?? "상품 등록에 실패했습니다.😭")
         }
     }
 }
