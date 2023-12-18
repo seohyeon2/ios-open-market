@@ -317,23 +317,28 @@ final class DetailCollectionViewCell: UICollectionViewListCell {
         bargainPriceLabel: UILabel,
         product: MarketItem
     ) {
-        priceLabel.text = "\(product.currency) \(product.price)"
-
+        if product.currency == Currency.KRW.name {
+            let price = Int(product.price)
+            let bargainPrice = Int(product.bargainPrice)
+            priceLabel.text = "\(product.currency) \(price)"
+            bargainPriceLabel.text = "\(product.currency) \(bargainPrice)"
+        } else {
+            priceLabel.text = "\(product.currency) \(product.price)"
+            bargainPriceLabel.text = "\(product.currency) \(product.bargainPrice)"
+        }
+        
         if product.discountedPrice == Metric.discountedPrice {
             bargainPriceLabel.isHidden = true
             priceLabel.textColor = .black
             priceLabel.font = UIFont.preferredFont(forTextStyle: .headline)
-            priceLabel.attributedText = NSAttributedString(
-                string: priceLabel.text  ?? ""
-            )
+            priceLabel.attributedText = NSAttributedString(string: priceLabel.text  ?? "")
         } else {
             bargainPriceLabel.isHidden = false
+            bargainPriceLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+            bargainPriceLabel.textColor = .tertiary
             priceLabel.textColor = .systemGray
             priceLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
             priceLabel.attributedText = priceLabel.text?.strikeThrough()
-            bargainPriceLabel.text = "\(product.currency) \(product.bargainPrice)"
-            bargainPriceLabel.font = UIFont.preferredFont(forTextStyle: .headline)
-            bargainPriceLabel.textColor = .tertiary
         }
     }
 
